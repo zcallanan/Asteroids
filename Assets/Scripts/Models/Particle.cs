@@ -21,10 +21,6 @@ namespace Models
             ExplosionDuration = particleData.explosionDuration;
             scales = particleData.scales;
         }
-        private void Start()
-        {
-            
-        }
     }
     
     
