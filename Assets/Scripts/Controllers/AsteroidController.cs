@@ -28,6 +28,15 @@ namespace Controllers
             _initialLargeAsteroidCount = _difficultySetting.initialLargeAsteroidCount;
             _smallPerMedium = _difficultySetting.numberOfSmallAsteroidsPer;
             _mediumPerLarge = _difficultySetting.numberOfMediumAsteroidsPer;
+            DetermineAsteroidSpawnBoundValues();
+            GameManager.sharedInstance.OnLevelStarted += HandleLevelStarted;
+            GameManager.sharedInstance.OnAsteroidCollisionOccurred += HandleAsteroidCollision;
+            GameManager.sharedInstance.OnGameOver += HandleGameOver;
+            GameManager.sharedInstance.OnScreenSizeChange += DetermineAsteroidSpawnBoundValues;
+        }
+
+        private void DetermineAsteroidSpawnBoundValues()
+        {
             _outerMaxX = BoundManager.sharedInstance.MaxX;
             _innerMaxX = _outerMaxX - 1;
             _outerMinX = BoundManager.sharedInstance.MinX;
@@ -36,10 +45,6 @@ namespace Controllers
             _innerMaxZ = _outerMaxZ - 1;
             _outerMinZ = BoundManager.sharedInstance.MinZ;
             _innerMinZ = _outerMinZ + 1;
-            //TODO Handle resolution change
-            GameManager.sharedInstance.OnLevelStarted += HandleLevelStarted;
-            GameManager.sharedInstance.OnAsteroidCollisionOccurred += HandleAsteroidCollision;
-            GameManager.sharedInstance.OnGameOver += HandleGameOver;
         }
 
         private void HandleGameOver()

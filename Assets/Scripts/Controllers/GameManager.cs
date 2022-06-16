@@ -196,8 +196,6 @@ namespace Controllers
         private void Awake()
         {
             sharedInstance = this;
-            // CurrentLevel = -3;
-
             // At initialization, set game settings. User selection will override these values
             CurrentLives = gameSettings.initialPlayerLives;
             CurrentDifficulty = gameSettings.defaultDifficulty;

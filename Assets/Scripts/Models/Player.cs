@@ -21,6 +21,7 @@ namespace Models
         public float ShipAlphaValue { get; private set; }
         public float HyperspaceDuration { get; private set; }
         public MeshCollider PlayerMeshCollider { get; private set; }
+        public MeshRenderer PlayerMeshRenderer { get; private set; }
 
         private void Awake()
         {
@@ -34,6 +35,7 @@ namespace Models
             ShipAlphaValue = playerData.shipAlphaValue;
             HyperspaceDuration = playerData.hyperspaceDuration;
             PlayerMeshCollider = GetComponent<MeshCollider>();
+            PlayerMeshRenderer = GetComponent<MeshRenderer>();
         }
 
         private void Update()

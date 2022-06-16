@@ -54,7 +54,7 @@ namespace Controllers
             _ufoProjectile.transform.position = ufo.transform.position;
             _ufoProjectile.name = "Ufo Projectile";
             _ufoProjectile.FacingDirection = DetermineUfoProjectileFacing();
-            // TODO: localScale (on player's too)
+            _ufoProjectile.gameObject.transform.localScale = .15f * Vector3.one;
             _hideProjectileCoroutine = HideProjectileCoroutine(_ufoProjectile, _ufoProjectile.UfoProjectileLifespan);
             StartCoroutine(_hideProjectileCoroutine);
             _ufoProjectile.DisableHidePlayerProjectileCoroutine = _hideProjectileCoroutine;
@@ -123,9 +123,11 @@ namespace Controllers
                 Physics.IgnoreCollision(ufo.UfoMeshCollider, 
                     _playerProjectile.ProjectileSphereCollider, false);
             }
-                    
-            _playerProjectile.gameObject.SetActive(true);
+
+            var obj = _playerProjectile.gameObject;
+            obj.SetActive(true);
             _playerProjectile.name = "Player Projectile";
+            obj.transform.localScale = .1f * Vector3.one;
             _playerProjectile.transform.position = _playerTransform.position;
             _playerProjectile.FacingDirection = _playerTransform.forward;
                     

@@ -34,8 +34,6 @@ namespace Controllers
         private void Start()
         {
             _playerInstance = Instantiate(playerPrefab, _spawnPosition, playerPrefab.transform.rotation);
-            GameManager.sharedInstance.PlayerSpawned(_playerInstance);
-            GameManager.sharedInstance.OnPlayerDied += HandlePlayerDeath;
             var playerTransform = _playerInstance.transform;
             _previousPosition = playerTransform.position;
             _accelerationSpeed = (_playerInstance.MovementSpeed / 2) / _playerInstance.MovementOverNumberOfFrames;
@@ -44,12 +42,12 @@ namespace Controllers
             _positionPlayerIsFacing = playerTransform.forward;
             _isOpaque = true;
             _alphaChange = _playerInstance.ShipAlphaValue;
-            _maxX = BoundManager.sharedInstance.MaxX;
-            _minX = BoundManager.sharedInstance.MinX;
-            _maxZ = BoundManager.sharedInstance.MaxZ;
-            _minZ = BoundManager.sharedInstance.MinZ;
+            DetermineHyperspaceBounds();
+            GameManager.sharedInstance.PlayerSpawned(_playerInstance);
+            GameManager.sharedInstance.OnPlayerDied += HandlePlayerDeath;
+            GameManager.sharedInstance.OnScreenSizeChange += DetermineHyperspaceBounds;
         }
-        
+
         private void CalculateCurrentSpeed() {
             _currentPosition = _playerInstance.transform.position;
             _currentSpeed = Vector3.Distance(Abs(_previousPosition), Abs(_currentPosition)) * 100f;
@@ -83,7 +81,7 @@ namespace Controllers
         private void RotatePlayerShip()
         {
             _playerInstance.transform.Rotate(
-                _playerInstance.RotationAngle * _horizontalInput * Time.fixedDeltaTime * _playerInstance.RotationSpeed,
+                _playerInstance.RotationAngle * (_horizontalInput * Time.fixedDeltaTime * _playerInstance.RotationSpeed),
                 Space.Self);
 
         }
@@ -131,6 +129,14 @@ namespace Controllers
                 HyperSpaceTriggered();
             }
         }
+        
+        private void DetermineHyperspaceBounds()
+        {
+            _maxX = BoundManager.sharedInstance.MaxX;
+            _minX = BoundManager.sharedInstance.MinX;
+            _maxZ = BoundManager.sharedInstance.MaxZ;
+            _minZ = BoundManager.sharedInstance.MinZ;
+        }
 
         private void HyperSpaceTriggered()
         {
@@ -153,7 +159,6 @@ namespace Controllers
 
         private Vector3 DetermineRandomHyperspacePosition()
         {
-            // TODO: Account for screen resolution change
             return new Vector3(Random.Range(_minX + 1, _maxX - 1), 1, Random.Range(_minZ + 1, _maxZ - 1));
         }
 
@@ -167,7 +172,7 @@ namespace Controllers
 
         private IEnumerator PlayerRespawnCoroutine(Player playerRespawnInstance)
         {
-            _meshRenderer = playerRespawnInstance.GetComponent<MeshRenderer>();
+            _meshRenderer = playerRespawnInstance.PlayerMeshRenderer;
             _material = _meshRenderer.material;
             _color = _material.color;
             _color.a = _alphaChange;
