@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44728777b04484fb8bbf89120c860aad, type: 3}
+  m_Name: PlayerData
+  m_EditorClassIdentifier: 
+  respawnDelay: 2
+  invulnerabilityTimer: 1.5
+  isInvulnerable: 0
+  hyperspaceDuration: 2
+  shipAlphaValue: 0.4
+  movementSpeed: 10
+  movementOverNumberOfFrames: 120
+  rotationSpeed: 5
+  rotationAngle: {x: 0, y: 100, z: 0}

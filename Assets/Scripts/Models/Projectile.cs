@@ -1,0 +1,64 @@
+using System.Collections;
+using Controllers;
+using Data;
+using UnityEngine;
+
+namespace Models
+{
+    public class Projectile : MonoBehaviour
+    {
+        [SerializeField] private ProjectileData projectileData;
+        public IEnumerator DisableHidePlayerProjectileCoroutine { get; set; }
+        public Vector3 FacingDirection { get; set; }
+        public float PlayerProjectileLifespan { get; private set; }
+        public float UfoProjectileLifespan { get; private set; }
+        public float UfoFireTowardsPlayerFrequency { get; private set; }
+        public float ShootingCooldownLength { get; private set; }
+        public SphereCollider ProjectileSphereCollider { get; private set; }
+        private float _playerProjectileSpeed;
+        private float _ufoProjectileSpeed;
+        private DifficultySettings _difficultySetting;
+
+        private void Awake()
+        {
+            _difficultySetting = GameManager.sharedInstance.DifficultySettings;
+            PlayerProjectileLifespan = projectileData.playerProjLifespan;
+            UfoProjectileLifespan = projectileData.ufoProjLifespan;
+            UfoFireTowardsPlayerFrequency = _difficultySetting.ufoFireTowardsPlayerFrequency;
+            ShootingCooldownLength = projectileData.playerCooldownLength;
+            ProjectileSphereCollider = GetComponent<SphereCollider>();
+            _playerProjectileSpeed = projectileData.playerProjSpeed;
+            _ufoProjectileSpeed = projectileData.ufoProjSpeed;
+        }
+
+        private Vector3 MoveProjectile(float speed)
+        {
+            var position = transform.position;
+            position += FacingDirection * (Time.deltaTime * speed);
+            return BoundManager.sharedInstance.EnforceBounds(position);
+        }
+
+        private void Update()
+        {
+            var projectileTransform = transform;
+            projectileTransform.position = gameObject.layer switch
+            {
+                6 => MoveProjectile(_playerProjectileSpeed),
+                12 => MoveProjectile(_ufoProjectileSpeed),
+                _ => projectileTransform.position
+            };
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            var projectileCollider = gameObject.GetComponent<Projectile>();
+            StopCoroutine(projectileCollider.DisableHidePlayerProjectileCoroutine);
+            if (other.gameObject.GetComponent<Asteroid>())
+            {
+                GameManager.sharedInstance.AsteroidCollided(other.gameObject.GetComponent<Asteroid>());
+            }
+            other.gameObject.SetActive(false);
+            gameObject.SetActive(false);
+        }
+    }
+}

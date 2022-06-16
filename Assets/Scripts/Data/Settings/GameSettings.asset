@@ -1,0 +1,98 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01bb6fc3d3deb4a32b954f6eb646db94, type: 3}
+  m_Name: GameSettings
+  m_EditorClassIdentifier: 
+  initialPlayerLives: 2
+  defaultDifficulty: 1
+  scoreLargeAsteroid: 20
+  scoreMediumAsteroid: 5000
+  scoreSmallAsteroid: 100
+  scoreOtherPlayer: 500
+  scoreLargeUfo: 200
+  scoreSmallUfo: 1000
+  difficulties:
+  - name: Beginner
+    asteroidLowerSpeed: 0.2
+    asteroidUpperSpeed: 0.4
+    initialLargeAsteroidCount: 3
+    numberOfSmallAsteroidsPer: 2
+    numberOfMediumAsteroidsPer: 2
+    ufoPresent: 0
+    ufoXTargetOffsetLower: 0
+    ufoXTargetOffsetUpper: 0
+    ufoZTargetOffsetLower: 0
+    ufoZTargetOffsetUpper: 0
+    ufoLowerSpeed: 0
+    ufoUpperSpeed: 0
+    ufoSpawnTimerLower: 0
+    ufoSpawnTimerUpper: 0
+    ufoFireTowardsPlayerFrequency: 0
+    levelToSpawnSmalls: 0
+  - name: Intermediate
+    asteroidLowerSpeed: 0.35
+    asteroidUpperSpeed: 0.5
+    initialLargeAsteroidCount: 3
+    numberOfSmallAsteroidsPer: 2
+    numberOfMediumAsteroidsPer: 2
+    ufoPresent: 1
+    ufoXTargetOffsetLower: 0.75
+    ufoXTargetOffsetUpper: 1
+    ufoZTargetOffsetLower: 0.75
+    ufoZTargetOffsetUpper: 1
+    ufoLowerSpeed: 1.5
+    ufoUpperSpeed: 3
+    ufoSpawnTimerLower: 20
+    ufoSpawnTimerUpper: 35
+    ufoFireTowardsPlayerFrequency: 5
+    levelToSpawnSmalls: 5
+  - name: Advanced
+    asteroidLowerSpeed: 2
+    asteroidUpperSpeed: 2.5
+    initialLargeAsteroidCount: 3
+    numberOfSmallAsteroidsPer: 2
+    numberOfMediumAsteroidsPer: 2
+    ufoPresent: 1
+    ufoXTargetOffsetLower: 0.5
+    ufoXTargetOffsetUpper: 0.75
+    ufoZTargetOffsetLower: 0.5
+    ufoZTargetOffsetUpper: 0.75
+    ufoLowerSpeed: 3
+    ufoUpperSpeed: 4.5
+    ufoSpawnTimerLower: 16
+    ufoSpawnTimerUpper: 30
+    ufoFireTowardsPlayerFrequency: 6
+    levelToSpawnSmalls: 4
+  - name: Expert
+    asteroidLowerSpeed: 2.5
+    asteroidUpperSpeed: 3
+    initialLargeAsteroidCount: 3
+    numberOfSmallAsteroidsPer: 2
+    numberOfMediumAsteroidsPer: 2
+    ufoPresent: 1
+    ufoXTargetOffsetLower: 0.2
+    ufoXTargetOffsetUpper: 0.5
+    ufoZTargetOffsetLower: 0.2
+    ufoZTargetOffsetUpper: 0.5
+    ufoLowerSpeed: 4
+    ufoUpperSpeed: 6
+    ufoSpawnTimerLower: 14
+    ufoSpawnTimerUpper: 25
+    ufoFireTowardsPlayerFrequency: 7
+    levelToSpawnSmalls: 3
+  gameTypes:
+  - name: Single Player
+    playerCount: 1
+  - name: Two Player Competitive
+    playerCount: 2
+  - name: Two Player Team
+    playerCount: 2
