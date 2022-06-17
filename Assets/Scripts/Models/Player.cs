@@ -9,8 +9,8 @@ namespace Models
     public class Player : MonoBehaviour
     {
         [SerializeField] private PlayerData playerData;
-        public Vector3 PlayerPosition { get; set; }
-        public Vector3 PlayerFacing { get; set; }
+        
+        public Vector3 PlayerFacing { get; private set; }
         public float MovementSpeed { get; private set; }
         public float MovementOverNumberOfFrames { get; private set; }
         public float RotationSpeed { get; private set; }
@@ -22,6 +22,8 @@ namespace Models
         public float HyperspaceDuration { get; private set; }
         public MeshCollider PlayerMeshCollider { get; private set; }
         public MeshRenderer PlayerMeshRenderer { get; private set; }
+        
+        private Vector3 _playerPosition;
 
         private void Awake()
         {
@@ -40,10 +42,10 @@ namespace Models
 
         private void Update()
         {
-            PlayerPosition = BoundManager.sharedInstance.EnforceBounds(transform.position);
+            _playerPosition = BoundManager.sharedInstance.EnforceBounds(transform.position);
             var playerTransform = transform;
             PlayerFacing = playerTransform.forward;
-            playerTransform.position = PlayerPosition;
+            playerTransform.position = _playerPosition;
         }
         
         private void OnTriggerEnter(Collider other)

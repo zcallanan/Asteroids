@@ -7,7 +7,8 @@ namespace Models
     public class Particle : MonoBehaviour
     {
         [SerializeField] private ParticleData particleData;
-        public List<float> scales = new List<float>();
+        
+        public List<float> Scales { get; private set; }
         public ParticleSystem.MinMaxGradient AsteroidExplosionColor { get; private set; }
         public ParticleSystem.MinMaxGradient PlayerExplosionColor { get; private set; }
         public ParticleSystem.MinMaxGradient UfoExplosionColor { get; private set; }
@@ -19,7 +20,7 @@ namespace Models
             PlayerExplosionColor = particleData.playerExplosionColor;
             UfoExplosionColor = particleData.ufoExplosionColor;
             ExplosionDuration = particleData.explosionDuration;
-            scales = particleData.scales;
+            Scales = particleData.scales;
         }
     }
     

@@ -1,11 +1,15 @@
 public class Notes
 {
     /*
+     * Create different materials instead of updating materials on the fly
+     * Tests
      * Explosions when things die
      *      Make explosion big then taper off before disabled
      *      Add different colors per asteroid type
      * Bugs
-     *      Asteroids that don't move
+     *      Ufo variable projectile lifespan/speed
+     *      Ufo projectile behavior when there are multiple ufos, slow down?
+     * Asteroids that don't move
      *      Asteroids rotate too slowly
      *      Unsubscribe events?
      * Resolution

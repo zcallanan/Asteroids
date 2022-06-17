@@ -8,22 +8,34 @@ namespace Controllers
     public class ParticleController : MonoBehaviour
     {
         [SerializeField] private Particle thrustPrefab;
+        
         private GameObject _thrustAttach;
+        private GameObject _obj;
         private Particle _thrustInstance;
         private Particle _explosion;
         private ParticleSystem _partSystem;
         private ParticleSystem.MainModule _main;
-        private GameObject _obj;
 
         private void Start()
         {
             _thrustInstance = Instantiate(thrustPrefab, Vector3.zero, Quaternion.identity);
             _thrustInstance.gameObject.SetActive(false);
+            
             GameManager.sharedInstance.OnPlayerSpawn += AttachThrustToPlayerThrustAttachmentPoint;
-            GameManager.sharedInstance.OnPlayerAppliedThrust += EnableThrustEffect;
             GameManager.sharedInstance.OnAsteroidCollisionOccurred += HandleAsteroidExplosion;
             GameManager.sharedInstance.OnPlayerDied += HandlePlayerExplosion;
             GameManager.sharedInstance.OnUfoCollisionOccurred += HandleUfoExplosion;
+            GameManager.sharedInstance.OnGameOver += HandleGameOver;
+        }
+
+        private void HandleGameOver()
+        {
+            GameManager.sharedInstance.OnPlayerSpawn -= AttachThrustToPlayerThrustAttachmentPoint;
+            GameManager.sharedInstance.OnPlayerAppliedThrust -= EnableThrustEffect;
+            GameManager.sharedInstance.OnAsteroidCollisionOccurred -= HandleAsteroidExplosion;
+            GameManager.sharedInstance.OnPlayerDied -= HandlePlayerExplosion;
+            GameManager.sharedInstance.OnUfoCollisionOccurred -= HandleUfoExplosion;
+            GameManager.sharedInstance.OnGameOver -= HandleGameOver;
         }
 
         private void EnableThrustEffect(bool thrustIsActive, Player player)
@@ -38,6 +50,8 @@ namespace Controllers
             var thrustTransform = _thrustInstance.transform;
             thrustTransform.parent = _thrustAttach.transform;
             thrustTransform.position = _thrustAttach.transform.position;
+            
+            GameManager.sharedInstance.OnPlayerAppliedThrust += EnableThrustEffect;
         }
 
         private void DetermineObjects()
@@ -52,40 +66,52 @@ namespace Controllers
         {
             DetermineObjects();
             _obj.transform.position = asteroid.transform.position;
-            _explosion.name = $"{asteroid.names[asteroid.asteroidSize]} Asteroid Explosion";
+            _explosion.name = $"{asteroid.Names[asteroid.AsteroidSize]} Asteroid Explosion";
+            
             // Explosion scales 0 to 2
-            _obj.transform.localScale = _explosion.scales[asteroid.asteroidSize] * Vector3.one;
+            _obj.transform.localScale = _explosion.Scales[asteroid.AsteroidSize] * Vector3.one;
             _main.startColor = _explosion.AsteroidExplosionColor;
             _obj.SetActive(true);
+            
             StartCoroutine(ExplosionDisableCoroutine(_explosion));
         }
 
         private void HandlePlayerExplosion(Player player)
         {
             DetermineObjects();
+            
             _obj.transform.position = player.transform.position;
             _explosion.name = $"Player Explosion";
+            
             // Explosion scale 3
-            _obj.transform.localScale = _explosion.scales[3] * Vector3.one;
+            _obj.transform.localScale = _explosion.Scales[3] * Vector3.one;
             _main.startColor = _explosion.PlayerExplosionColor;
             _obj.SetActive(true);
+            
             StartCoroutine(ExplosionDisableCoroutine(_explosion));
+            
+            GameManager.sharedInstance.OnPlayerAppliedThrust -= EnableThrustEffect;
         }
         
         private void HandleUfoExplosion(Ufo ufo)
         {
             DetermineObjects();
+            
             _obj.transform.position = ufo.transform.position;
-            _explosion.name = $"{ufo.names[ufo.UfoSize]} UFO Explosion";
+            _explosion.name = $"{ufo.Names[ufo.UfoSize]} UFO Explosion";
+            
             // Explosion scale 4 and 5
             int explosionScale = 4;
+            
             if (ufo.UfoSize == 1)
             {
                 explosionScale = 5;
             }
-            _obj.transform.localScale = _explosion.scales[explosionScale] * Vector3.one;
+            
+            _obj.transform.localScale = _explosion.Scales[explosionScale] * Vector3.one;
             _main.startColor = _explosion.UfoExplosionColor;
             _obj.SetActive(true);
+            
             StartCoroutine(ExplosionDisableCoroutine(_explosion));
         }
 

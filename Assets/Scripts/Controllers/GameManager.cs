@@ -9,24 +9,31 @@ namespace Controllers
     public class GameManager : MonoBehaviour
     {
         [SerializeField] private GameData gameSettings;
+        
         public static GameManager sharedInstance;
+        
+        [NonSerialized] public DifficultySettings difficultySettings;
+
         public int Score { get; set; }
-        public int TotalLargeAsteroidsCollided { get; set; }
-        public int TotalMediumAsteroidsCollided { get; set; }
-        public int TotalSmallAsteroidsCollided { get; set; }
         public int CurrentLives { get; private set; }
         public int CurrentDifficulty { get; set; }
+        
+        public int TotalLargeAsteroidsCollided { get; private set; }
+        public int TotalMediumAsteroidsCollided { get; private set; }
+        public int TotalSmallAsteroidsCollided { get; private set; }
         public int TotalExpectedSmallAsteroidsInLevel { get; set; }
         public int CountActualSmallAsteroidsDestroyedInLevel { get; set; }
+        
         public float UfoXTargetOffsetLower { get; private set; }
         public float UfoXTargetOffsetUpper{ get; private set; }
         public float UfoZTargetOffsetLower { get; private set; }
         public float UfoZTargetOffsetUpper { get; private set; }
+        
         public int CurrentGameType { get; set; }
+        public int CurrentLevel { get; set; }
+        
         private Vector2 _previousScreenSize;
         private Vector2 _latestScreenSize;
-        [NonSerialized] public DifficultySettings DifficultySettings;
-        public int CurrentLevel { get; set; }
         private int _largeAsteroidScore;
         private int _mediumAsteroidScore;
         private int _smallAsteroidScore;
@@ -62,6 +69,49 @@ namespace Controllers
         public event LivesChange OnDisplayedLivesShouldChange;
         public delegate void GameOver();
         public event GameOver OnGameOver;
+        
+        private void Awake()
+        {
+            sharedInstance = this;
+            // At initialization, set game settings. User selection will override these values
+            CurrentLives = gameSettings.initialPlayerLives;
+            CurrentDifficulty = gameSettings.defaultDifficulty;
+            difficultySettings = gameSettings.difficulties[CurrentDifficulty];
+            
+            UfoXTargetOffsetLower = difficultySettings.ufoXTargetOffsetLower;
+            UfoXTargetOffsetUpper = difficultySettings.ufoXTargetOffsetUpper;
+            UfoZTargetOffsetLower = difficultySettings.ufoZTargetOffsetLower;
+            UfoZTargetOffsetUpper = difficultySettings.ufoZTargetOffsetUpper;
+            
+            _largeAsteroidScore = gameSettings.scoreLargeAsteroid;
+            _mediumAsteroidScore = gameSettings.scoreMediumAsteroid;
+            _smallAsteroidScore = gameSettings.scoreSmallAsteroid;
+            _largeUfoScore = gameSettings.scoreLargeUfo;
+            _smallUfoScore = gameSettings.scoreSmallUfo;
+            _otherPlayerScore = gameSettings.scoreOtherPlayer;
+            
+            _previousScreenSize = new Vector2(Screen.width, Screen.height);
+        }
+
+        private void Start()
+        {
+            Screen.SetResolution(800, 600, false);
+            // TODO: CurrentLevel is set from an event when the game actually starts
+            OnAsteroidCollisionOccurred += UpdateScoreUponAsteroidDeath;
+            OnUfoCollisionOccurred += UpdateScoreUponUfoDeath;
+            StartCoroutine(LevelStartDelayCoroutine());
+        }
+
+        private void Update()
+        {
+            _latestScreenSize = new Vector2(Screen.width, Screen.height);
+            if (_latestScreenSize != _previousScreenSize)
+            {
+                Debug.Log("screen size changed");
+                ScreenSizeChanged();
+            }
+            _previousScreenSize = _latestScreenSize;
+        }
 
         public void UfoIsReadyToFire(Ufo ufo)
         {
@@ -82,40 +132,10 @@ namespace Controllers
         {
             OnHyperspaceTrigger?.Invoke(player);
         }
-
-        private void GameEnded()
-        {
-            if (CurrentLives < 0)
-            {
-                OnGameOver?.Invoke();
-            }
-        }
-
-        private void ScoreUpdated(int score)
-        {
-            OnScoreUpdate?.Invoke(score);
-            if (_previousScore < _getALifeEveryTenK && Score >= _getALifeEveryTenK)
-            {
-                _getALifeEveryTenK += 10000;
-                CurrentLives++;
-                OnDisplayedLivesShouldChange?.Invoke(CurrentLives);
-            }
-        }
-
-        private void ScreenSizeChanged()
-        {
-            OnScreenSizeChange?.Invoke();
-        }
-
-        private void LevelStart(int currentLevel)
-        {
-            CurrentLevel = currentLevel;
-            OnLevelStarted?.Invoke(currentLevel);
-        }
         
         public void AsteroidCollided(Asteroid collidedAsteroid)
         {
-            switch (collidedAsteroid.asteroidSize)
+            switch (collidedAsteroid.AsteroidSize)
             {
                 case 0:
                     TotalLargeAsteroidsCollided++;
@@ -161,14 +181,44 @@ namespace Controllers
         {
             OnPlayerSpawn?.Invoke(player);
         }
-        
+
+        private void GameEnded()
+        {
+            if (CurrentLives < 0)
+            {
+                OnGameOver?.Invoke();
+            }
+        }
+
+        private void ScoreUpdated(int score)
+        {
+            OnScoreUpdate?.Invoke(score);
+            if (_previousScore < _getALifeEveryTenK && Score >= _getALifeEveryTenK)
+            {
+                _getALifeEveryTenK += 10000;
+                CurrentLives++;
+                OnDisplayedLivesShouldChange?.Invoke(CurrentLives);
+            }
+        }
+
+        private void ScreenSizeChanged()
+        {
+            OnScreenSizeChange?.Invoke();
+        }
+
+        private void LevelStart(int currentLevel)
+        {
+            CurrentLevel = currentLevel;
+            OnLevelStarted?.Invoke(currentLevel);
+        }
+
         private void UpdateScoreUponAsteroidDeath(Asteroid asteroid)
         {
             _previousScore = Score;
-            if (asteroid.asteroidSize == 0)
+            if (asteroid.AsteroidSize == 0)
             {
                 Score += _largeAsteroidScore;
-            } else if (asteroid.asteroidSize == 1)
+            } else if (asteroid.AsteroidSize == 1)
             {
                 Score += _mediumAsteroidScore;
             }
@@ -190,47 +240,8 @@ namespace Controllers
             {
                 Score += _largeUfoScore;
             }
+            
             ScoreUpdated(Score);
-        }
-
-        private void Awake()
-        {
-            sharedInstance = this;
-            // At initialization, set game settings. User selection will override these values
-            CurrentLives = gameSettings.initialPlayerLives;
-            CurrentDifficulty = gameSettings.defaultDifficulty;
-            DifficultySettings = gameSettings.difficulties[CurrentDifficulty];
-            UfoXTargetOffsetLower = DifficultySettings.ufoXTargetOffsetLower;
-            UfoXTargetOffsetUpper = DifficultySettings.ufoXTargetOffsetUpper;
-            UfoZTargetOffsetLower = DifficultySettings.ufoZTargetOffsetLower;
-            UfoZTargetOffsetUpper = DifficultySettings.ufoZTargetOffsetUpper;
-            _largeAsteroidScore = gameSettings.scoreLargeAsteroid;
-            _mediumAsteroidScore = gameSettings.scoreMediumAsteroid;
-            _smallAsteroidScore = gameSettings.scoreSmallAsteroid;
-            _largeUfoScore = gameSettings.scoreLargeUfo;
-            _smallUfoScore = gameSettings.scoreSmallUfo;
-            _otherPlayerScore = gameSettings.scoreOtherPlayer;
-            _previousScreenSize = new Vector2(Screen.width, Screen.height);
-        }
-
-        private void Start()
-        {
-            Screen.SetResolution(800, 600, false);
-            // TODO: CurrentLevel is set from an event when the game actually starts
-            OnAsteroidCollisionOccurred += UpdateScoreUponAsteroidDeath;
-            OnUfoCollisionOccurred += UpdateScoreUponUfoDeath;
-            StartCoroutine(LevelStartDelayCoroutine());
-        }
-
-        private void Update()
-        {
-            _latestScreenSize = new Vector2(Screen.width, Screen.height);
-            if (_latestScreenSize != _previousScreenSize)
-            {
-                Debug.Log("screen size changed");
-                ScreenSizeChanged();
-            }
-            _previousScreenSize = _latestScreenSize;
         }
 
         private IEnumerator LevelStartDelayCoroutine()
@@ -243,6 +254,7 @@ namespace Controllers
             {
                 yield return new WaitForSeconds(1.5f);
             }
+            
             LevelStart(CurrentLevel);
         }
     }

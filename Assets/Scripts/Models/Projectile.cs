@@ -8,6 +8,7 @@ namespace Models
     public class Projectile : MonoBehaviour
     {
         [SerializeField] private ProjectileData projectileData;
+        
         public IEnumerator DisableHidePlayerProjectileCoroutine { get; set; }
         public Vector3 FacingDirection { get; set; }
         public float PlayerProjectileLifespan { get; private set; }
@@ -15,18 +16,22 @@ namespace Models
         public float UfoFireTowardsPlayerFrequency { get; private set; }
         public float ShootingCooldownLength { get; private set; }
         public SphereCollider ProjectileSphereCollider { get; private set; }
+        
         private float _playerProjectileSpeed;
         private float _ufoProjectileSpeed;
         private DifficultySettings _difficultySetting;
 
         private void Awake()
         {
-            _difficultySetting = GameManager.sharedInstance.DifficultySettings;
+            _difficultySetting = GameManager.sharedInstance.difficultySettings;
+            UfoFireTowardsPlayerFrequency = _difficultySetting.ufoFireTowardsPlayerFrequency;
+            
+            ProjectileSphereCollider = GetComponent<SphereCollider>();
+
             PlayerProjectileLifespan = projectileData.playerProjLifespan;
             UfoProjectileLifespan = projectileData.ufoProjLifespan;
-            UfoFireTowardsPlayerFrequency = _difficultySetting.ufoFireTowardsPlayerFrequency;
             ShootingCooldownLength = projectileData.playerCooldownLength;
-            ProjectileSphereCollider = GetComponent<SphereCollider>();
+            
             _playerProjectileSpeed = projectileData.playerProjSpeed;
             _ufoProjectileSpeed = projectileData.ufoProjSpeed;
         }

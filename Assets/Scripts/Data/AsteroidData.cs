@@ -7,11 +7,7 @@ namespace Data
     public class AsteroidData : ScriptableObject
     {
         public List<string> names = new List<string>();
-        public List<string> tags = new List<string>();
         public List<int> scales = new List<int>();
-        public List<Mesh> meshes = new List<Mesh>();
-        public List<Material> materials = new List<Material>();
-        public int layer;
         public float upperRotationSpeed;
         public float lowerRotationSpeed;
     }
