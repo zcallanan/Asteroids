@@ -7,7 +7,6 @@ namespace Data
     {
         public float respawnDelay;
         public float invulnerabilityTimer;
-        public bool isInvulnerable;
         public float hyperspaceDuration;
         public float shipAlphaValue;
         public float movementSpeed;

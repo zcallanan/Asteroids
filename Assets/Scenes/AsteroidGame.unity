@@ -305,6 +305,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerPrefab: {fileID: 8143644424858173400, guid: 06b1719f3e8a809468cb747aac74807f, type: 3}
+  transparentMaterial: {fileID: 2100000, guid: 1353c69cab1e24a68bdb263ab6156ea3, type: 2}
 --- !u!1 &455104195
 GameObject:
   m_ObjectHideFlags: 0
