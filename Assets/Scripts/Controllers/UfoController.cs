@@ -25,8 +25,16 @@ namespace Controllers
         private float _modifiedMaxZ;
         
         private Quaternion _currentRotation;
+        
         private void Start()
         {
+            _difficultySettings = GameManager.sharedInstance.difficultySettings;
+            _ufoPresent = _difficultySettings.ufoPresent;
+            
+            _ufoSpawnTimerLower = _difficultySettings.ufoSpawnTimerLower;
+            _ufoSpawnTimerUpper = _difficultySettings.ufoSpawnTimerUpper;
+            _levelToSpawnSmalls = _difficultySettings.levelToSpawnSmalls;
+
             if (_ufoPresent)
             {
                 _currentSpawnCoroutine = StartCoroutine(RandomlySpawnUfoCoroutine());
@@ -36,20 +44,11 @@ namespace Controllers
                 enabled = false;
             }
             
-            _difficultySettings = GameManager.sharedInstance.difficultySettings;
-            
-            _ufoPresent = _difficultySettings.ufoPresent;
-            _ufoSpawnTimerLower = _difficultySettings.ufoSpawnTimerLower;
-            _ufoSpawnTimerUpper = _difficultySettings.ufoSpawnTimerUpper;
-            _levelToSpawnSmalls = _difficultySettings.levelToSpawnSmalls;
-            
             DetermineUfoSpawnBounds();
             
             GameManager.sharedInstance.OnLevelStarted += HandleLevelChange;
             GameManager.sharedInstance.OnGameOver += HandleGameOver;
             GameManager.sharedInstance.OnScreenSizeChange += DetermineUfoSpawnBounds;
-            
-            
         }
 
         private void DetermineUfoSpawnBounds()

@@ -58,10 +58,12 @@ namespace Models
         {
             var projectileCollider = gameObject.GetComponent<Projectile>();
             StopCoroutine(projectileCollider.DisableHidePlayerProjectileCoroutine);
+            
             if (other.gameObject.GetComponent<Asteroid>())
             {
                 GameManager.sharedInstance.AsteroidCollided(other.gameObject.GetComponent<Asteroid>());
             }
+            
             other.gameObject.SetActive(false);
             gameObject.SetActive(false);
         }

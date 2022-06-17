@@ -19,6 +19,7 @@ namespace Models
             AsteroidExplosionColor = particleData.asteroidExplosionColor;
             PlayerExplosionColor = particleData.playerExplosionColor;
             UfoExplosionColor = particleData.ufoExplosionColor;
+            
             ExplosionDuration = particleData.explosionDuration;
             Scales = particleData.scales;
         }

@@ -56,10 +56,12 @@ namespace Models
             var position = transform.position;
             position +=
                 DirectionToFace * (Time.deltaTime * Random.Range(_ufoLowerSpeed, _ufoUpperSpeed));
+            
             if (!IsRecentlySpawned)
             {
                 position = BoundManager.sharedInstance.EnforceBounds(position);
             }
+            
             transform.position = position;
         }
         
@@ -74,6 +76,7 @@ namespace Models
             {
                 StopCoroutine(_ufoDisableRecentSpawningCoroutine);
             }
+            
             if (_ufoIsReadyToFireCoroutine != null)
             {
                 StopCoroutine(_ufoIsReadyToFireCoroutine);
@@ -86,9 +89,11 @@ namespace Models
             {
                 GameManager.sharedInstance.AsteroidCollided(other.gameObject.GetComponent<Asteroid>());
             }
+            
             other.gameObject.SetActive(false);
-            GameManager.sharedInstance.UfoCollided(_ufo);
             gameObject.SetActive(false);
+            
+            GameManager.sharedInstance.UfoCollided(_ufo);
         }
         
         private IEnumerator DisableRecentSpawningCoroutine()

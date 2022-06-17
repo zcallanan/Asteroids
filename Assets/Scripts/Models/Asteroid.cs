@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using Controllers;
 using Data;
@@ -36,10 +34,13 @@ namespace Models
         private void Start()
         {
             _difficultySetting = GameManager.sharedInstance.difficultySettings;
+            
             _upperMoveSpeed = _difficultySetting.asteroidUpperSpeed;
             _lowerMoveSpeed = _difficultySetting.asteroidLowerSpeed;
+            
             _randomRotationVector = new Vector3(Random.value/10, Random.value/10, Random.value/10);
             _randomDirectionVector = new Vector3(Random.Range(-5, 5), 1, Random.Range(-5, 5));
+            
             _upperRotationSpeed = asteroidData.upperRotationSpeed;
             _lowerRotationSpeed = asteroidData.lowerRotationSpeed;
             _asteroidSpeedRotationModifier = Random.Range(_lowerRotationSpeed, _upperRotationSpeed);
@@ -49,9 +50,11 @@ namespace Models
         {
             var asteroidTransform = gameObject.transform;
             asteroidTransform.Rotate(_randomRotationVector * (Time.deltaTime * _asteroidSpeedRotationModifier));
+            
             var position = asteroidTransform.position;
             position += _randomDirectionVector * (Time.deltaTime * Random.Range(_lowerMoveSpeed, _upperMoveSpeed));
             position = BoundManager.sharedInstance.EnforceBounds(position);
+            
             transform.position = position;
         }
     }

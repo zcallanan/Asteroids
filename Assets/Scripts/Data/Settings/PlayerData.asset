@@ -14,7 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   respawnDelay: 2
   invulnerabilityTimer: 1.5
-  isInvulnerable: 0
   hyperspaceDuration: 2
   shipAlphaValue: 0.4
   movementSpeed: 10

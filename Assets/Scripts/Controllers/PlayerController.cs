@@ -1,14 +1,14 @@
 using System.Collections;
 using Models;
 using UnityEngine;
-using Utils;
 
 namespace Controllers
 {
     public class PlayerController : MonoBehaviour
     {
         [SerializeField] private Player playerPrefab;
-        
+        [SerializeField] private Material transparentMaterial;
+
         private Player _playerInstance;
         private readonly Vector3 _spawnPosition = new Vector3(0, 1.0f, 0);
         private Vector3 _previousPosition;
@@ -23,14 +23,11 @@ namespace Controllers
         private float _ensureOnlyForwardInput;
         private float _horizontalInput;
         
-        private bool _isOpaque;
         private bool _isTogglingTransparency;
         private bool _isHyperspaceInitiated;
         
-        private float _alphaChange;
         private MeshRenderer _meshRenderer;
         private Material _material;
-        private Color _color;
 
         private Vector3 _maxBounds;
         private Vector3 _minBounds;
@@ -46,9 +43,7 @@ namespace Controllers
             
             _ensureOnlyForwardInput = 0;
             _positionPlayerIsFacing = playerTransform.forward;
-            _isOpaque = true;
-            _alphaChange = _playerInstance.ShipAlphaValue;
-            
+
             DetermineHyperspaceBounds();
             
             GameManager.sharedInstance.PlayerSpawned(_playerInstance);
@@ -186,8 +181,7 @@ namespace Controllers
         {
             _meshRenderer = playerRespawnInstance.PlayerMeshRenderer;
             _material = _meshRenderer.material;
-            _color = _material.color;
-            _color.a = _alphaChange;
+            
             _isTogglingTransparency = true;
             
             TogglePlayerTransparency();
@@ -195,9 +189,7 @@ namespace Controllers
             
             yield return new WaitForSeconds(playerRespawnInstance.RespawnDelay);
             playerRespawnInstance.gameObject.SetActive(true);
-            playerRespawnInstance.IsInvulnerable = true;
             playerRespawnInstance.PlayerMeshCollider.enabled = false;
-            // playerRespawnInstance.gameObject.layer = 13;
             
             StartCoroutine(RemovePlayerRespawnInvulnerability(playerRespawnInstance));
             
@@ -211,11 +203,7 @@ namespace Controllers
 
         private void TogglePlayerTransparency()
         {
-            MaterialMode.SetupBlendMode(_material, _isOpaque ? MaterialMode.BlendMode.Transparent : MaterialMode.BlendMode.Opaque);
-            
-            _material.color = _color;
-            _meshRenderer.material = _material;
-            _isOpaque = !_isOpaque;
+            _meshRenderer.material = _meshRenderer.material == _material ? transparentMaterial : _material;
         }
 
         private IEnumerator TogglePlayerTransparencyCoroutine()
@@ -231,10 +219,9 @@ namespace Controllers
         private IEnumerator RemovePlayerRespawnInvulnerability(Player playerRespawnInstance)
         {
             yield return new WaitForSeconds(playerRespawnInstance.InvulnerabilityTimer);
-            playerRespawnInstance.IsInvulnerable = false;
-            // playerRespawnInstance.gameObject.layer = 8;
             playerRespawnInstance.PlayerMeshCollider.enabled = true;
             _isTogglingTransparency = false;
+            _meshRenderer.material = _material;
         }
     }
 }
