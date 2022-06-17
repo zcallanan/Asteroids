@@ -15,5 +15,5 @@ MonoBehaviour:
   playerCooldownLength: 0.08
   playerProjSpeed: 8.5
   playerProjLifespan: 1
-  ufoProjSpeed: 7
-  ufoProjLifespan: 1
+  ufoProjSpeed: 3
+  ufoProjLifespan: 0.8

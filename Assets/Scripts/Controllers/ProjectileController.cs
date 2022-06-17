@@ -26,6 +26,7 @@ namespace Controllers
             GameManager.sharedInstance.OnHyperspaceEnd += HandleHyperspaceEnded;
             GameManager.sharedInstance.OnUfoReadyToFire += SpawnUfoProjectile;
             GameManager.sharedInstance.OnUfoCollisionOccurred += HandleUfoDeath;
+            
             _isPlayerFiringInCooldown = false;
         }
 
@@ -40,6 +41,7 @@ namespace Controllers
         private void SpawnUfoProjectile(Ufo ufo)
         {
             _ufoProjectile = ProjectilePool.SharedInstance.GetPooledObject();
+            
             if (!_allUfoInstancesInScene.Contains(ufo))
             {
                 _allUfoInstancesInScene.Add(ufo);
@@ -48,6 +50,7 @@ namespace Controllers
             Physics.IgnoreCollision(ufo.UfoMeshCollider, _ufoProjectile.ProjectileSphereCollider);
             Physics.IgnoreCollision(_playerInstance.PlayerMeshCollider,
                 _ufoProjectile.ProjectileSphereCollider, false);
+            
             var obj = _ufoProjectile.gameObject;
             obj.SetActive(true);
             obj.layer = 12;
@@ -55,6 +58,7 @@ namespace Controllers
             _ufoProjectile.name = "Ufo Projectile";
             _ufoProjectile.FacingDirection = DetermineUfoProjectileFacing();
             _ufoProjectile.gameObject.transform.localScale = .15f * Vector3.one;
+            
             _hideProjectileCoroutine = HideProjectileCoroutine(_ufoProjectile, _ufoProjectile.UfoProjectileLifespan);
             StartCoroutine(_hideProjectileCoroutine);
             _ufoProjectile.DisableHidePlayerProjectileCoroutine = _hideProjectileCoroutine;
@@ -67,7 +71,9 @@ namespace Controllers
                     GameManager.sharedInstance.UfoXTargetOffsetUpper), 1,
                 Random.Range(GameManager.sharedInstance.UfoZTargetOffsetLower,
                     GameManager.sharedInstance.UfoZTargetOffsetUpper));
+                
             var n = Random.Range(0, 10);
+            
             return (n < _ufoProjectile.UfoFireTowardsPlayerFrequency) ? position : -position;;
         }
 
@@ -79,6 +85,7 @@ namespace Controllers
         private void HandlePlayerSpawn(Player playerInstance)
         {
             _playerInstance = playerInstance;
+            
             EnableFiring();
         }
         
@@ -101,7 +108,7 @@ namespace Controllers
 
                 if (!_isPlayerFiringInputDisregarded)
                 {
-                    _isPlayerFiring = InputController.SharedInstance.IsFiring;
+                    _isPlayerFiring = InputController.sharedInstance.IsFiring;
                 }
                 
                 if (_isPlayerFiring && !_isPlayerFiringInCooldown)
