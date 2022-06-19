@@ -1,13 +1,20 @@
+using System;
 using System.Collections;
 using Models;
 using Pools;
+using UniRx;
+using UniRx.Triggers;
 using UnityEngine;
 
 namespace Controllers
 {
     public class ParticleController : MonoBehaviour
     {
+        public static ParticleController sharedInstance;
+        
         [SerializeField] private Particle thrustPrefab;
+        
+        public ReactiveProperty<Player> PlayerInstance { get; private set; }
         
         private GameObject _thrustAttach;
         private GameObject _obj;
@@ -16,53 +23,40 @@ namespace Controllers
         private ParticleSystem _partSystem;
         private ParticleSystem.MainModule _main;
 
+        private readonly CompositeDisposable _disposables = new CompositeDisposable();
+
         private void Start()
         {
+            sharedInstance = this;
+
+            PlayerInstance = new ReactiveProperty<Player>(null);
+            
             _thrustInstance = Instantiate(thrustPrefab, Vector3.zero, Quaternion.identity);
             _thrustInstance.gameObject.SetActive(false);
-            
-            GameManager.sharedInstance.OnPlayerSpawn += AttachThrustToPlayerThrustAttachmentPoint;
-            GameManager.sharedInstance.OnAsteroidCollisionOccurred += HandleAsteroidExplosion;
-            GameManager.sharedInstance.OnPlayerDied += HandlePlayerExplosion;
-            GameManager.sharedInstance.OnUfoCollisionOccurred += HandleUfoExplosion;
-            GameManager.sharedInstance.OnGameOver += HandleGameOver;
-        }
 
-        private void HandleGameOver()
-        {
-            GameManager.sharedInstance.OnPlayerSpawn -= AttachThrustToPlayerThrustAttachmentPoint;
-            GameManager.sharedInstance.OnPlayerAppliedThrust -= EnableThrustEffect;
-            GameManager.sharedInstance.OnAsteroidCollisionOccurred -= HandleAsteroidExplosion;
-            GameManager.sharedInstance.OnPlayerDied -= HandlePlayerExplosion;
-            GameManager.sharedInstance.OnUfoCollisionOccurred -= HandleUfoExplosion;
-            GameManager.sharedInstance.OnGameOver -= HandleGameOver;
-        }
+            GameManager.sharedInstance.GameOver
+                .Subscribe(HandleGameOver)
+                .AddTo(_disposables);
 
-        private void EnableThrustEffect(bool thrustIsActive, Player player)
-        {
-            _thrustInstance.gameObject.SetActive(thrustIsActive);
-            _thrustInstance.transform.forward = -player.PlayerFacing;
+            PlayerInstance
+                .Where(y => y != null)
+                .Subscribe(player =>
+                {
+                    AttachThrustToPlayerThrustAttachmentPoint(player);
+                    player
+                        .OnEnableAsObservable()
+                        .Subscribe( y => AttachThrustToPlayerThrustAttachmentPoint(player))
+                        .AddTo(_disposables);
+                    
+                    player
+                        .UpdateAsObservable()
+                        .Subscribe(y => DetermineThrustEffectAppearance(player.IsApplyingThrust.Value))
+                        .AddTo(_disposables);
+                })
+                .AddTo(_disposables);
         }
-
-        private void AttachThrustToPlayerThrustAttachmentPoint(Player player)
-        {
-            _thrustAttach = player.gameObject.transform.GetChild(0).gameObject;
-            var thrustTransform = _thrustInstance.transform;
-            thrustTransform.parent = _thrustAttach.transform;
-            thrustTransform.position = _thrustAttach.transform.position;
-            
-            GameManager.sharedInstance.OnPlayerAppliedThrust += EnableThrustEffect;
-        }
-
-        private void DetermineObjects()
-        {
-            _explosion = ParticlePool.SharedInstance.GetPooledObject();
-            _partSystem = _explosion.GetComponent<ParticleSystem>();
-            _main = _partSystem.main;
-            _obj = _explosion.gameObject;
-        }
-
-        private void HandleAsteroidExplosion(Asteroid asteroid)
+        
+        public void HandleAsteroidExplosion(Asteroid asteroid)
         {
             DetermineObjects();
             _obj.transform.position = asteroid.transform.position;
@@ -76,7 +70,7 @@ namespace Controllers
             StartCoroutine(ExplosionDisableCoroutine(_explosion));
         }
 
-        private void HandlePlayerExplosion(Player player)
+        public void HandlePlayerExplosion(Player player)
         {
             DetermineObjects();
             
@@ -89,11 +83,9 @@ namespace Controllers
             _obj.SetActive(true);
             
             StartCoroutine(ExplosionDisableCoroutine(_explosion));
-            
-            GameManager.sharedInstance.OnPlayerAppliedThrust -= EnableThrustEffect;
         }
         
-        private void HandleUfoExplosion(Ufo ufo)
+        public void HandleUfoExplosion(Ufo ufo)
         {
             DetermineObjects();
             
@@ -113,6 +105,38 @@ namespace Controllers
             _obj.SetActive(true);
             
             StartCoroutine(ExplosionDisableCoroutine(_explosion));
+        }
+
+        private void HandleGameOver(bool gameOver)
+        {
+            if (gameOver)
+            {
+                _disposables.Clear();
+            }
+        }
+
+        private void DetermineThrustEffectAppearance(bool isThrustActive)
+        {
+            _thrustInstance.gameObject.SetActive(isThrustActive);
+            _thrustInstance.transform.forward = -PlayerInstance.Value.PlayerFacing;
+        }
+
+        private void AttachThrustToPlayerThrustAttachmentPoint(Player player)
+        {
+            _thrustAttach = player.gameObject.transform.GetChild(0).gameObject;
+            var thrustTransform = _thrustInstance.transform;
+            thrustTransform.parent = _thrustAttach.transform;
+            thrustTransform.position = _thrustAttach.transform.position;
+            
+            // GameManager.sharedInstance.OnPlayerAppliedThrust += EnableThrustEffect;
+        }
+
+        private void DetermineObjects()
+        {
+            _explosion = ParticlePool.SharedInstance.GetPooledObject();
+            _partSystem = _explosion.GetComponent<ParticleSystem>();
+            _main = _partSystem.main;
+            _obj = _explosion.gameObject;
         }
 
         private IEnumerator ExplosionDisableCoroutine(Particle explosion)

@@ -1,9 +1,10 @@
 public class Notes
 {
     /*
-     * Create different materials instead of updating materials on the fly
+     * DI
      * Tests
      * Explosions when things die
+     *      Ufo explosions don't appear
      *      Make explosion big then taper off before disabled
      *      Add different colors per asteroid type
      * Bugs
@@ -17,7 +18,6 @@ public class Notes
      * UFOs
      *      Add projectile logic and spawning
      *      Jet contrail would be nice
-     * 
      * UI
      *      Game Options
      *      Difficulty

@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using Controllers;
@@ -31,19 +30,18 @@ namespace Models
         
         private Coroutine _ufoIsReadyToFireCoroutine;
         private Coroutine _ufoDisableRecentSpawningCoroutine;
-
+        
         private void Awake()
         {
             _difficultySettings = GameManager.sharedInstance.difficultySettings;
             _ufo = this;
-
+            
             _ufoLowerSpeed = _difficultySettings.ufoLowerSpeed;
             _ufoUpperSpeed = _difficultySettings.ufoUpperSpeed;
-            
-            
+
             Scales = ufoData.scales;
             Names = ufoData.names;
-            
+
             _ufoProjectileCooldownLengthLower = ufoData.ufoProjectileCooldownLengthLower;
             _ufoProjectileCooldownLengthUpper = ufoData.ufoProjectileCooldownLengthUpper;
             _ufoEnforceBoundaryDelayLength = ufoData.ufoEnforceBoundaryDelayLength;
@@ -85,24 +83,20 @@ namespace Models
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.gameObject.GetComponent<Asteroid>())
-            {
-                GameManager.sharedInstance.AsteroidCollided(other.gameObject.GetComponent<Asteroid>());
-            }
-            
-            other.gameObject.SetActive(false);
             gameObject.SetActive(false);
-            
-            GameManager.sharedInstance.UfoCollided(_ufo);
+                    
+            ParticleController.sharedInstance.HandleUfoExplosion(this);
+            ProjectileController.sharedInstance.RemoveDeadUfoFromActiveList(this);
+            GameManager.sharedInstance.UpdateScoreUponUfoDeath(UfoSize);
         }
-        
+
         private IEnumerator DisableRecentSpawningCoroutine()
         {
             yield return new WaitForSeconds(_ufoEnforceBoundaryDelayLength);
             IsRecentlySpawned = false;
             _ufoIsReadyToFireCoroutine = StartCoroutine(TriggerUfoToStartFiring());
             
-            GameManager.sharedInstance.UfoIsReadyToFire(_ufo);
+            ProjectileController.sharedInstance.SpawnUfoProjectile(this);
         }
         
         private IEnumerator TriggerUfoToStartFiring()
@@ -110,8 +104,7 @@ namespace Models
             if (isActiveAndEnabled)
             {
                 yield return new WaitForSeconds(Random.Range(_ufoProjectileCooldownLengthLower, _ufoProjectileCooldownLengthUpper));
-                
-                GameManager.sharedInstance.UfoIsReadyToFire(_ufo);
+                ProjectileController.sharedInstance.SpawnUfoProjectile(this);
                 
                 _ufoIsReadyToFireCoroutine = StartCoroutine(TriggerUfoToStartFiring());
             }

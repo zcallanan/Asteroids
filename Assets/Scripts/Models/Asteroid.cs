@@ -24,7 +24,7 @@ namespace Models
         
         private Vector3 _randomDirectionVector;
         private Vector3 _randomRotationVector;
-
+        
         private void Awake()
         {
             Scales = asteroidData.scales;
@@ -56,6 +56,19 @@ namespace Models
             position = BoundManager.sharedInstance.EnforceBounds(position);
             
             transform.position = position;
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            gameObject.SetActive(false);
+
+            if (AsteroidSize < 3)
+            {
+                AsteroidController.sharedInstance.SetupAsteroidsFromPool(AsteroidSize + 1, this);
+                ParticleController.sharedInstance.HandleAsteroidExplosion(this);
+                GameManager.sharedInstance.DetermineWhenToStartNewLevel(AsteroidSize);
+                GameManager.sharedInstance.UpdateScoreUponAsteroidDeath(AsteroidSize);
+            }
         }
     }
 }
