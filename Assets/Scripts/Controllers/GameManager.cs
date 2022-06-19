@@ -29,13 +29,9 @@ namespace Controllers
         public int TotalMediumAsteroidsCollided { get; private set; }
         public int TotalSmallAsteroidsCollided { get; private set; }
         
-        
-        // TODO Replace with vectors
-        public float UfoXTargetOffsetLower { get; private set; }
-        public float UfoXTargetOffsetUpper{ get; private set; }
-        public float UfoZTargetOffsetLower { get; private set; }
-        public float UfoZTargetOffsetUpper { get; private set; }
-        
+        public Vector3 UfoOffsetMin { get; private set; }
+        public Vector3 UfoOffsetMax { get; private set; }
+
         public ReactiveProperty<Vector2> LatestScreenSize { get; private set; }
         
         private int _getALifeEveryTenK = 10000;
@@ -62,12 +58,10 @@ namespace Controllers
             
             CurrentDifficulty = gameSettings.defaultDifficulty;
             difficultySettings = gameSettings.difficulties[CurrentDifficulty];
-            
-            UfoXTargetOffsetLower = difficultySettings.ufoXTargetOffsetLower;
-            UfoXTargetOffsetUpper = difficultySettings.ufoXTargetOffsetUpper;
-            UfoZTargetOffsetLower = difficultySettings.ufoZTargetOffsetLower;
-            UfoZTargetOffsetUpper = difficultySettings.ufoZTargetOffsetUpper;
-            
+
+            UfoOffsetMin = new Vector3(difficultySettings.ufoXTargetOffsetLower, 1, difficultySettings.ufoZTargetOffsetLower);
+            UfoOffsetMax = new Vector3(difficultySettings.ufoXTargetOffsetUpper, 1, difficultySettings.ufoZTargetOffsetUpper);
+
             _largeAsteroidScore = gameSettings.scoreLargeAsteroid;
             _mediumAsteroidScore = gameSettings.scoreMediumAsteroid;
             _smallAsteroidScore = gameSettings.scoreSmallAsteroid;

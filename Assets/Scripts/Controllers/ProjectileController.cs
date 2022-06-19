@@ -126,10 +126,10 @@ namespace Controllers
         private Vector3 DetermineUfoProjectileFacing()
         {
             var position = PlayerInstance.Value.transform.position + new Vector3(
-                Random.Range(GameManager.sharedInstance.UfoXTargetOffsetLower,
-                    GameManager.sharedInstance.UfoXTargetOffsetUpper), 1,
-                Random.Range(GameManager.sharedInstance.UfoZTargetOffsetLower,
-                    GameManager.sharedInstance.UfoZTargetOffsetUpper));
+                Random.Range(GameManager.sharedInstance.UfoOffsetMin.x,
+                    GameManager.sharedInstance.UfoOffsetMax.x), 1,
+                Random.Range(GameManager.sharedInstance.UfoOffsetMin.z,
+                    GameManager.sharedInstance.UfoOffsetMax.z));
                 
             var n = Random.Range(0, 10);
             
