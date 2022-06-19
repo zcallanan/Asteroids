@@ -1,3 +1,4 @@
+using UniRx;
 using UnityEngine;
 
 namespace Controllers
@@ -13,23 +14,22 @@ namespace Controllers
         private static Vector3 _bottomCorner;
         private static Vector3 _topCorner;
         private Camera _mainCamera;
+        
+        private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
         private void Awake()
         {
             _mainCamera = Camera.main;
             sharedInstance = this;
             SetScreenBounds();
-            GameManager.sharedInstance.OnScreenSizeChange += SetScreenBounds;
-        }
-
-        private void SetScreenBounds()
-        {
-            _camDistance = Vector3.Distance(transform.position, _mainCamera.transform.position);
-            _bottomCorner = _mainCamera.ViewportToWorldPoint(new Vector3(0, 0, _camDistance));
-            _topCorner = _mainCamera.ViewportToWorldPoint(new Vector3(1, 1, _camDistance));
-
-            MaxBounds = new Vector3(_topCorner.x, 1, _topCorner.z);
-            MinBounds = new Vector3(_bottomCorner.x, 1, _bottomCorner.z);
+            
+            GameManager.sharedInstance.GameOver
+                .Subscribe(HandleGameOver)
+                .AddTo(_disposables);
+            
+            GameManager.sharedInstance.LatestScreenSize
+                .Subscribe(unit => SetScreenBounds())
+                .AddTo(_disposables);
         }
 
         public Vector3 EnforceBounds(Vector3 currentPosition)
@@ -61,6 +61,24 @@ namespace Controllers
                 }
                 return boundsAppliedToCurrentPosition;
             }
+        }
+        
+        private void HandleGameOver(bool gameOver)
+        {
+            if (gameOver)
+            {
+                _disposables.Clear();
+            }
+        }
+        
+        private void SetScreenBounds()
+        {
+            _camDistance = Vector3.Distance(transform.position, _mainCamera.transform.position);
+            _bottomCorner = _mainCamera.ViewportToWorldPoint(new Vector3(0, 0, _camDistance));
+            _topCorner = _mainCamera.ViewportToWorldPoint(new Vector3(1, 1, _camDistance));
+
+            MaxBounds = new Vector3(_topCorner.x, 1, _topCorner.z);
+            MinBounds = new Vector3(_bottomCorner.x, 1, _bottomCorner.z);
         }
     }
 }

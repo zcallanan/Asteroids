@@ -1,5 +1,7 @@
 using System.Collections;
 using Models;
+using UniRx;
+using UniRx.Triggers;
 using UnityEngine;
 
 namespace Controllers
@@ -8,7 +10,7 @@ namespace Controllers
     {
         [SerializeField] private Player playerPrefab;
         [SerializeField] private Material transparentMaterial;
-
+        
         private Player _playerInstance;
         private readonly Vector3 _spawnPosition = new Vector3(0, 1.0f, 0);
         private Vector3 _previousPosition;
@@ -31,10 +33,13 @@ namespace Controllers
 
         private Vector3 _maxBounds;
         private Vector3 _minBounds;
+        
+        private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
         private void Start()
         {
             _playerInstance = Instantiate(playerPrefab, _spawnPosition, playerPrefab.transform.rotation);
+            
             var playerTransform = _playerInstance.transform;
             _previousPosition = playerTransform.position;
             
@@ -46,9 +51,18 @@ namespace Controllers
 
             DetermineHyperspaceBounds();
             
-            GameManager.sharedInstance.PlayerSpawned(_playerInstance);
-            GameManager.sharedInstance.OnPlayerDied += HandlePlayerDeath;
-            GameManager.sharedInstance.OnScreenSizeChange += DetermineHyperspaceBounds;
+            GameManager.sharedInstance.GameOver
+                .Subscribe(HandleGameOver)
+                .AddTo(_disposables);
+            
+            GameManager.sharedInstance.LatestScreenSize
+                .Subscribe(unit => DetermineHyperspaceBounds())
+                .AddTo(_disposables);
+            
+            _playerInstance.gameObject
+                .OnTriggerEnterAsObservable()
+                .Subscribe(y => HandlePlayerDeath(_playerInstance))
+                .AddTo(_disposables);
         }
         
         private void Update()
@@ -77,10 +91,10 @@ namespace Controllers
 
                 if (verticalInput > 0)
                 {
-                    GameManager.sharedInstance.PlayerIsApplyingThrust(true, _playerInstance);
+                    _playerInstance.IsApplyingThrust.Value = true;
                 } else if (verticalInput == 0)
                 {
-                    GameManager.sharedInstance.PlayerIsApplyingThrust(false, _playerInstance);
+                    _playerInstance.IsApplyingThrust.Value = false;
                 }
                 
                 CalculateMovementSpeedModifier();
@@ -89,6 +103,22 @@ namespace Controllers
                 RotatePlayerShip();
                 
                 _previousPosition = _currentPosition;
+            }
+        }
+
+        private void HandleGameOver(bool gameOver)
+        {
+            if (gameOver)
+            {
+                _disposables.Clear();
+            }
+        }
+        
+        private void HandlePlayerDeath(Player playerInstance)
+        {
+            if (GameManager.sharedInstance.CurrentLives.Value >= 0)
+            {
+                StartCoroutine(PlayerRespawnCoroutine(playerInstance));
             }
         }
 
@@ -149,8 +179,8 @@ namespace Controllers
                 _playerInstance.transform.position = DetermineRandomHyperspacePosition();
                 
                 StartCoroutine(LeaveHyperspaceCoroutine());
-                
-                GameManager.sharedInstance.HyperspaceWasTriggered(_playerInstance);
+
+                _playerInstance.IsHyperspaceActive.Value = true;
             }
         }
 
@@ -160,21 +190,13 @@ namespace Controllers
             _playerInstance.gameObject.SetActive(true);
             _speedModifier = 0;
             
-            GameManager.sharedInstance.HyperspaceIsEnding(_playerInstance);
+            _playerInstance.IsHyperspaceActive.Value = false;
         }
 
         private Vector3 DetermineRandomHyperspacePosition()
         {
             return new Vector3(Random.Range(_minBounds.x + 1, _maxBounds.x - 1), 1,
                 Random.Range(_minBounds.z + 1, _maxBounds.z - 1));
-        }
-
-        private void HandlePlayerDeath(Player playerInstance)
-        {
-            if (GameManager.sharedInstance.CurrentLives >= 0)
-            {
-                StartCoroutine(PlayerRespawnCoroutine(playerInstance));
-            }
         }
 
         private IEnumerator PlayerRespawnCoroutine(Player playerRespawnInstance)
@@ -198,7 +220,7 @@ namespace Controllers
             playerTransform.position = _spawnPosition;
             playerTransform.rotation = Quaternion.identity;
             
-            GameManager.sharedInstance.PlayerSpawned(playerRespawnInstance);
+            // GameManager.sharedInstance.PlayerSpawned(playerRespawnInstance);
         }
 
         private void TogglePlayerTransparency()

@@ -2,6 +2,8 @@ using System;
 using Data;
 using Models;
 using Pools;
+using UniRx;
+using UniRx.Triggers;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -9,6 +11,7 @@ namespace Controllers
 {
     public class AsteroidController : MonoBehaviour
     {
+        public static AsteroidController sharedInstance;
         private Vector3 _maxBounds;
         private Vector3 _minBounds;
         private Vector3 _innerMaxBounds;
@@ -18,48 +21,35 @@ namespace Controllers
         private int _smallPerMedium;
         private int _mediumPerLarge;
         private DifficultySettings _difficultySetting;
+        
+        private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
         private void Start()
         {
+            sharedInstance = this;
+            
             _difficultySetting = GameManager.sharedInstance.difficultySettings;
             _initialLargeAsteroidCount = _difficultySetting.initialLargeAsteroidCount;
             _smallPerMedium = _difficultySetting.numberOfSmallAsteroidsPer;
             _mediumPerLarge = _difficultySetting.numberOfMediumAsteroidsPer;
             
             DetermineAsteroidSpawnBoundValues();
+
+            GameManager.sharedInstance.GameOver
+                .Subscribe(HandleGameOver)
+                .AddTo(_disposables);
             
-            GameManager.sharedInstance.OnLevelStarted += HandleLevelStarted;
-            GameManager.sharedInstance.OnAsteroidCollisionOccurred += HandleAsteroidCollision;
-            GameManager.sharedInstance.OnGameOver += HandleGameOver;
-            GameManager.sharedInstance.OnScreenSizeChange += DetermineAsteroidSpawnBoundValues;
-        }
-
-        private void HandleGameOver()
-        {
-            GameManager.sharedInstance.OnLevelStarted -= HandleLevelStarted;
-            GameManager.sharedInstance.OnAsteroidCollisionOccurred -= HandleAsteroidCollision;
-            GameManager.sharedInstance.OnGameOver -= HandleGameOver;
-        }
-
-        private void HandleLevelStarted(int level)
-        {
-            GameManager.sharedInstance.TotalExpectedSmallAsteroidsInLevel = (_initialLargeAsteroidCount + level) *
-                                                             (_smallPerMedium +
-                                                              _smallPerMedium);
-            GameManager.sharedInstance.CountActualSmallAsteroidsDestroyedInLevel = 0;
+            GameManager.sharedInstance.CurrentLevel
+                .Throttle(TimeSpan.FromSeconds(.5))
+                .Subscribe(HandleLevelStarted)
+                .AddTo(_disposables);
             
-            SetupAsteroidsFromPool(0, null, level);
+            GameManager.sharedInstance.LatestScreenSize
+                .Subscribe(unit => DetermineAsteroidSpawnBoundValues())
+                .AddTo(_disposables);
         }
 
-        private void HandleAsteroidCollision(Asteroid asteroidCollided)
-        {
-            if (asteroidCollided.AsteroidSize + 1 < 3)
-            {
-                SetupAsteroidsFromPool(asteroidCollided.AsteroidSize + 1, asteroidCollided);
-            }
-        }
-
-        private void SetupAsteroidsFromPool(int asteroidOfSize, Asteroid asteroidCollided = null, int level = -1)
+        public void SetupAsteroidsFromPool(int asteroidOfSize, Asteroid asteroidCollided = null, int level = -1)
         {
             var asteroidCount = 0;
             string asteroidTag = null;
@@ -96,6 +86,23 @@ namespace Controllers
                     SetAsteroidPosition(pooledAsteroid, asteroidCollided);
                 }
             }
+        }
+        
+        private void HandleGameOver(bool gameOver)
+        {
+            if (gameOver)
+            {
+                _disposables.Clear();
+            }
+        }
+
+        private void HandleLevelStarted(int level)
+        {
+            GameManager.sharedInstance.TotalExpectedSmallAsteroidsInLevel.Value =
+                (_initialLargeAsteroidCount + level) * (_smallPerMedium + _smallPerMedium);
+            GameManager.sharedInstance.CountActualSmallAsteroidsDestroyedInLevel.Value = 0;
+            
+            SetupAsteroidsFromPool(0, null, level);
         }
         
         private void SetAsteroidPosition(Asteroid asteroid, Asteroid biggerAsteroid = null)

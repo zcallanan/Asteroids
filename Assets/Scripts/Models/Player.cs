@@ -1,6 +1,6 @@
-using System.Numerics;
 using Controllers;
 using Data;
+using UniRx;
 using UnityEngine;
 using Vector3 = UnityEngine.Vector3;
 
@@ -10,6 +10,9 @@ namespace Models
     {
         [SerializeField] private PlayerData playerData;
         
+        public ReactiveProperty<bool> IsApplyingThrust { get; private set; }
+        public ReactiveProperty<bool> IsHyperspaceActive { get; private set; }
+
         public Vector3 PlayerFacing { get; private set; }
         public float MovementSpeed { get; private set; }
         public float MovementOverNumberOfFrames { get; private set; }
@@ -25,9 +28,15 @@ namespace Models
         public MeshRenderer PlayerMeshRenderer { get; private set; }
         
         private Vector3 _playerPosition;
-
+        
         private void Awake()
         {
+            ProjectileController.sharedInstance.PlayerInstance.Value = this;
+            ParticleController.sharedInstance.PlayerInstance.Value = this;
+            
+            IsApplyingThrust = new ReactiveProperty<bool>(false);
+            IsHyperspaceActive = new ReactiveProperty<bool>(false);
+            
             MovementSpeed = playerData.movementSpeed;
             MovementOverNumberOfFrames = playerData.movementOverNumberOfFrames;
             RotationSpeed = playerData.rotationSpeed;
@@ -50,20 +59,14 @@ namespace Models
             PlayerFacing = playerTransform.forward;
             playerTransform.position = _playerPosition;
         }
-        
+
         private void OnTriggerEnter(Collider other)
         {
-            var playerCollider = gameObject.GetComponent<Player>();
-            
-            if (other.gameObject.GetComponent<Asteroid>())
-            {
-                GameManager.sharedInstance.AsteroidCollided(other.gameObject.GetComponent<Asteroid>());
-            }
-            
-            other.gameObject.SetActive(false);
             gameObject.SetActive(false);
-            
-            GameManager.sharedInstance.PlayerCollided(playerCollider);
+
+            ProjectileController.sharedInstance.PreventFiring();
+            ParticleController.sharedInstance.HandlePlayerExplosion(this);
+            GameManager.sharedInstance.DecrementLivesAndCheckForGameOver();
         }
     }
 }

@@ -1,4 +1,6 @@
+using System;
 using Controllers;
+using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,10 +10,18 @@ namespace UI
     {
         [SerializeField] private Sprite[] lifeCountSprite;
         private Image _imageComponent;
+        
+        private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
         void Start()
         {
-            GameManager.sharedInstance.OnDisplayedLivesShouldChange += ChangeNumberOfLivesSprite;
+            GameManager.sharedInstance.GameOver.Subscribe(HandleGameOver).AddTo(_disposables);
+            
+            GameManager.sharedInstance.CurrentLives
+                .Throttle(TimeSpan.FromSeconds(1))
+                .Subscribe(ChangeNumberOfLivesSprite)
+                .AddTo(_disposables);
+            
             _imageComponent = gameObject.GetComponent<Image>();
         }
 
@@ -80,6 +90,14 @@ namespace UI
                     _imageComponent.sprite = lifeCountSprite[10];
                     break;
                 }
+            }
+        }
+        
+        private void HandleGameOver(bool gameOver)
+        {
+            if (gameOver)
+            {
+                _disposables.Clear();
             }
         }
     }

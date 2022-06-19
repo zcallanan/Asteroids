@@ -2,6 +2,7 @@ using System.Collections;
 using Data;
 using Models;
 using Pools;
+using UniRx;
 using UnityEngine;
 
 namespace Controllers
@@ -26,6 +27,8 @@ namespace Controllers
         
         private Quaternion _currentRotation;
         
+        private readonly CompositeDisposable _disposables = new CompositeDisposable();
+
         private void Start()
         {
             _difficultySettings = GameManager.sharedInstance.difficultySettings;
@@ -45,10 +48,18 @@ namespace Controllers
             }
             
             DetermineUfoSpawnBounds();
+
+            GameManager.sharedInstance.GameOver
+                .Subscribe(HandleGameOver)
+                .AddTo(_disposables);
             
-            GameManager.sharedInstance.OnLevelStarted += HandleLevelChange;
-            GameManager.sharedInstance.OnGameOver += HandleGameOver;
-            GameManager.sharedInstance.OnScreenSizeChange += DetermineUfoSpawnBounds;
+            GameManager.sharedInstance.CurrentLevel
+                .Subscribe(HandleLevelChange)
+                .AddTo(_disposables);
+            
+            GameManager.sharedInstance.LatestScreenSize
+                .Subscribe(unit => DetermineUfoSpawnBounds())
+                .AddTo(_disposables);
         }
 
         private void DetermineUfoSpawnBounds()
@@ -60,10 +71,14 @@ namespace Controllers
             _modifiedMaxZ = _maxBounds.z - (_maxBounds.z / 3);
         }
 
-        private void HandleGameOver()
+        private void HandleGameOver(bool gameOver)
         {
-            _isGameOver = true;
-            StopCoroutine(_currentSpawnCoroutine);
+            _isGameOver = gameOver;
+            if (gameOver)
+            {
+                StopCoroutine(_currentSpawnCoroutine);
+                _disposables.Clear();   
+            }
         }
 
         private void HandleLevelChange(int currentLevel)

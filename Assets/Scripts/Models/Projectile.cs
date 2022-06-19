@@ -20,7 +20,7 @@ namespace Models
         private float _playerProjectileSpeed;
         private float _ufoProjectileSpeed;
         private DifficultySettings _difficultySetting;
-
+        
         private void Awake()
         {
             _difficultySetting = GameManager.sharedInstance.difficultySettings;
@@ -56,16 +56,8 @@ namespace Models
 
         private void OnTriggerEnter(Collider other)
         {
-            var projectileCollider = gameObject.GetComponent<Projectile>();
-            StopCoroutine(projectileCollider.DisableHidePlayerProjectileCoroutine);
-            
-            if (other.gameObject.GetComponent<Asteroid>())
-            {
-                GameManager.sharedInstance.AsteroidCollided(other.gameObject.GetComponent<Asteroid>());
-            }
-            
-            other.gameObject.SetActive(false);
             gameObject.SetActive(false);
+            StopCoroutine(DisableHidePlayerProjectileCoroutine);
         }
     }
 }

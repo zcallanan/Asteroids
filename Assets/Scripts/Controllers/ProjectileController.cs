@@ -2,45 +2,96 @@ using System.Collections;
 using System.Collections.Generic;
 using Models;
 using Pools;
+using UniRx;
+using UniRx.Triggers;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Controllers
 {
     public class ProjectileController : MonoBehaviour
     {
+        public static ProjectileController sharedInstance;
+        
+        public ReactiveProperty<Player> PlayerInstance { get; private set; }
+        
         private bool _isPlayerFiring;
         private bool _isPlayerFiringInputDisregarded;
         private bool _isPlayerFiringInCooldown;
         private IEnumerator _hideProjectileCoroutine;
         private Projectile _playerProjectile;
         private Projectile _ufoProjectile;
-        private Player _playerInstance;
         private Transform _playerTransform;
         private readonly List<Ufo> _allUfoInstancesInScene = new List<Ufo>();
+        
+        private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
         private void Start()
         {
-            GameManager.sharedInstance.OnPlayerSpawn += HandlePlayerSpawn;
-            GameManager.sharedInstance.OnPlayerDied += PreventFiring;
-            GameManager.sharedInstance.OnHyperspaceTrigger += PreventFiring;
-            GameManager.sharedInstance.OnHyperspaceEnd += HandleHyperspaceEnded;
-            GameManager.sharedInstance.OnUfoReadyToFire += SpawnUfoProjectile;
-            GameManager.sharedInstance.OnUfoCollisionOccurred += HandleUfoDeath;
+            sharedInstance = this;
+
+            PlayerInstance = new ReactiveProperty<Player>(null);
             
+            GameManager.sharedInstance.GameOver
+                .Subscribe(HandleGameOver)
+                .AddTo(_disposables);
+
+            PlayerInstance
+                .Where(y => y != null)
+                .Subscribe(player =>
+                {
+                    player
+                        .OnEnableAsObservable()
+                        .Subscribe(y => _isPlayerFiringInputDisregarded = false)
+                        .AddTo(_disposables);
+                    
+                    player
+                        .UpdateAsObservable()
+                        .Subscribe(y => HandleDisableDuringHyperspace(player.IsHyperspaceActive.Value))
+                        .AddTo(_disposables);
+                })
+                .AddTo(_disposables);
+
             _isPlayerFiringInCooldown = false;
         }
+        
+        private void Update()
+        {
+            if (PlayerInstance.Value)
+            {
+                _playerTransform = PlayerInstance.Value.transform;
 
-        private void HandleUfoDeath(Ufo ufo)
+                if (!_isPlayerFiringInputDisregarded)
+                {
+                    _isPlayerFiring = InputController.sharedInstance.IsFiring;
+                }
+                
+                if (_isPlayerFiring && !_isPlayerFiringInCooldown)
+                {
+                    _playerProjectile = ProjectilePool.SharedInstance.GetPooledObject();
+                    PlayerProjectileSetup();
+                }
+            }
+        }
+
+        public void RemoveDeadUfoFromActiveList(Ufo ufo)
         {
             if (_allUfoInstancesInScene.Contains(ufo))
             {
                 _allUfoInstancesInScene.Remove(ufo);
             }
         }
+        
+        public void PreventFiring()
+        {
+            _isPlayerFiringInputDisregarded = true;
+            _isPlayerFiring = false;
+        }
 
-        private void SpawnUfoProjectile(Ufo ufo)
+        public void SpawnUfoProjectile(Ufo ufo)
         {
             _ufoProjectile = ProjectilePool.SharedInstance.GetPooledObject();
+            // ufo.IsReadyToFire.Value = false;
             
             if (!_allUfoInstancesInScene.Contains(ufo))
             {
@@ -48,7 +99,7 @@ namespace Controllers
             }
             
             Physics.IgnoreCollision(ufo.UfoMeshCollider, _ufoProjectile.ProjectileSphereCollider);
-            Physics.IgnoreCollision(_playerInstance.PlayerMeshCollider,
+            Physics.IgnoreCollision(PlayerInstance.Value.PlayerMeshCollider,
                 _ufoProjectile.ProjectileSphereCollider, false);
             
             var obj = _ufoProjectile.gameObject;
@@ -64,9 +115,17 @@ namespace Controllers
             _ufoProjectile.DisableHidePlayerProjectileCoroutine = _hideProjectileCoroutine;
         }
 
+        private void HandleGameOver(bool gameOver)
+        {
+            if (gameOver)
+            {
+                _disposables.Clear();
+            }
+        }
+
         private Vector3 DetermineUfoProjectileFacing()
         {
-            var position = _playerInstance.transform.position + new Vector3(
+            var position = PlayerInstance.Value.transform.position + new Vector3(
                 Random.Range(GameManager.sharedInstance.UfoXTargetOffsetLower,
                     GameManager.sharedInstance.UfoXTargetOffsetUpper), 1,
                 Random.Range(GameManager.sharedInstance.UfoZTargetOffsetLower,
@@ -77,45 +136,15 @@ namespace Controllers
             return (n < _ufoProjectile.UfoFireTowardsPlayerFrequency) ? position : -position;;
         }
 
-        private void HandleHyperspaceEnded(Player player)
+        private void HandleDisableDuringHyperspace(bool isHyperspaceActive)
         {
-            EnableFiring();
-        }
-        
-        private void HandlePlayerSpawn(Player playerInstance)
-        {
-            _playerInstance = playerInstance;
-            
-            EnableFiring();
-        }
-        
-        private void EnableFiring()
-        {
-            _isPlayerFiringInputDisregarded = false;
-        }
-
-        private void PreventFiring(Player playerInstance)
-        {
-            _isPlayerFiringInputDisregarded = true;
-            _isPlayerFiring = false;
-        }
-
-        private void Update()
-        {
-            if (_playerInstance)
+            if (isHyperspaceActive)
             {
-                _playerTransform = _playerInstance.transform;
-
-                if (!_isPlayerFiringInputDisregarded)
-                {
-                    _isPlayerFiring = InputController.sharedInstance.IsFiring;
-                }
-                
-                if (_isPlayerFiring && !_isPlayerFiringInCooldown)
-                {
-                    _playerProjectile = ProjectilePool.SharedInstance.GetPooledObject();
-                    PlayerProjectileSetup();
-                }
+                PreventFiring();
+            }
+            else
+            {
+                _isPlayerFiringInputDisregarded = false;
             }
         }
 
@@ -123,7 +152,7 @@ namespace Controllers
         {
             
             _playerProjectile.gameObject.layer = 6;
-            Physics.IgnoreCollision(_playerInstance.PlayerMeshCollider, _playerProjectile.ProjectileSphereCollider);
+            Physics.IgnoreCollision(PlayerInstance.Value.PlayerMeshCollider, _playerProjectile.ProjectileSphereCollider);
                     
             foreach (var ufo in _allUfoInstancesInScene)
             {
