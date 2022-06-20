@@ -14,7 +14,7 @@ namespace UI
 
         private void Start()
         {
-            _gameOverText = gameObject.GetComponent<Text>();
+            _gameOverText = GetComponent<Text>();
             _gameOverText.enabled = false;
             
             GameManager.sharedInstance.GameOver
