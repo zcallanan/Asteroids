@@ -20,6 +20,7 @@ namespace Installers
             public PlayerMoveHandler.Settings playerMoveHandler;
             public PlayerLifecycleHandlerSettings playerLifecycleHandlerSettings;
             public PlayerRespawnEffect.Settings playerRespawnEffect;
+            public PlayerFiringHandler.Settings playerFiringHandler;
         }
         
         [Serializable]
@@ -31,12 +32,13 @@ namespace Installers
         public override void InstallBindings()
         {
             Container.BindInstance(gameInstaller).IfNotBound();
-            // Container.BindInstance(playerInstaller).IfNotBound();
             
             Container.BindInstance(playerSettings.playerDirectionHandler).IfNotBound();
             Container.BindInstance(playerSettings.playerMoveHandler).IfNotBound();
             Container.BindInstance(playerSettings.playerLifecycleHandlerSettings).IfNotBound();
             Container.BindInstance(playerSettings.playerRespawnEffect).IfNotBound();
+            Container.BindInstance(playerSettings.playerFiringHandler).IfNotBound();
+
         }
     }
 }

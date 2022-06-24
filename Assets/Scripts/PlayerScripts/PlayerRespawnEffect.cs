@@ -13,6 +13,9 @@ namespace PlayerScripts
         private bool _isTogglingTransparency;
         private float _whenRespawnEffectStarted;
         private float _whenLastToggleOccurred;
+        
+        // TODO: clear on game over
+        private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
         public PlayerRespawnEffect(Player player, Settings settings)
         {
@@ -28,7 +31,7 @@ namespace PlayerScripts
                 {
                     InitiateRespawnEffect();
                 }
-            });
+            }).AddTo(_disposables);
         }
         
         public void Tick()

@@ -11,9 +11,7 @@ namespace PlayerScripts
         private GameSettingsInstaller.PlayerLifecycleHandlerSettings _settings;
         
         private float _lastDeathTime;
-
-        private bool _playerShouldRespawn;
-
+        
         [Inject]
         public void Construct(
             Player player,
@@ -36,7 +34,7 @@ namespace PlayerScripts
 
         private void CheckIfPlayerShouldRespawn()
         {
-            if (_playerShouldRespawn && _player.CurrentLives >= 0 &&
+            if (_player.IsDead && _player.CurrentLives >= 0 &&
                 Time.realtimeSinceStartup - _lastDeathTime >= _settings.respawnDelay)
             {
                 _player.MeshRenderer.enabled = true;
@@ -47,7 +45,7 @@ namespace PlayerScripts
                 _player.Rotation = Vector3.up;
                 
                 _player.JustRespawned.Value = true;
-                _playerShouldRespawn = false;
+                _player.IsDead = false; // TODO use this to trigger effect
             }
         }
 
@@ -58,7 +56,7 @@ namespace PlayerScripts
             _lastDeathTime = Time.realtimeSinceStartup;
             
             _player.MeshRenderer.enabled = false;
-            _playerShouldRespawn = true;
+            _player.IsDead = true;
         }
     }
 }

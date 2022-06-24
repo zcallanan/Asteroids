@@ -14,7 +14,7 @@ namespace PlayerScripts
 
         public void Tick()
         {
-            _playerInputState.IsFiring = Input.GetButtonDown("Fire1");
+            _playerInputState.IsFiring.Value = Input.GetButtonDown("Fire1");
             _playerInputState.IsHyperspaceActive.Value = Input.GetButtonDown("Fire2");
         
             _playerInputState.VerticalInput = Input.GetAxis("Vertical");

@@ -14,6 +14,13 @@ namespace Installers
     
         public override void InstallBindings()
         {
+            Container
+                .BindFactory<float, float, BulletProjectileTypes, BulletProjectile, BulletProjectile.Factory>()
+                .FromPoolableMemoryPool<float, float, BulletProjectileTypes, BulletProjectile, BulletProjectilePool>(x => x
+                    .WithInitialSize(20)
+                    .FromComponentInNewPrefab(_settings.bulletProjectilePrefab)
+                    .UnderTransformGroup("BulletProjectiles"));
+            
             // Container.BindInterfacesAndSelfTo<AsteroidSpawner>().AsSingle();
             // Container.BindInterfacesAndSelfTo<UfoSpawner>().AsSingle();
         
@@ -33,12 +40,7 @@ namespace Installers
             //         .ByNewPrefabInstaller<UfoInstaller>(_settings.ufoPrefab)
             //         .UnderTransformGroup("Ufos"));
             //
-            // Container
-            //     .BindFactory<float, float, BulletProjectileTypes, BulletProjectile, BulletProjectile.Factory>()
-            //     .FromPoolableMemoryPool<float, float, BulletProjectileTypes, BulletProjectile, BulletProjectilePool>(x => x
-            //         .WithInitialSize(20)
-            //         .FromComponentInNewPrefab(_settings.bulletProjectilePrefab)
-            //         .UnderTransformGroup("BulletProjectiles"));
+            
             //
             // Container
             //     .BindFactory<ExplosionP, ExplosionP.Factory>()

@@ -54,6 +54,8 @@ namespace PlayerScripts
 
         public int CurrentLives { get; set; }
         
+        public bool IsDead { get; set; }
+        
         public ReactiveProperty<bool> JustRespawned { get; set; }
     }
 }

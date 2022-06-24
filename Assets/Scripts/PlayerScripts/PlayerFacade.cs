@@ -20,6 +20,7 @@ namespace PlayerScripts
         private void Awake()
         {
             _playerInputState.IsHyperspaceActive = new ReactiveProperty<bool>(false);
+            _playerInputState.IsFiring = new ReactiveProperty<bool>(false);
         }
 
         public MeshCollider MeshCollider => _player.MeshCollider;

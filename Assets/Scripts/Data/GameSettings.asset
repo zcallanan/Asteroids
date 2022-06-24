@@ -32,3 +32,7 @@ MonoBehaviour:
       toggleEffectDuration: 0.2
       defaultMat: {fileID: 2100000, guid: d79a83adef48e0c41bf93a4d0491ac1d, type: 2}
       transparentMat: {fileID: 2100000, guid: 1353c69cab1e24a68bdb263ab6156ea3, type: 2}
+    playerFiringHandler:
+      fireCooldown: 0.08
+      projectileSpeed: 8.5
+      projectileLifespan: 1

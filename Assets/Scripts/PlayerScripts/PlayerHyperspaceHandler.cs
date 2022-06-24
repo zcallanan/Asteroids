@@ -17,6 +17,9 @@ namespace PlayerScripts
         private bool _hyperspaceWasTriggered;
 
         private float _whenHyperspaceTriggered;
+        
+        // TODO: clear on game over
+        private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
         public PlayerHyperspaceHandler(
             PlayerInputState playerInputState, 
@@ -39,7 +42,7 @@ namespace PlayerScripts
                 {
                     HyperSpaceTriggered();
                 }
-            });
+            }).AddTo(_disposables);
         }
         
         public void Tick()
