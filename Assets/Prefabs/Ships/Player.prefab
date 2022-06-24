@@ -95,8 +95,6 @@ GameObject:
   - component: {fileID: 868114068}
   - component: {fileID: 868114066}
   - component: {fileID: 667228338}
-  - component: {fileID: 2392123680620859223}
-  - component: {fileID: 714388156636994571}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -213,8 +211,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _components:
   - {fileID: 868114066}
-  - {fileID: 2392123680620859223}
-  - {fileID: 714388156636994571}
   _identifier: 
   _useSceneContext: 0
   _context: {fileID: 0}
@@ -249,27 +245,3 @@ MonoBehaviour:
   _installerPrefabs: []
   _autoRun: 1
   _kernel: {fileID: 0}
---- !u!114 &2392123680620859223
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9044568935916217178}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9e5d611a4dcdd404793baa98a0cde601, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &714388156636994571
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9044568935916217178}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8eb799156d9c94ebe8b8d1ccbc654275, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

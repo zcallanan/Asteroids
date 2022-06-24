@@ -7,24 +7,29 @@ namespace PlayerScripts
 {
     public class PlayerFacade : MonoBehaviour
     {
-        private Player _model;
+        private Player _player;
+        private PlayerInputState _playerInputState;
     
         [Inject]
-        public void Construct(Player player)
+        public void Construct(Player player, PlayerInputState playerInputState)
         {
-            _model = player;
+            _player = player;
+            _playerInputState = playerInputState;
         }
 
-        public MeshCollider MeshCollider => _model.MeshCollider;
-        public MeshRenderer MeshRenderer => _model.MeshRenderer;
+        private void Awake()
+        {
+            _playerInputState.IsHyperspaceActive = new ReactiveProperty<bool>(false);
+        }
 
-        public Vector3 Facing => _model.Facing;
+        public MeshCollider MeshCollider => _player.MeshCollider;
+        public MeshRenderer MeshRenderer => _player.MeshRenderer;
 
-        public Vector3 Position => _model.Position;
+        public Vector3 Facing => _player.Facing;
 
-        public int CurrentLives => _model.CurrentLives;
+        public Vector3 Position => _player.Position;
 
-        // public bool IsDead => _model.IsDead;
+        public int CurrentLives => _player.CurrentLives;
     }
     
     

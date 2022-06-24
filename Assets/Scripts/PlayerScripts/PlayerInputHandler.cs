@@ -1,25 +1,18 @@
-using UniRx;
 using UnityEngine;
 using Zenject;
 
 namespace PlayerScripts
 {
-    public class PlayerInputHandler : MonoBehaviour
+    public class PlayerInputHandler : ITickable
     {
-        PlayerInputState _playerInputState;
+        private readonly PlayerInputState _playerInputState;
 
-        [Inject]
-        public void Construct(PlayerInputState playerInputState)
+        public PlayerInputHandler(PlayerInputState playerInputState)
         {
             _playerInputState = playerInputState;
         }
 
-        private void Awake()
-        {
-            _playerInputState.IsHyperspaceActive = new ReactiveProperty<bool>(false);
-        }
-
-        private void Update()
+        public void Tick()
         {
             _playerInputState.IsFiring = Input.GetButtonDown("Fire1");
             _playerInputState.IsHyperspaceActive.Value = Input.GetButtonDown("Fire2");

@@ -23,7 +23,7 @@ namespace Installers
 
             Container.Bind<PlayerInputState>().AsSingle();
             
-            // Container.BindInterfacesTo<PlayerInputHandler>().AsSingle();
+            Container.BindInterfacesTo<PlayerInputHandler>().AsSingle();
             Container.BindInterfacesTo<PlayerHyperspaceHandler>().AsSingle();
             Container.BindInterfacesTo<PlayerDirectionHandler>().AsSingle();
             Container.BindInterfacesTo<PlayerMoveHandler>().AsSingle();
