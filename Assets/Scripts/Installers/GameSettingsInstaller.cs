@@ -1,4 +1,5 @@
 using System;
+using Misc;
 using PlayerScripts;
 using UnityEditor;
 using UnityEngine;
@@ -10,8 +11,15 @@ namespace Installers
     public class GameSettingsInstaller : ScriptableObjectInstaller<GameSettingsInstaller>
     {
         public GameInstaller.Settings gameInstaller;
-        // public PlayerInstaller.Settings playerInstaller;
+        public GameSettings gameSettings;
         public PlayerSettings playerSettings;
+        
+
+        [Serializable]
+        public class GameSettings
+        {
+            public GameLevelHandler.Settings gameLevelHandler;
+        }
 
         [Serializable]
         public class PlayerSettings
@@ -32,6 +40,8 @@ namespace Installers
         public override void InstallBindings()
         {
             Container.BindInstance(gameInstaller).IfNotBound();
+            
+            Container.BindInstance(gameSettings.gameLevelHandler).IfNotBound();
             
             Container.BindInstance(playerSettings.playerDirectionHandler).IfNotBound();
             Container.BindInstance(playerSettings.playerMoveHandler).IfNotBound();

@@ -48,8 +48,9 @@ namespace Installers
             //         .WithInitialSize(20)
             //         .FromComponentInNewPrefab(_settings.explosionPrefab)
             //         .UnderTransformGroup("Explosions"));
-            Container.Bind<BoundManager>().FromComponentInHierarchy().AsCached();
-            // PlayerInstaller.Install(Container);
+            Container.Bind<BoundHandler>().FromComponentInHierarchy().AsCached();
+            Container.Bind<GameState>().FromComponentInHierarchy().AsCached();
+            Container.Bind<GameLevelHandler>().AsSingle();
         }
     
         [Serializable]

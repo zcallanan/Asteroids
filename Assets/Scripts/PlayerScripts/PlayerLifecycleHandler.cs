@@ -24,17 +24,19 @@ namespace PlayerScripts
         private void Awake()
         {
             _player.JustRespawned = new ReactiveProperty<bool>(false);
-            _player.CurrentLives = 2;
+            _player.CurrentLives = new ReactiveProperty<int>(2);
         }
 
         private void Update()
         {
             CheckIfPlayerShouldRespawn();
         }
+        
+        // TODO: Increase & decrease current lives.
 
         private void CheckIfPlayerShouldRespawn()
         {
-            if (_player.IsDead && _player.CurrentLives >= 0 &&
+            if (_player.IsDead && _player.CurrentLives.Value >= 0 &&
                 Time.realtimeSinceStartup - _lastDeathTime >= _settings.respawnDelay)
             {
                 _player.MeshRenderer.enabled = true;
@@ -54,6 +56,8 @@ namespace PlayerScripts
             Debug.Log($"other is {other}");
             Debug.Log($"player is {gameObject}");
             _lastDeathTime = Time.realtimeSinceStartup;
+
+            _player.CurrentLives.Value--;
             
             _player.MeshRenderer.enabled = false;
             _player.IsDead = true;

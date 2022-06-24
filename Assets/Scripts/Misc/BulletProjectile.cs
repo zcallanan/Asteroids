@@ -12,7 +12,7 @@ namespace Misc
     
     public class BulletProjectile : MonoBehaviour, IPoolable<float, float, BulletProjectileTypes, IMemoryPool>
     {
-        private BoundManager _boundManager;
+        private BoundHandler _boundHandler;
 
         private float _whenSpawned;
         private float _speed;
@@ -21,9 +21,9 @@ namespace Misc
         private IMemoryPool _pool;
         
         [Inject]
-        public void Construct(BoundManager boundManager)
+        public void Construct(BoundHandler boundHandler)
         {
-            _boundManager = boundManager;
+            _boundHandler = boundHandler;
         }
         
         public void Update()
@@ -31,7 +31,7 @@ namespace Misc
             var projTransform = transform;
             
             var position = projTransform.position + projTransform.forward * (_speed * Time.deltaTime);
-            projTransform.position = _boundManager.EnforceBounds(position); 
+            projTransform.position = _boundHandler.EnforceBounds(position); 
 
             if (Time.realtimeSinceStartup - _whenSpawned >= _lifespan)
             {

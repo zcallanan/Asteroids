@@ -9,7 +9,7 @@ namespace PlayerScripts
     {
         private readonly PlayerInputState _playerInputState;
         private readonly Player _player;
-        private readonly BoundManager _boundManager;
+        private readonly BoundHandler _boundHandler;
 
         private Vector3 _maxBounds;
         private Vector3 _minBounds;
@@ -24,17 +24,17 @@ namespace PlayerScripts
         public PlayerHyperspaceHandler(
             PlayerInputState playerInputState, 
             Player player,
-            BoundManager boundManager)
+            BoundHandler boundHandler)
         {
             _playerInputState = playerInputState;
             _player = player;
-            _boundManager = boundManager;
+            _boundHandler = boundHandler;
         }
         
         public void Initialize()
         {
-            _boundManager.MaxBounds.Subscribe(maxGameBounds => _maxBounds = maxGameBounds);
-            _boundManager.MinBounds.Subscribe(minGameBounds => _minBounds = minGameBounds);
+            _boundHandler.MaxBounds.Subscribe(maxGameBounds => _maxBounds = maxGameBounds);
+            _boundHandler.MinBounds.Subscribe(minGameBounds => _minBounds = minGameBounds);
             
             _playerInputState.IsHyperspaceActive.Subscribe(hyperspaceInput =>
             {

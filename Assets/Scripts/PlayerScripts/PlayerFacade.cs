@@ -30,7 +30,7 @@ namespace PlayerScripts
 
         public Vector3 Position => _player.Position;
 
-        public int CurrentLives => _player.CurrentLives;
+        public int CurrentLives => _player.CurrentLives.Value;
     }
     
     

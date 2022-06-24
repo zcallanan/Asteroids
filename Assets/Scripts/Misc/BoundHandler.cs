@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Misc
 {
-    public class BoundManager : MonoBehaviour
+    public class BoundHandler : MonoBehaviour
     {
         public ReactiveProperty<Vector3> MaxBounds {get; private set;  }
         public ReactiveProperty<Vector3> MinBounds { get; private set; }
