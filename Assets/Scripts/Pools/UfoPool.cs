@@ -1,9 +1,9 @@
 using Models;
 
-namespace Pools
-{
-    public class UfoPool : PoolFactory<Ufo>
-    {
-        
-    }
-}
+// namespace Pools
+// {
+//     public class UfoPool : PoolFactory<Models.Ufo>
+//     {
+//         
+//     }
+// }

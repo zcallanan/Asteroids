@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6095b07d0329845f894d8cd2023f84cf, type: 3}
+  m_Name: GameSettings
+  m_EditorClassIdentifier: 
+  gameInstaller:
+    asteroidPrefab: {fileID: 2942051580892192243, guid: d57d6419728ca4fa486055a9b54eb326, type: 3}
+    bulletProjectilePrefab: {fileID: 9033534424328100445, guid: 5d46797b9a6dc420fbf9761f62531082, type: 3}
+    ufoPrefab: {fileID: 1449967967273523445, guid: 311599e2534effb4fbb4eead92e22bcd, type: 3}
+    explosionPrefab: {fileID: 8917179331539235180, guid: 827056dd9127245689b1f891afcd3e85, type: 3}
+    boundManagerPrefab: {fileID: 5513947491739451442, guid: a9245f9f1b9e74bb8993c54b20e25e61, type: 3}
+  playerSettings:
+    playerDirectionHandler:
+      rotationAngle: {x: 0, y: 100, z: 0}
+      rotationSpeed: 5
+    playerMoveHandler:
+      playerMoveSpeedConstant: 10
+      movementModifier: 120
+    playerLifecycleHandlerSettings:
+      respawnDelay: 2
+    playerRespawnEffect:
+      totalRespawnEffectDuration: 2
+      toggleEffectDuration: 0.2
+      defaultMat: {fileID: 2100000, guid: d79a83adef48e0c41bf93a4d0491ac1d, type: 2}
+      transparentMat: {fileID: 2100000, guid: 1353c69cab1e24a68bdb263ab6156ea3, type: 2}
