@@ -44,14 +44,12 @@ namespace PlayerScripts
         
         public void Tick()
         {
-            if (_hyperspaceWasTriggered && Time.realtimeSinceStartup - _whenHyperspaceTriggered >= 2f &&
-                _whenHyperspaceTriggered != 0)
+            if (_hyperspaceWasTriggered && Time.realtimeSinceStartup - _whenHyperspaceTriggered >= 2f)
             {
                 _player.MeshRenderer.enabled = true;
                 _player.AdjustedSpeed = 0;
             
                 _hyperspaceWasTriggered = false;
-                _whenHyperspaceTriggered = 0;
             }
         }
         

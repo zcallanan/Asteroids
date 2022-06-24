@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using Installers;
 using UniRx;
 using UnityEngine;
@@ -14,6 +12,8 @@ namespace PlayerScripts
         
         private float _lastDeathTime;
 
+        private bool _playerShouldRespawn;
+
         [Inject]
         public void Construct(
             Player player,
@@ -23,8 +23,9 @@ namespace PlayerScripts
             _settings = settings;
         }
 
-        private void Start()
+        private void Awake()
         {
+            _player.JustRespawned = new ReactiveProperty<bool>(false);
             _player.CurrentLives = 2;
         }
 
@@ -35,7 +36,8 @@ namespace PlayerScripts
 
         private void CheckIfPlayerShouldRespawn()
         {
-            if (_player.CurrentLives >= 0 && Time.realtimeSinceStartup - _lastDeathTime == _settings.respawnDelay)
+            if (_playerShouldRespawn && _player.CurrentLives >= 0 &&
+                Time.realtimeSinceStartup - _lastDeathTime >= _settings.respawnDelay)
             {
                 _player.MeshRenderer.enabled = true;
                 _player.MeshCollider.enabled = false;
@@ -44,8 +46,8 @@ namespace PlayerScripts
                 _player.Position = new Vector3(0,1,0);
                 _player.Rotation = Vector3.up;
                 
-                _lastDeathTime = 0;
-                _player.JustRespawned = true;
+                _player.JustRespawned.Value = true;
+                _playerShouldRespawn = false;
             }
         }
 
@@ -54,7 +56,9 @@ namespace PlayerScripts
             Debug.Log($"other is {other}");
             Debug.Log($"player is {gameObject}");
             _lastDeathTime = Time.realtimeSinceStartup;
+            
             _player.MeshRenderer.enabled = false;
+            _playerShouldRespawn = true;
         }
     }
 }

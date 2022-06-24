@@ -13,7 +13,6 @@ namespace PlayerScripts
         private readonly BoundManager _boundManager;
         
         private Vector3 _currentPosition;
-        private Vector3 _previousPosition;
         private Vector3 _facing;
         private float _currentSpeed;
         private float _accelerationRate;
@@ -94,18 +93,7 @@ namespace PlayerScripts
         {
             return new Vector3(Mathf.Abs(posVector.x), posVector.y, Mathf.Abs(posVector.z));
         }
-        
-        private static float Distance(Vector3 a, Vector3 b)
-        {
-            Debug.Log(a.x);
-            Debug.Log(b.x);
-            float num1 = a.x - b.x;
-            float num2 = a.y - b.y;
-            float num3 = a.z - b.z;
-            Debug.Log($"num1: {num1}, num2: {num2}, num3: {num3}");
-            return (float) Math.Sqrt((double) num1 * (double) num1 + (double) num2 * (double) num2 + (double) num3 * (double) num3);
-        }
-        
+
         [Serializable]
         public class Settings
         {
