@@ -14,7 +14,6 @@ namespace PlayerScripts
         private Vector3 _maxBounds;
         private Vector3 _minBounds;
 
-        private bool _isHyperspaceActive;
         private bool _hyperspaceWasTriggered;
 
         private float _whenHyperspaceTriggered;
@@ -31,26 +30,26 @@ namespace PlayerScripts
         
         public void Initialize()
         {
-            _boundManager.MaxBounds.Subscribe(y => _maxBounds = y);
-            _boundManager.MinBounds.Subscribe(y => _minBounds = y);
+            _boundManager.MaxBounds.Subscribe(maxGameBounds => _maxBounds = maxGameBounds);
+            _boundManager.MinBounds.Subscribe(minGameBounds => _minBounds = minGameBounds);
             
-            _playerInputState.IsHyperspaceActive.Subscribe(y => _isHyperspaceActive = y);
+            _playerInputState.IsHyperspaceActive.Subscribe(hyperspaceInput =>
+            {
+                if (hyperspaceInput && !_hyperspaceWasTriggered && _player.MeshRenderer.enabled)
+                {
+                    HyperSpaceTriggered();
+                }
+            });
         }
         
         public void Tick()
         {
-            if (_isHyperspaceActive && !_hyperspaceWasTriggered)
-            {
-                HyperSpaceTriggered();
-            }
-            Debug.Log(_hyperspaceWasTriggered);
             if (_hyperspaceWasTriggered && Time.realtimeSinceStartup - _whenHyperspaceTriggered >= 2f &&
                 _whenHyperspaceTriggered != 0)
             {
                 _player.MeshRenderer.enabled = true;
                 _player.AdjustedSpeed = 0;
             
-                _isHyperspaceActive = false;
                 _hyperspaceWasTriggered = false;
                 _whenHyperspaceTriggered = 0;
             }
@@ -58,16 +57,11 @@ namespace PlayerScripts
         
         private void HyperSpaceTriggered()
         {
-            if (_isHyperspaceActive && _player.MeshRenderer.enabled)
-            {
-                _hyperspaceWasTriggered = true;
-                
-                _player.MeshRenderer.enabled = false;
-                
-                _player.Position = DetermineRandomHyperspacePosition();
-            
-                _whenHyperspaceTriggered = Time.realtimeSinceStartup;
-            }
+            _hyperspaceWasTriggered = true;
+            _whenHyperspaceTriggered = Time.realtimeSinceStartup;
+
+            _player.MeshRenderer.enabled = false;
+            _player.Position = DetermineRandomHyperspacePosition();
         }
 
         private Vector3 DetermineRandomHyperspacePosition()
