@@ -1,9 +1,13 @@
-using UnityEngine;
+using Asteroid;
 using Zenject;
 
-public class AsteroidInstaller : Installer<AsteroidInstaller>
+namespace Installers
 {
-    public override void InstallBindings()
+    public class AsteroidInstaller : Installer<AsteroidInstaller>
     {
+        public override void InstallBindings()
+        {
+            Container.BindInterfacesAndSelfTo<AsteroidExplosionHandler>().AsSingle();
+        }
     }
 }

@@ -8,17 +8,17 @@ namespace PlayerScripts
     public class PlayerLifecycleHandler : MonoBehaviour
     {
         private Player _player;
-        private GameSettingsInstaller.PlayerLifecycleHandlerSettings _settings;
+        private PlayerData.Settings _playerData;
         
         private float _lastDeathTime;
         
         [Inject]
         public void Construct(
             Player player,
-            GameSettingsInstaller.PlayerLifecycleHandlerSettings settings)
+            PlayerData.Settings playerData)
         {
             _player = player;
-            _settings = settings;
+            _playerData = playerData;
         }
 
         private void Awake()
@@ -32,12 +32,12 @@ namespace PlayerScripts
             CheckIfPlayerShouldRespawn();
         }
         
-        // TODO: Increase & decrease current lives.
+        // TODO: Increase current lives.
 
         private void CheckIfPlayerShouldRespawn()
         {
             if (_player.IsDead && _player.CurrentLives.Value >= 0 &&
-                Time.realtimeSinceStartup - _lastDeathTime >= _settings.respawnDelay)
+                Time.realtimeSinceStartup - _lastDeathTime >= _playerData.respawnDelay)
             {
                 _player.MeshRenderer.enabled = true;
                 _player.MeshCollider.enabled = false;
@@ -47,7 +47,7 @@ namespace PlayerScripts
                 _player.Rotation = Vector3.up;
                 
                 _player.JustRespawned.Value = true;
-                _player.IsDead = false; // TODO use this to trigger effect
+                _player.IsDead = false;
             }
         }
 

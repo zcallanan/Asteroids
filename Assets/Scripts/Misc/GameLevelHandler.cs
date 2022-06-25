@@ -11,7 +11,7 @@ namespace Misc
 
         private readonly GameState _gameState;
         private readonly Settings _settings;
-        private readonly GameSettingsInstaller.DifficultySettings _difficultySettings;
+        private readonly Difficulty.Settings _difficultySettings;
 
         private int _gameDifficulty;
         private int _initLargeAsteroids;
@@ -25,7 +25,7 @@ namespace Misc
 
         public GameLevelHandler(
             Settings settings,
-            GameSettingsInstaller.DifficultySettings difficultySettings,
+            Difficulty.Settings difficultySettings,
             GameState gameState)
         {
             _settings = settings;

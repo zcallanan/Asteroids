@@ -21,6 +21,35 @@ MonoBehaviour:
   gameSettings:
     gameLevelHandler:
       levelStartDelay: 1
+    scoreHandler:
+      smallAstVal: 100
+      mediumAstVal: 50
+      largeAstVal: 10
+      smallUfoVal: 1000
+      largeUfoVal: 200
+      otherPlayerVal: 500
+    difficulty:
+      difficulties:
+      - smallPerMedium: 2
+        mediumPerLarge: 2
+        initLargeAsteroids: 2
+        astMinSpeed: 0.2
+        astMaxSpeed: 0.4
+      - smallPerMedium: 2
+        mediumPerLarge: 2
+        initLargeAsteroids: 3
+        astMinSpeed: 0.34
+        astMaxSpeed: 0.5
+      - smallPerMedium: 3
+        mediumPerLarge: 3
+        initLargeAsteroids: 3
+        astMinSpeed: 0.4
+        astMaxSpeed: 0.6
+      - smallPerMedium: 4
+        mediumPerLarge: 4
+        initLargeAsteroids: 4
+        astMinSpeed: 0.45
+        astMaxSpeed: 0.65
   playerSettings:
     playerDirectionHandler:
       rotationAngle: {x: 0, y: 100, z: 0}
@@ -39,13 +68,7 @@ MonoBehaviour:
       fireCooldown: 0.08
       projectileSpeed: 8.5
       projectileLifespan: 1
-  difficultySettings:
-    difficulties:
-    - smallPerMedium: 2
-      initLargeAsteroids: 3
-    - smallPerMedium: 2
-      initLargeAsteroids: 3
-    - smallPerMedium: 3
-      initLargeAsteroids: 4
-    - smallPerMedium: 3
-      initLargeAsteroids: 5
+  asteroidSettings:
+    asteroidData:
+      minRotSpeed: 30
+      maxRotSpeed: 60

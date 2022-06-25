@@ -14,6 +14,13 @@ namespace Installers
     
         public override void InstallBindings()
         {
+            Container.Bind<GameLevelHandler>().AsSingle();
+            Container.Bind<BoundHandler>().FromComponentInHierarchy().AsCached();
+            Container.Bind<GameState>().FromComponentInHierarchy().AsCached();
+            
+            Container.Bind<ScoreHandler>().AsSingle();
+            Container.Bind<AsteroidSpawner>().AsSingle();
+            
             Container
                 .BindFactory<float, float, BulletProjectileTypes, BulletProjectile, BulletProjectile.Factory>()
                 .FromPoolableMemoryPool<float, float, BulletProjectileTypes, BulletProjectile, BulletProjectilePool>(x => x
@@ -21,17 +28,19 @@ namespace Installers
                     .FromComponentInNewPrefab(_settings.bulletProjectilePrefab)
                     .UnderTransformGroup("BulletProjectiles"));
             
-            // Container.BindInterfacesAndSelfTo<AsteroidSpawner>().AsSingle();
+            
             // Container.BindInterfacesAndSelfTo<UfoSpawner>().AsSingle();
         
-            // Container
-            //     .BindFactory<int, AsteroidFacade, AsteroidFacade.Factory>()
-            //     .FromPoolableMemoryPool<int, AsteroidFacade, AsteroidFacadePool>(x => x
-            //         .WithInitialSize(60)
-            //         .FromSubContainerResolve()
-            //         .ByNewPrefabInstaller<AsteroidInstaller>(_settings.asteroidPrefab)
-            //         .UnderTransformGroup("Asteroids"));
-            //
+            Container
+                .BindFactory<float, AsteroidSizes, AsteroidFacade, AsteroidFacade.Factory>()
+                .FromPoolableMemoryPool<float, AsteroidSizes, AsteroidFacade, AsteroidFacadePool>(x => x
+                    .WithInitialSize(60)
+                    .FromSubContainerResolve()
+                    .ByNewPrefabInstaller<AsteroidInstaller>(_settings.asteroidPrefab)
+                    .UnderTransformGroup("Asteroids"));
+            
+            
+            
             // Container
             //     .BindFactory<UfoFacade, UfoFacade.Factory>()
             //     .FromPoolableMemoryPool<UfoFacade, UfoFacadePool>(x => x
@@ -48,10 +57,8 @@ namespace Installers
             //         .WithInitialSize(20)
             //         .FromComponentInNewPrefab(_settings.explosionPrefab)
             //         .UnderTransformGroup("Explosions"));
-            Container.Bind<BoundHandler>().FromComponentInHierarchy().AsCached();
-            Container.Bind<GameState>().FromComponentInHierarchy().AsCached();
-            Container.Bind<GameLevelHandler>().AsSingle();
-            Container.Bind<ScoreHandler>().AsSingle();
+            
+
         }
     
         [Serializable]
@@ -64,7 +71,7 @@ namespace Installers
             public GameObject boundManagerPrefab;
         }
     
-        class AsteroidFacadePool : MonoPoolableMemoryPool<int, IMemoryPool, AsteroidFacade>
+        class AsteroidFacadePool : MonoPoolableMemoryPool<float, AsteroidSizes, IMemoryPool, AsteroidFacade>
         {
         }
 
