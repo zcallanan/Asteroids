@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Misc;
 using PlayerScripts;
-using UnityEditor;
 using UnityEngine;
 using Zenject;
 
@@ -15,12 +14,12 @@ namespace Installers
         public GameSettings gameSettings;
         public PlayerSettings playerSettings;
         public DifficultySettings difficultySettings;
-        // public List<Difficulty> difficultySettings = new List<Difficulty>();
-
+        
         [Serializable]
         public class GameSettings
         {
             public GameLevelHandler.Settings gameLevelHandler;
+            public ScoreHandler.Settings scoreHandler;
         }
 
         [Serializable]
@@ -57,6 +56,7 @@ namespace Installers
             Container.BindInstance(gameInstaller).IfNotBound();
             
             Container.BindInstance(gameSettings.gameLevelHandler).IfNotBound();
+            Container.BindInstance(gameSettings.scoreHandler).IfNotBound();
             
             Container.BindInstance(playerSettings.playerDirectionHandler).IfNotBound();
             Container.BindInstance(playerSettings.playerMoveHandler).IfNotBound();

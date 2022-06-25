@@ -51,6 +51,7 @@ namespace Installers
             Container.Bind<BoundHandler>().FromComponentInHierarchy().AsCached();
             Container.Bind<GameState>().FromComponentInHierarchy().AsCached();
             Container.Bind<GameLevelHandler>().AsSingle();
+            Container.Bind<ScoreHandler>().AsSingle();
         }
     
         [Serializable]
