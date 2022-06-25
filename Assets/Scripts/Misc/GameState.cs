@@ -1,23 +1,19 @@
-using System;
 using UniRx;
 using UnityEngine;
-using Zenject;
 
 namespace Misc
 {
     public class GameState : MonoBehaviour
     {
-        private GameLevelHandler _gameLevelHandler;
+        public ReactiveProperty<int> CurrentLevel { get; private set; }
         
-        [Inject]
-        public void Construct(GameLevelHandler gameLevelHandler)
-        {
-            _gameLevelHandler = gameLevelHandler;
-        }
+        public int GameDifficulty { get; set; }
 
         private void Awake()
         {
-            _gameLevelHandler.CurrentLevel = new ReactiveProperty<int>(0);
+            GameDifficulty = 1; // TODO set from start screen scene
+            
+            CurrentLevel = new ReactiveProperty<int>(0);
         }
     }
 }

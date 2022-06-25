@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Misc;
 using PlayerScripts;
 using UnityEditor;
@@ -13,7 +14,8 @@ namespace Installers
         public GameInstaller.Settings gameInstaller;
         public GameSettings gameSettings;
         public PlayerSettings playerSettings;
-        
+        public DifficultySettings difficultySettings;
+        // public List<Difficulty> difficultySettings = new List<Difficulty>();
 
         [Serializable]
         public class GameSettings
@@ -35,6 +37,19 @@ namespace Installers
         public class PlayerLifecycleHandlerSettings
         {
             public float respawnDelay;
+        }
+
+        [Serializable]
+        public class DifficultySettings
+        {
+            public List<Difficulty> difficulties = new List<Difficulty>();
+        }
+        
+        [Serializable]
+        public class Difficulty
+        {
+            public int smallPerMedium;
+            public int initLargeAsteroids;
         }
 
         public override void InstallBindings()

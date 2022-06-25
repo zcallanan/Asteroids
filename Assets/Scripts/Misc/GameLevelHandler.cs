@@ -1,40 +1,43 @@
 using System;
+using Installers;
 using UniRx;
 using UnityEngine;
 using Zenject;
 
 namespace Misc
 {
-    public class GameLevelHandler : ITickable
+    public class GameLevelHandler : IInitializable, ITickable
     {
-        public ReactiveProperty<int> CurrentLevel { get; set; }
 
-        public int CountSmallAsteroidsDestroyedInLevel { get; set; }
-        public int TotalExpectedSmallAsteroidsInLevel { get; set; }
-
+        private readonly GameState _gameState;
         private readonly Settings _settings;
+        private readonly GameSettingsInstaller.DifficultySettings _difficultySettings;
+
+        private int _gameDifficulty;
+        private int _initLargeAsteroids;
+        private int _smallPerMedium;
         
+        private int _countSmallAsteroidsDestroyedInLevel;
+        private int _totalExpectedSmallAsteroidsInLevel;
+
         private bool _isReadyToStartNewLevel;
         private float _whenLastSmallAsteroidWasKilled;
 
-        public GameLevelHandler(Settings settings)
+        public GameLevelHandler(
+            Settings settings,
+            GameSettingsInstaller.DifficultySettings difficultySettings,
+            GameState gameState)
         {
             _settings = settings;
+            _difficultySettings = difficultySettings;
+            _gameState = gameState;
         }
 
-        public void RegisterSmallDeathToDetermineNextLevel()
+        public void Initialize()
         {
-            
-            CountSmallAsteroidsDestroyedInLevel++;
-
-            if (CountSmallAsteroidsDestroyedInLevel == TotalExpectedSmallAsteroidsInLevel)
-            {
-                // StartCoroutine(LevelStartDelayCoroutine(CurrentLevel.Value + 1));
-                _whenLastSmallAsteroidWasKilled = Time.realtimeSinceStartup;
-                
-                _isReadyToStartNewLevel = true;
-            }
-            
+            _gameDifficulty = _gameState.GameDifficulty;
+            _initLargeAsteroids = _difficultySettings.difficulties[_gameDifficulty].initLargeAsteroids;
+            _smallPerMedium = _difficultySettings.difficulties[_gameDifficulty].smallPerMedium;
         }
 
         public void Tick()
@@ -42,9 +45,25 @@ namespace Misc
             if (_isReadyToStartNewLevel &&
                 Time.realtimeSinceStartup - _whenLastSmallAsteroidWasKilled >= _settings.levelStartDelay)
             {
-                CurrentLevel.Value++;
+                _gameState.CurrentLevel.Value++;
+                _countSmallAsteroidsDestroyedInLevel = 0;
+
+                _totalExpectedSmallAsteroidsInLevel =
+                    (_initLargeAsteroids + _gameState.CurrentLevel.Value) * (_smallPerMedium + _smallPerMedium);
                 
                 _isReadyToStartNewLevel = false;
+            }
+        }
+        
+        public void RegisterSmallDeathToDetermineNextLevel()
+        {
+            _countSmallAsteroidsDestroyedInLevel++;
+
+            if (_countSmallAsteroidsDestroyedInLevel == _totalExpectedSmallAsteroidsInLevel)
+            {
+                _whenLastSmallAsteroidWasKilled = Time.realtimeSinceStartup;
+                
+                _isReadyToStartNewLevel = true;
             }
         }
 
