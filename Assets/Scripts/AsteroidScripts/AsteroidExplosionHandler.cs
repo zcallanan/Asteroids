@@ -1,6 +1,6 @@
 using Misc;
 
-namespace Asteroid
+namespace AsteroidScripts
 {
     public class AsteroidExplosionHandler
     {

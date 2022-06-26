@@ -12,6 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6095b07d0329845f894d8cd2023f84cf, type: 3}
   m_Name: GameSettings
   m_EditorClassIdentifier: 
+  asteroidSpawner:
+    largeScale: 47
+    mediumScale: 36
+    smallScale: 25
   gameInstaller:
     asteroidPrefab: {fileID: 2942051580892192243, guid: d57d6419728ca4fa486055a9b54eb326, type: 3}
     bulletProjectilePrefab: {fileID: 9033534424328100445, guid: 5d46797b9a6dc420fbf9761f62531082, type: 3}
@@ -57,7 +61,7 @@ MonoBehaviour:
     playerMoveHandler:
       playerMoveSpeedConstant: 10
       movementModifier: 120
-    playerLifecycleHandlerSettings:
+    playerData:
       respawnDelay: 2
     playerRespawnEffect:
       totalRespawnEffectDuration: 2

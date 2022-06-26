@@ -6,18 +6,17 @@ using UnityEngine;
 using Zenject;
 using Random = UnityEngine.Random;
 
-namespace Asteroid
+namespace AsteroidScripts
 {
     public class AsteroidSpawner : IInitializable
     {
+        private readonly Settings _settings;
         private readonly Difficulty.Settings _difficultySettings;
         private readonly GameState _gameState;
         private readonly AsteroidFacade.Factory _asteroidFactory;
         private readonly BoundHandler _boundHandler;
 
         private int _gameDifficulty;
-        private float _minSpeed;
-        private float _maxSpeed;
         private int _initLargeAsteroids;
 
         private Vector3 _maxBounds;
@@ -28,11 +27,13 @@ namespace Asteroid
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
         public AsteroidSpawner(
+            Settings settings,
             Difficulty.Settings difficultySettings,
             GameState gameState,
             AsteroidFacade.Factory asteroidFactory,
             BoundHandler boundHandler)
-        {
+        { 
+            _settings = settings;
             _difficultySettings = difficultySettings;
             _gameState = gameState;
             _asteroidFactory = asteroidFactory;
@@ -41,9 +42,8 @@ namespace Asteroid
         
         public void Initialize()
         {
+            Debug.Log("test?");
             _gameDifficulty = _gameState.GameDifficulty;
-            _minSpeed = _difficultySettings.difficulties[_gameDifficulty].astMinSpeed;
-            _maxSpeed = _difficultySettings.difficulties[_gameDifficulty].astMaxSpeed;
             _initLargeAsteroids = _difficultySettings.difficulties[_gameDifficulty].initLargeAsteroids;
             
             DetermineAsteroidSpawnBoundValues();
@@ -62,22 +62,22 @@ namespace Asteroid
 
             _gameState.CurrentLevel.Subscribe(level =>
             {
+                Debug.Log($"The level is: {level}");
                 for (int i = 0; i < _initLargeAsteroids; i++)
                 {
-                    SpawnAsteroid(AsteroidSizes.LargeAsteroid, Vector3.zero);
+                    SpawnAsteroid(AsteroidFacade.AsteroidSizes.LargeAsteroid, Vector3.zero);
                 }
             }).AddTo(_disposables);
         }
         
-        public void SpawnAsteroid(AsteroidSizes asteroidSize, Vector3 largerAsteroidPosition)
+        public void SpawnAsteroid(AsteroidFacade.AsteroidSizes asteroidSize, Vector3 largerAsteroidPosition)
         {
-            float speed = Random.Range(_minSpeed, _maxSpeed);
 
-            var asteroidFacade = _asteroidFactory.Create(speed, asteroidSize);
+            var asteroidFacade = _asteroidFactory.Create(asteroidSize);
             
             Vector3 tempPosition;
             
-            if (asteroidSize == AsteroidSizes.SmallAsteroid || asteroidSize == AsteroidSizes.MediumAsteroid)
+            if (asteroidSize == AsteroidFacade.AsteroidSizes.SmallAsteroid || asteroidSize == AsteroidFacade.AsteroidSizes.MediumAsteroid)
             {
                 tempPosition = largerAsteroidPosition;
             }
@@ -87,6 +87,24 @@ namespace Asteroid
             }
             
             asteroidFacade.Position = tempPosition;
+            
+            ScaleAsteroid(asteroidFacade);
+        }
+        
+        private void ScaleAsteroid(AsteroidFacade asteroidFacade)
+        {
+            if (asteroidFacade.Size == AsteroidFacade.AsteroidSizes.SmallAsteroid)
+            {
+                asteroidFacade.Scale = _settings.smallScale * Vector3.one;
+            }
+            else if (asteroidFacade.Size == AsteroidFacade.AsteroidSizes.MediumAsteroid)
+            {
+                asteroidFacade.Scale = _settings.mediumScale * Vector3.one;
+            }
+            else if (asteroidFacade.Size == AsteroidFacade.AsteroidSizes.LargeAsteroid)
+            {
+                asteroidFacade.Scale = _settings.largeScale * Vector3.one;
+            }
         }
         
         private void DetermineAsteroidSpawnBoundValues()
@@ -112,7 +130,9 @@ namespace Asteroid
         [Serializable]
         public class Settings
         {
-            
+            public float largeScale;
+            public float mediumScale;
+            public float smallScale;
         }
     }
 }

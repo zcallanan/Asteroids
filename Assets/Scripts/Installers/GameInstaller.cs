@@ -1,5 +1,5 @@
 using System;
-using Asteroid;
+using AsteroidScripts;
 using Misc;
 using Ufo;
 using UnityEngine;
@@ -14,12 +14,12 @@ namespace Installers
     
         public override void InstallBindings()
         {
+            Container.BindInterfacesAndSelfTo<AsteroidSpawner>().AsSingle();
             Container.Bind<GameLevelHandler>().AsSingle();
             Container.Bind<BoundHandler>().FromComponentInHierarchy().AsCached();
             Container.Bind<GameState>().FromComponentInHierarchy().AsCached();
             
             Container.Bind<ScoreHandler>().AsSingle();
-            Container.Bind<AsteroidSpawner>().AsSingle();
             
             Container
                 .BindFactory<float, float, BulletProjectileTypes, BulletProjectile, BulletProjectile.Factory>()
@@ -28,12 +28,11 @@ namespace Installers
                     .FromComponentInNewPrefab(_settings.bulletProjectilePrefab)
                     .UnderTransformGroup("BulletProjectiles"));
             
-            
             // Container.BindInterfacesAndSelfTo<UfoSpawner>().AsSingle();
         
             Container
-                .BindFactory<float, AsteroidSizes, AsteroidFacade, AsteroidFacade.Factory>()
-                .FromPoolableMemoryPool<float, AsteroidSizes, AsteroidFacade, AsteroidFacadePool>(x => x
+                .BindFactory<AsteroidFacade.AsteroidSizes, AsteroidFacade, AsteroidFacade.Factory>()
+                .FromPoolableMemoryPool<AsteroidFacade.AsteroidSizes, AsteroidFacade, AsteroidFacadePool>(x => x
                     .WithInitialSize(60)
                     .FromSubContainerResolve()
                     .ByNewPrefabInstaller<AsteroidInstaller>(_settings.asteroidPrefab)
@@ -71,7 +70,7 @@ namespace Installers
             public GameObject boundManagerPrefab;
         }
     
-        class AsteroidFacadePool : MonoPoolableMemoryPool<float, AsteroidSizes, IMemoryPool, AsteroidFacade>
+        class AsteroidFacadePool : MonoPoolableMemoryPool<AsteroidFacade.AsteroidSizes, IMemoryPool, AsteroidFacade>
         {
         }
 

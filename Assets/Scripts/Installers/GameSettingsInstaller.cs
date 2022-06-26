@@ -1,5 +1,5 @@
 using System;
-using Asteroid;
+using AsteroidScripts;
 using Misc;
 using PlayerScripts;
 using UnityEngine;

@@ -1,6 +1,6 @@
 using System;
 
-namespace Asteroid
+namespace AsteroidScripts
 {
     public class AsteroidData
     {

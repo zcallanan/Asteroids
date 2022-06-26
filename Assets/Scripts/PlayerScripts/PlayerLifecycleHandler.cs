@@ -60,6 +60,8 @@ namespace PlayerScripts
             _player.CurrentLives.Value--;
             
             _player.MeshRenderer.enabled = false;
+            _player.MeshCollider.enabled = false;
+            
             _player.IsDead = true;
         }
     }

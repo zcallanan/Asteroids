@@ -10,7 +10,7 @@ namespace Misc
         
         public int GameDifficulty { get; set; }
         public int GameMode { get; set; }
-
+        
         private void Awake()
         {
             // TODO set these from start screen scene

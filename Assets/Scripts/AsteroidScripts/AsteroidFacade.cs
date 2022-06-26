@@ -1,20 +1,15 @@
 using System;
+using System.Numerics;
 using Installers;
 using Misc;
 using UnityEngine;
 using Zenject;
 using Random = UnityEngine.Random;
+using Vector3 = UnityEngine.Vector3;
 
-namespace Asteroid
+namespace AsteroidScripts
 {
-    public enum AsteroidSizes
-    {
-        SmallAsteroid,
-        MediumAsteroid,
-        LargeAsteroid
-    }
-    
-    public class AsteroidFacade : MonoBehaviour, IPoolable<float, AsteroidSizes, IMemoryPool>
+    public class AsteroidFacade : MonoBehaviour, IPoolable<AsteroidFacade.AsteroidSizes, IMemoryPool>
     {
         private GameLevelHandler _gameLevelHandler;
         private ScoreHandler _scoreHandler;
@@ -24,8 +19,6 @@ namespace Asteroid
         private Difficulty.Settings _difficultySettings;
         private GameState _gameState;
 
-        private AsteroidSizes _type;
-        private float _speed;
         private IMemoryPool _pool;
 
         private int _gameDifficulty;
@@ -39,6 +32,9 @@ namespace Asteroid
         private float _minSpeed;
         private float _maxRotSpeed;
         private float _minRotSpeed;
+
+        private float _asteroidSpeed;
+        private float _asteroidRotSpeed;
         
         [Inject]
         public void Construct(
@@ -67,31 +63,34 @@ namespace Asteroid
 
             _maxSpeed = _difficultySettings.difficulties[_gameDifficulty].astMaxSpeed;
             _minSpeed = _difficultySettings.difficulties[_gameDifficulty].astMinSpeed;
+
             
             _maxRotSpeed = _asteroidData.maxRotSpeed;
             _minRotSpeed = _asteroidData.minRotSpeed;
             
+            _asteroidRotSpeed = Random.Range(_minRotSpeed, _maxRotSpeed);
+            _asteroidSpeed = Random.Range(_minSpeed, _maxSpeed);
+
             _randomRotation = new Vector3(Random.value/10, Random.value/10, Random.value/10);
             _randomDirection = new Vector3(Random.Range(-5, 5), 1, Random.Range(-5, 5));
         }
 
         private void Update()
         {
-            var asteroidTransform = transform;
-            asteroidTransform.Rotate(_randomRotation * (Time.deltaTime * Random.Range(_minRotSpeed, _maxRotSpeed)));
+            Rotation = _randomRotation * (Time.deltaTime * _asteroidRotSpeed);
              
-             var position = asteroidTransform.position;
-             position += _randomDirection * (Time.deltaTime * Random.Range(_minSpeed, _maxSpeed));
+             var position = transform.position;
+             position += _randomDirection * (Time.deltaTime * _asteroidSpeed);
              Position = position;
         }
         
         private void OnTriggerEnter(Collider other)
         {
-            if (_type == AsteroidSizes.SmallAsteroid)
+            if (Size == AsteroidSizes.SmallAsteroid)
             {
                 _scoreHandler.UpdateScore(ScoreTypes.SmallAsteroid);
             }
-            else if (_type == AsteroidSizes.MediumAsteroid)
+            else if (Size == AsteroidSizes.MediumAsteroid)
             {
                 for (int i = 0; i < _smallPerMedium; i++)  
                 {
@@ -100,7 +99,7 @@ namespace Asteroid
                 
                 _scoreHandler.UpdateScore(ScoreTypes.MediumAsteroid);
             }
-            else if (_type == AsteroidSizes.LargeAsteroid)
+            else if (Size == AsteroidSizes.LargeAsteroid)
             {
                 for (int i = 0; i < _mediumPerLarge; i++)  
                 {
@@ -113,7 +112,6 @@ namespace Asteroid
             }
             
             _pool.Despawn(this);
-            
         }
 
         public Vector3 Position
@@ -122,10 +120,16 @@ namespace Asteroid
             set => transform.position = _boundHandler.EnforceBounds(value);
         }
 
-        public void OnSpawned(float speed, AsteroidSizes type, IMemoryPool pool)
+        public Vector3 Scale
         {
-            _speed = speed;
-            _type = type;
+            set => transform.localScale = value;
+        }
+
+        public AsteroidSizes Size { get; set; }
+
+        public void OnSpawned(AsteroidSizes type, IMemoryPool pool)
+        {
+            Size = type;
             _pool = pool;
         }
         
@@ -134,8 +138,20 @@ namespace Asteroid
             _pool = null;
         }
 
-        public class Factory : PlaceholderFactory<float, AsteroidSizes, AsteroidFacade>
+        public class Factory : PlaceholderFactory<AsteroidSizes, AsteroidFacade>
         {
+        }
+        
+        public enum AsteroidSizes
+        {
+            SmallAsteroid,
+            MediumAsteroid,
+            LargeAsteroid
+        }
+        
+        private Vector3 Rotation
+        {
+            set => transform.Rotate(value);
         }
     }
 }

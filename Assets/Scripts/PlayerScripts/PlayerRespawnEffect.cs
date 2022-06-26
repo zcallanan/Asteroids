@@ -51,7 +51,8 @@ namespace PlayerScripts
         
         private void TogglePlayerTransparency()
         {
-            _player.MeshRenderer.material = _player.MeshRenderer.material == _settings.defaultMat
+            Debug.Log(_player.MeshRenderer.material);
+            _player.MeshRenderer.material = _player.MeshRenderer.material.name == _settings.defaultMat.name
                 ? _settings.transparentMat
                 : _settings.defaultMat;
             _whenLastToggleOccurred = Time.realtimeSinceStartup;
