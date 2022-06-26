@@ -9,7 +9,7 @@ using Vector3 = UnityEngine.Vector3;
 
 namespace AsteroidScripts
 {
-    public class AsteroidFacade : MonoBehaviour, IPoolable<AsteroidFacade.AsteroidSizes, IMemoryPool>
+    public class AsteroidFacade : MonoBehaviour, IPoolable<int, AsteroidFacade.AsteroidSizes, IMemoryPool>
     {
         private GameLevelHandler _gameLevelHandler;
         private ScoreHandler _scoreHandler;
@@ -35,7 +35,7 @@ namespace AsteroidScripts
 
         private float _asteroidSpeed;
         private float _asteroidRotSpeed;
-        
+
         [Inject]
         public void Construct(
             GameLevelHandler gameLevelHandler,
@@ -64,26 +64,26 @@ namespace AsteroidScripts
             _maxSpeed = _difficultySettings.difficulties[_gameDifficulty].astMaxSpeed;
             _minSpeed = _difficultySettings.difficulties[_gameDifficulty].astMinSpeed;
 
-            
+
             _maxRotSpeed = _asteroidData.maxRotSpeed;
             _minRotSpeed = _asteroidData.minRotSpeed;
-            
+
             _asteroidRotSpeed = Random.Range(_minRotSpeed, _maxRotSpeed);
             _asteroidSpeed = Random.Range(_minSpeed, _maxSpeed);
 
-            _randomRotation = new Vector3(Random.value/10, Random.value/10, Random.value/10);
+            _randomRotation = new Vector3(Random.value / 10, Random.value / 10, Random.value / 10);
             _randomDirection = new Vector3(Random.Range(-5, 5), 1, Random.Range(-5, 5));
         }
 
         private void Update()
         {
             Rotation = _randomRotation * (Time.deltaTime * _asteroidRotSpeed);
-             
-             var position = transform.position;
-             position += _randomDirection * (Time.deltaTime * _asteroidSpeed);
-             Position = position;
+
+            var position = transform.position;
+            position += _randomDirection * (Time.deltaTime * _asteroidSpeed);
+            Position = position;
         }
-        
+
         private void OnTriggerEnter(Collider other)
         {
             if (Size == AsteroidSizes.SmallAsteroid)
@@ -92,25 +92,25 @@ namespace AsteroidScripts
             }
             else if (Size == AsteroidSizes.MediumAsteroid)
             {
-                for (int i = 0; i < _smallPerMedium; i++)  
+                for (int i = 0; i < _smallPerMedium; i++)
                 {
-                    _asteroidSpawner.SpawnAsteroid(AsteroidSizes.SmallAsteroid, transform.position);
+                    _asteroidSpawner.SpawnAsteroid(RenderValue, AsteroidSizes.SmallAsteroid, transform.position);
                 }
-                
+
                 _scoreHandler.UpdateScore(ScoreTypes.MediumAsteroid);
             }
             else if (Size == AsteroidSizes.LargeAsteroid)
             {
-                for (int i = 0; i < _mediumPerLarge; i++)  
+                for (int i = 0; i < _mediumPerLarge; i++)
                 {
-                    _asteroidSpawner.SpawnAsteroid(AsteroidSizes.MediumAsteroid, transform.position);
+                    _asteroidSpawner.SpawnAsteroid(RenderValue, AsteroidSizes.MediumAsteroid, transform.position);
                 }
-                
+
                 _scoreHandler.UpdateScore(ScoreTypes.LargeAsteroid);
-                
+
                 _gameLevelHandler.RegisterSmallDeathToDetermineNextLevel();
             }
-            
+
             _pool.Despawn(this);
         }
 
@@ -125,10 +125,23 @@ namespace AsteroidScripts
             set => transform.localScale = value;
         }
 
+        public int RenderValue { get; set; }
+
+        public Material MeshRendererMaterial
+        {
+            set => GetComponent<MeshRenderer>().material = value;
+        }
+
+        public Mesh MeshFilterMesh
+        {
+            set => GetComponent<MeshFilter>().mesh = value;
+        }
+
         public AsteroidSizes Size { get; set; }
 
-        public void OnSpawned(AsteroidSizes type, IMemoryPool pool)
+        public void OnSpawned(int renderValue, AsteroidSizes type, IMemoryPool pool)
         {
+            RenderValue = renderValue;
             Size = type;
             _pool = pool;
         }
@@ -138,7 +151,7 @@ namespace AsteroidScripts
             _pool = null;
         }
 
-        public class Factory : PlaceholderFactory<AsteroidSizes, AsteroidFacade>
+        public class Factory : PlaceholderFactory<int, AsteroidSizes, AsteroidFacade>
         {
         }
         

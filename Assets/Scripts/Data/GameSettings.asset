@@ -16,6 +16,16 @@ MonoBehaviour:
     largeScale: 47
     mediumScale: 36
     smallScale: 25
+    meshRendererMaterials:
+    - {fileID: 2100000, guid: 4a81d6c5819c847a6a46c6ecfe84c60a, type: 2}
+    - {fileID: 2100000, guid: 443d49db2da184f60b9a1ca1ddca60f8, type: 2}
+    - {fileID: 2100000, guid: d89e3e2cf10054b0ab7bac50c51f0e77, type: 2}
+    - {fileID: 2100000, guid: f7244c98095f64982b9ac3654f88d268, type: 2}
+    meshFilterMesh:
+    - {fileID: 4300000, guid: a46c36ec5cfaf40a5ab1ac90231bbaab, type: 3}
+    - {fileID: 4300000, guid: 5b3fffef11ac2450c9a33d4371fbbe64, type: 3}
+    - {fileID: 4300000, guid: 2111b6ad5e475457587cca11988811e9, type: 3}
+    - {fileID: 4300000, guid: de0ade0b8b7154794bb1dbc5193ef21e, type: 3}
   gameInstaller:
     asteroidPrefab: {fileID: 2942051580892192243, guid: d57d6419728ca4fa486055a9b54eb326, type: 3}
     bulletProjectilePrefab: {fileID: 9033534424328100445, guid: 5d46797b9a6dc420fbf9761f62531082, type: 3}

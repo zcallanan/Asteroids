@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Installers;
 using Misc;
 using UniRx;
@@ -42,7 +43,6 @@ namespace AsteroidScripts
         
         public void Initialize()
         {
-            Debug.Log("test?");
             _gameDifficulty = _gameState.GameDifficulty;
             _initLargeAsteroids = _difficultySettings.difficulties[_gameDifficulty].initLargeAsteroids;
             
@@ -65,16 +65,17 @@ namespace AsteroidScripts
                 Debug.Log($"The level is: {level}");
                 for (int i = 0; i < _initLargeAsteroids; i++)
                 {
-                    SpawnAsteroid(AsteroidFacade.AsteroidSizes.LargeAsteroid, Vector3.zero);
+                    var n = Random.Range(0, 4);
+                    SpawnAsteroid(n, AsteroidFacade.AsteroidSizes.LargeAsteroid, Vector3.zero);
                 }
             }).AddTo(_disposables);
         }
         
-        public void SpawnAsteroid(AsteroidFacade.AsteroidSizes asteroidSize, Vector3 largerAsteroidPosition)
+        public void SpawnAsteroid(int renderValue, AsteroidFacade.AsteroidSizes asteroidSize, Vector3 largerAsteroidPosition)
         {
 
-            var asteroidFacade = _asteroidFactory.Create(asteroidSize);
-            
+            AsteroidFacade asteroidFacade = _asteroidFactory.Create(renderValue, asteroidSize);
+
             Vector3 tempPosition;
             
             if (asteroidSize == AsteroidFacade.AsteroidSizes.SmallAsteroid || asteroidSize == AsteroidFacade.AsteroidSizes.MediumAsteroid)
@@ -87,10 +88,18 @@ namespace AsteroidScripts
             }
             
             asteroidFacade.Position = tempPosition;
-            
+            asteroidFacade.name = $"{asteroidFacade.Size} {asteroidFacade.RenderValue}";
+
+            RenderAsteroid(asteroidFacade);
             ScaleAsteroid(asteroidFacade);
         }
-        
+
+        private void RenderAsteroid(AsteroidFacade asteroidFacade)
+        {
+            asteroidFacade.MeshFilterMesh = _settings.meshFilterMesh[asteroidFacade.RenderValue];
+            asteroidFacade.MeshRendererMaterial = _settings.meshRendererMaterials[asteroidFacade.RenderValue];
+        }
+
         private void ScaleAsteroid(AsteroidFacade asteroidFacade)
         {
             if (asteroidFacade.Size == AsteroidFacade.AsteroidSizes.SmallAsteroid)
@@ -133,6 +142,8 @@ namespace AsteroidScripts
             public float largeScale;
             public float mediumScale;
             public float smallScale;
+            public List<Material> meshRendererMaterials = new List<Material>();
+            public List<Mesh> meshFilterMesh = new List<Mesh>();
         }
     }
 }
