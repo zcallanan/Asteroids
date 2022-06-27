@@ -1,7 +1,5 @@
-using System;
 using UniRx;
 using UnityEngine;
-using Zenject;
 
 namespace PlayerScripts
 {
@@ -10,13 +8,15 @@ namespace PlayerScripts
         private readonly MeshFilter _meshFilter;
         private readonly Rigidbody _rigidBody;
         private readonly Transform _transform;
+        private readonly PlayerFacade _playerFacade;
         
         public Player(
             MeshRenderer meshRenderer,
             MeshFilter meshFilter,
             MeshCollider meshCollider,
             Rigidbody rigidBody,
-            Transform transform
+            Transform transform,
+            PlayerFacade playerFacade
             )
         {
             MeshRenderer = meshRenderer;
@@ -24,6 +24,7 @@ namespace PlayerScripts
             MeshCollider = meshCollider;
             _rigidBody = rigidBody;
             _transform = transform;
+            _playerFacade = playerFacade;
         }
         public MeshCollider MeshCollider { get; }
 
@@ -49,7 +50,7 @@ namespace PlayerScripts
         {
             set => _transform.Rotate(value, Space.Self);
         }
-
+        
         public float AdjustedSpeed { get; set; }
 
         public ReactiveProperty<int> CurrentLives { get; set; }
@@ -57,5 +58,7 @@ namespace PlayerScripts
         public bool IsDead { get; set; }
         
         public ReactiveProperty<bool> JustRespawned { get; set; }
+
+        public GameObject GameObj => _playerFacade.GameObj;
     }
 }

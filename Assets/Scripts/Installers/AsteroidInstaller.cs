@@ -10,6 +10,7 @@ namespace Installers
         public override void InstallBindings()
         {
             Container.BindInterfacesAndSelfTo<AsteroidExplosionHandler>().AsSingle();
+            Container.BindInterfacesAndSelfTo<AsteroidCollisionHandler>().AsSingle();
         }
     }
 }

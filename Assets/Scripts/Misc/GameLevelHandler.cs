@@ -38,26 +38,36 @@ namespace Misc
             _gameDifficulty = _gameState.GameDifficulty;
             _initLargeAsteroids = _difficultySettings.difficulties[_gameDifficulty].initLargeAsteroids;
             _smallPerMedium = _difficultySettings.difficulties[_gameDifficulty].smallPerMedium;
+
+            DetermineTotalSmallAsteroids();
         }
 
         public void Tick()
         {
+            Debug.Log($"count: {_countSmallAsteroidsDestroyedInLevel}, total: {_totalExpectedSmallAsteroidsInLevel}");
+
             if (_isReadyToStartNewLevel &&
                 Time.realtimeSinceStartup - _whenLastSmallAsteroidWasKilled >= _settings.levelStartDelay)
             {
                 _gameState.CurrentLevel.Value++;
                 _countSmallAsteroidsDestroyedInLevel = 0;
 
-                _totalExpectedSmallAsteroidsInLevel =
-                    (_initLargeAsteroids + _gameState.CurrentLevel.Value) * (_smallPerMedium + _smallPerMedium);
+                DetermineTotalSmallAsteroids();
                 
                 _isReadyToStartNewLevel = false;
             }
+        }
+
+        private void DetermineTotalSmallAsteroids()
+        {
+            _totalExpectedSmallAsteroidsInLevel =
+                (_initLargeAsteroids + _gameState.CurrentLevel.Value) * (_smallPerMedium + _smallPerMedium);
         }
         
         public void RegisterSmallDeathToDetermineNextLevel()
         {
             _countSmallAsteroidsDestroyedInLevel++;
+            Debug.Log(_totalExpectedSmallAsteroidsInLevel);
 
             if (_countSmallAsteroidsDestroyedInLevel == _totalExpectedSmallAsteroidsInLevel)
             {

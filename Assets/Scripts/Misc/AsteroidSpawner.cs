@@ -61,8 +61,7 @@ namespace Misc
 
             _gameState.CurrentLevel.Subscribe(level =>
             {
-                Debug.Log($"The level is: {level}");
-                for (int i = 0; i < _initLargeAsteroids; i++)
+                for (int i = 0; i < _initLargeAsteroids + _gameState.CurrentLevel.Value; i++)
                 {
                     var renderValue = Random.Range(0, 4);
                     SpawnAsteroid(renderValue, AsteroidFacade.AsteroidSizes.LargeAsteroid, Vector3.zero);

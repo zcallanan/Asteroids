@@ -1,7 +1,6 @@
-using System;
-using System.Numerics;
-using Installers;
 using Misc;
+using UniRx;
+using UniRx.Triggers;
 using UnityEngine;
 using Zenject;
 using Random = UnityEngine.Random;
@@ -11,19 +10,15 @@ namespace AsteroidScripts
 {
     public class AsteroidFacade : MonoBehaviour, IPoolable<int, AsteroidFacade.AsteroidSizes, IMemoryPool>
     {
-        private GameLevelHandler _gameLevelHandler;
-        private ScoreHandler _scoreHandler;
         private BoundHandler _boundHandler;
-        private AsteroidSpawner _asteroidSpawner;
         private AsteroidData.Settings _asteroidData;
         private Difficulty.Settings _difficultySettings;
         private GameState _gameState;
+        private AsteroidCollisionHandler _asteroidCollisionHandler;
 
         private IMemoryPool _pool;
 
         private int _gameDifficulty;
-        private int _mediumPerLarge;
-        private int _smallPerMedium;
 
         private Vector3 _randomDirection;
         private Vector3 _randomRotation;
@@ -38,32 +33,25 @@ namespace AsteroidScripts
 
         [Inject]
         public void Construct(
-            GameLevelHandler gameLevelHandler,
-            ScoreHandler scoreHandler,
             BoundHandler boundHandler,
             AsteroidData.Settings asteroidData,
-            AsteroidSpawner asteroidSpawner,
             Difficulty.Settings difficultySettings,
-            GameState gameState)
+            GameState gameState,
+            AsteroidCollisionHandler asteroidCollisionHandler)
         {
-            _gameLevelHandler = gameLevelHandler;
-            _scoreHandler = scoreHandler;
             _boundHandler = boundHandler;
             _asteroidData = asteroidData;
-            _asteroidSpawner = asteroidSpawner;
             _difficultySettings = difficultySettings;
             _gameState = gameState;
+            _asteroidCollisionHandler = asteroidCollisionHandler;
         }
 
         private void Start()
         {
             _gameDifficulty = _gameState.GameDifficulty;
-            _mediumPerLarge = _difficultySettings.difficulties[_gameDifficulty].mediumPerLarge;
-            _smallPerMedium = _difficultySettings.difficulties[_gameDifficulty].smallPerMedium;
 
             _maxSpeed = _difficultySettings.difficulties[_gameDifficulty].astMaxSpeed;
             _minSpeed = _difficultySettings.difficulties[_gameDifficulty].astMinSpeed;
-
 
             _maxRotSpeed = _asteroidData.maxRotSpeed;
             _minRotSpeed = _asteroidData.minRotSpeed;
@@ -73,10 +61,19 @@ namespace AsteroidScripts
 
             _randomRotation = new Vector3(Random.value / 10, Random.value / 10, Random.value / 10);
             _randomDirection = new Vector3(Random.Range(-5, 5), 1, Random.Range(-5, 5));
+            
+            if (gameObject.GetComponent<ObservableTriggerTrigger>() == null) {
+                gameObject
+                    .AddComponent<ObservableTriggerTrigger>()
+                    .UpdateAsObservable()
+                    .SampleFrame(60)
+                    .Subscribe(_ => Debug.Log($"Observable added"));
+            }
         }
 
         private void Update()
         {
+            // TODO: Fix the rate
             Rotation = _randomRotation * (Time.deltaTime * _asteroidRotSpeed);
 
             var position = transform.position;
@@ -86,34 +83,9 @@ namespace AsteroidScripts
 
         private void OnTriggerEnter(Collider other)
         {
-            if (Size == AsteroidSizes.SmallAsteroid)
-            {
-                _scoreHandler.UpdateScore(ScoreTypes.SmallAsteroid);
-            }
-            else if (Size == AsteroidSizes.MediumAsteroid)
-            {
-                for (int i = 0; i < _smallPerMedium; i++)
-                {
-                    _asteroidSpawner.SpawnAsteroid(RenderValue, AsteroidSizes.SmallAsteroid, transform.position);
-                }
-
-                _scoreHandler.UpdateScore(ScoreTypes.MediumAsteroid);
-            }
-            else if (Size == AsteroidSizes.LargeAsteroid)
-            {
-                for (int i = 0; i < _mediumPerLarge; i++)
-                {
-                    _asteroidSpawner.SpawnAsteroid(RenderValue, AsteroidSizes.MediumAsteroid, transform.position);
-                }
-
-                _scoreHandler.UpdateScore(ScoreTypes.LargeAsteroid);
-
-                _gameLevelHandler.RegisterSmallDeathToDetermineNextLevel();
-            }
-
             _pool.Despawn(this);
         }
-
+        
         public Vector3 Position
         {
             get => transform.position;
@@ -125,7 +97,7 @@ namespace AsteroidScripts
             set => transform.localScale = value;
         }
 
-        public int RenderValue { get; set; }
+        public int RenderValue { get; private set; }
 
         public Material MeshRendererMaterial
         {
@@ -137,7 +109,7 @@ namespace AsteroidScripts
             set => GetComponent<MeshFilter>().mesh = value;
         }
 
-        public AsteroidSizes Size { get; set; }
+        public AsteroidSizes Size { get; private set; }
 
         public void OnSpawned(int renderValue, AsteroidSizes type, IMemoryPool pool)
         {

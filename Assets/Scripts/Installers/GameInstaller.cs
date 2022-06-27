@@ -18,15 +18,19 @@ namespace Installers
         public override void InstallBindings()
         {
             Container.BindInterfacesAndSelfTo<AsteroidSpawner>().AsSingle();
-            Container.Bind<GameLevelHandler>().AsSingle();
+            Container.BindInterfacesAndSelfTo<GameLevelHandler>().AsSingle();
+            
             Container.Bind<BoundHandler>().FromComponentInHierarchy().AsCached();
             Container.Bind<GameState>().FromComponentInHierarchy().AsCached();
             
             Container.Bind<ScoreHandler>().AsSingle();
+            // Container.BindInterfacesAndSelfTo<ExplosionHandler>().AsSingle();
             
             Container.Bind<ScoreUI>().FromComponentInHierarchy().AsCached();
             Container.Bind<LivesUI>().FromComponentInHierarchy().AsCached();
-
+            
+            Container.Bind<ExplosionHandler>().FromComponentInHierarchy().AsCached();
+            
             Container
                 .BindFactory<float, float, BulletProjectileTypes, BulletProjectile, BulletProjectile.Factory>()
                 .FromPoolableMemoryPool<float, float, BulletProjectileTypes, BulletProjectile, BulletProjectilePool>(x => x
@@ -43,7 +47,6 @@ namespace Installers
                     .FromSubContainerResolve()
                     .ByNewPrefabInstaller<AsteroidInstaller>(_settings.asteroidPrefab)
                     .UnderTransformGroup("Asteroids"));
-            
             
             
             // Container
