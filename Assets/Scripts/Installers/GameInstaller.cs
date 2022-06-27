@@ -1,7 +1,10 @@
 using System;
 using AsteroidScripts;
 using Misc;
+using PlayerScripts;
 using Ufo;
+using UI;
+using UniRx;
 using UnityEngine;
 using Zenject;
 
@@ -21,6 +24,9 @@ namespace Installers
             
             Container.Bind<ScoreHandler>().AsSingle();
             
+            Container.Bind<ScoreUI>().FromComponentInHierarchy().AsCached();
+            Container.Bind<LivesUI>().FromComponentInHierarchy().AsCached();
+
             Container
                 .BindFactory<float, float, BulletProjectileTypes, BulletProjectile, BulletProjectile.Factory>()
                 .FromPoolableMemoryPool<float, float, BulletProjectileTypes, BulletProjectile, BulletProjectilePool>(x => x

@@ -1,5 +1,6 @@
 using System;
 using PlayerScripts;
+using UI;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Zenject;
@@ -13,7 +14,7 @@ namespace Installers
 
         public override void InstallBindings()
         {
-            Container.Bind<Player>().AsSingle()
+            Container.BindInterfacesAndSelfTo<Player>().AsSingle()
                 .WithArguments(
                     settings.meshRenderer,
                     settings.meshFilter,

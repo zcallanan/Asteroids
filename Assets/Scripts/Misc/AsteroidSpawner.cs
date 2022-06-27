@@ -1,13 +1,12 @@
 using System;
 using System.Collections.Generic;
-using Installers;
-using Misc;
+using AsteroidScripts;
 using UniRx;
 using UnityEngine;
 using Zenject;
 using Random = UnityEngine.Random;
 
-namespace AsteroidScripts
+namespace Misc
 {
     public class AsteroidSpawner : IInitializable
     {
@@ -65,15 +64,14 @@ namespace AsteroidScripts
                 Debug.Log($"The level is: {level}");
                 for (int i = 0; i < _initLargeAsteroids; i++)
                 {
-                    var n = Random.Range(0, 4);
-                    SpawnAsteroid(n, AsteroidFacade.AsteroidSizes.LargeAsteroid, Vector3.zero);
+                    var renderValue = Random.Range(0, 4);
+                    SpawnAsteroid(renderValue, AsteroidFacade.AsteroidSizes.LargeAsteroid, Vector3.zero);
                 }
             }).AddTo(_disposables);
         }
         
         public void SpawnAsteroid(int renderValue, AsteroidFacade.AsteroidSizes asteroidSize, Vector3 largerAsteroidPosition)
         {
-
             AsteroidFacade asteroidFacade = _asteroidFactory.Create(renderValue, asteroidSize);
 
             Vector3 tempPosition;

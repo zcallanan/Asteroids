@@ -10,24 +10,24 @@ namespace UI
     public class LivesUI : MonoBehaviour
     {
         [SerializeField] private Sprite[] lifeCountSprite;
-        
-        private Player _player;
+
+        private PlayerFacade _playerFacade;
 
         private Image _imageComponent;
         
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
         
         [Inject]
-        public void Construct(Player player)
+        public void Construct(PlayerFacade playerFacade)
         {
-            _player = player;
+            _playerFacade = playerFacade;
         }
 
         void Start()
         {
             // GameManager.sharedInstance.IsGameOver.Subscribe(HandleGameOver).AddTo(_disposables);
             
-            _player.CurrentLives
+            _playerFacade.CurrentLives
                 .Throttle(TimeSpan.FromSeconds(.5))
                 .Subscribe(ChangeNumberOfLivesSprite)
                 .AddTo(_disposables);

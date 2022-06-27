@@ -9,7 +9,16 @@ namespace PlayerScripts
     {
         private Player _player;
         private PlayerInputState _playerInputState;
-    
+        
+        public MeshCollider MeshCollider => _player.MeshCollider;
+        public MeshRenderer MeshRenderer => _player.MeshRenderer;
+
+        public Vector3 Facing => _player.Facing;
+
+        public Vector3 Position => _player.Position;
+
+        public ReactiveProperty<int> CurrentLives { get; set; }
+
         [Inject]
         public void Construct(Player player, PlayerInputState playerInputState)
         {
@@ -21,16 +30,13 @@ namespace PlayerScripts
         {
             _playerInputState.IsHyperspaceActive = new ReactiveProperty<bool>(false);
             _playerInputState.IsFiring = new ReactiveProperty<bool>(false);
+            CurrentLives = new ReactiveProperty<int>(0);
         }
 
-        public MeshCollider MeshCollider => _player.MeshCollider;
-        public MeshRenderer MeshRenderer => _player.MeshRenderer;
-
-        public Vector3 Facing => _player.Facing;
-
-        public Vector3 Position => _player.Position;
-
-        public int CurrentLives => _player.CurrentLives.Value;
+        private void Start()
+        {
+            _player.CurrentLives.Subscribe(lives => CurrentLives.Value = lives);
+        }
     }
     
     

@@ -210,6 +210,7 @@ GameObject:
   - component: {fileID: 205219979}
   - component: {fileID: 205219981}
   - component: {fileID: 205219980}
+  - component: {fileID: 205219982}
   m_Layer: 5
   m_Name: ScoreText
   m_TagString: Untagged
@@ -278,6 +279,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 205219978}
   m_CullTransparentMesh: 1
+--- !u!114 &205219982
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 205219978}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb04a86748c6b4068882be69adb74de8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scoreText: {fileID: 205219980}
 --- !u!1 &357638468
 GameObject:
   m_ObjectHideFlags: 0
@@ -836,6 +850,10 @@ PrefabInstance:
       propertyPath: _components.Array.data[1]
       value: 
       objectReference: {fileID: 1253213783}
+    - target: {fileID: 868114068, guid: 06b1719f3e8a809468cb747aac74807f, type: 3}
+      propertyPath: _components.Array.data[2]
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 8561082489666402784, guid: 06b1719f3e8a809468cb747aac74807f, type: 3}
       propertyPath: m_RootOrder
       value: 9
@@ -1059,6 +1077,7 @@ GameObject:
   - component: {fileID: 1274967456}
   - component: {fileID: 1274967458}
   - component: {fileID: 1274967457}
+  - component: {fileID: 1274967459}
   m_Layer: 5
   m_Name: LivesImage
   m_TagString: Untagged
@@ -1123,6 +1142,30 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1274967455}
   m_CullTransparentMesh: 1
+--- !u!114 &1274967459
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1274967455}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 276217aab447243f8b2334fe9e2fb24c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lifeCountSprite:
+  - {fileID: 21300000, guid: 23ca220c983944b7a8a9cf40b3a9860d, type: 3}
+  - {fileID: 21300000, guid: 8d54bcdaad85740a0a90d2f18525c170, type: 3}
+  - {fileID: 21300000, guid: 796475e0d99794e32b5c9f5f83c7235c, type: 3}
+  - {fileID: 21300000, guid: 178b4fa992721413b9be44b95514ef96, type: 3}
+  - {fileID: 21300000, guid: ce3b039174fc6436996612972012e648, type: 3}
+  - {fileID: 21300000, guid: d0aacde70d7d944b8ae22f92639be15a, type: 3}
+  - {fileID: 21300000, guid: 6d35d6ecaaec54ceab1d407c618daa00, type: 3}
+  - {fileID: 21300000, guid: d7f9c5223a164401b9123bdbd3771509, type: 3}
+  - {fileID: 21300000, guid: fe2b631f862f24ae0b11651218095308, type: 3}
+  - {fileID: 21300000, guid: 24493e65bcc1d430b9dd1106b6883758, type: 3}
+  - {fileID: 21300000, guid: 449d883d843154c0bb7750e601c5b5f2, type: 3}
 --- !u!1 &1276899301
 GameObject:
   m_ObjectHideFlags: 0
