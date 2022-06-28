@@ -1,12 +1,10 @@
 using System;
-using Installers;
 using UniRx;
-using UnityEngine;
 using Zenject;
 
 namespace Misc
 {
-    public class GameLevelHandler : IInitializable, ITickable
+    public class GameLevelHandler : IInitializable
     {
 
         private readonly GameState _gameState;
@@ -21,7 +19,8 @@ namespace Misc
         private int _totalExpectedSmallAsteroidsInLevel;
 
         private bool _isReadyToStartNewLevel;
-        private float _whenLastSmallAsteroidWasKilled;
+        
+        private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
         public GameLevelHandler(
             Settings settings,
@@ -39,26 +38,10 @@ namespace Misc
             _initLargeAsteroids = _difficultySettings.difficulties[_gameDifficulty].initLargeAsteroids;
             _smallPerMedium = _difficultySettings.difficulties[_gameDifficulty].smallPerMedium;
 
-            DetermineTotalSmallAsteroids();
+            DetermineTotalSmallAsteroidsInThisLevel();
         }
 
-        public void Tick()
-        {
-            Debug.Log($"count: {_countSmallAsteroidsDestroyedInLevel}, total: {_totalExpectedSmallAsteroidsInLevel}");
-
-            if (_isReadyToStartNewLevel &&
-                Time.realtimeSinceStartup - _whenLastSmallAsteroidWasKilled >= _settings.levelStartDelay)
-            {
-                _gameState.CurrentLevel.Value++;
-                _countSmallAsteroidsDestroyedInLevel = 0;
-
-                DetermineTotalSmallAsteroids();
-                
-                _isReadyToStartNewLevel = false;
-            }
-        }
-
-        private void DetermineTotalSmallAsteroids()
+        private void DetermineTotalSmallAsteroidsInThisLevel()
         {
             _totalExpectedSmallAsteroidsInLevel =
                 (_initLargeAsteroids + _gameState.CurrentLevel.Value) * (_smallPerMedium + _smallPerMedium);
@@ -67,13 +50,26 @@ namespace Misc
         public void RegisterSmallDeathToDetermineNextLevel()
         {
             _countSmallAsteroidsDestroyedInLevel++;
-            Debug.Log(_totalExpectedSmallAsteroidsInLevel);
 
             if (_countSmallAsteroidsDestroyedInLevel == _totalExpectedSmallAsteroidsInLevel)
             {
-                _whenLastSmallAsteroidWasKilled = Time.realtimeSinceStartup;
-                
                 _isReadyToStartNewLevel = true;
+
+                Observable
+                    .Timer(TimeSpan.FromSeconds(_settings.levelStartDelay))
+                    .Subscribe(_ => 
+                    { 
+                        if (_isReadyToStartNewLevel)
+                        {
+                            _gameState.CurrentLevel.Value++;
+                            _countSmallAsteroidsDestroyedInLevel = 0;
+
+                            DetermineTotalSmallAsteroidsInThisLevel();
+
+                            _isReadyToStartNewLevel = false;
+                        } 
+                    })
+                    .AddTo(_disposables);
             }
         }
 

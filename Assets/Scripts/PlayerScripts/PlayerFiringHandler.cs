@@ -13,7 +13,7 @@ namespace PlayerScripts
         private readonly PlayerInputState _playerInputState;
         private readonly Settings _settings;
 
-        private float _lastFireTime;
+        private bool _firingDisabled;
         
         // TODO: clear on game over
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
@@ -34,10 +34,15 @@ namespace PlayerScripts
         {
             _playerInputState.IsFiring.Subscribe(hasFired =>
             {
-                if (!_player.IsDead && hasFired && Time.realtimeSinceStartup - _lastFireTime >= _settings.fireCooldown)
+                if (hasFired && !_player.IsDead && !_firingDisabled)
                 {
-                    _lastFireTime = Time.realtimeSinceStartup;
                     Fire();
+                    _firingDisabled = true;
+
+                    Observable
+                        .Timer(TimeSpan.FromSeconds(_settings.fireCooldown))
+                        .Subscribe(_ => _firingDisabled = false)
+                        .AddTo(_disposables);
                 }
             }).AddTo(_disposables);
         }

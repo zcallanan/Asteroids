@@ -1,5 +1,4 @@
 using System;
-using Installers;
 using Misc;
 using UniRx;
 using UnityEngine;
@@ -13,10 +12,10 @@ namespace PlayerScripts
         private PlayerData.Settings _playerData;
         private GameState _gameState;
         
-        private float _lastDeathTime;
-        
         private int _previousScore;
         private int _getALifeEveryTenK = 10000;
+        
+        private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
         [Inject]
         public void Construct(
@@ -50,33 +49,28 @@ namespace PlayerScripts
             });
         }
 
-        private void Update()
-        {
-            CheckIfPlayerShouldRespawn();
-        }
-        
         private void OnTriggerEnter(Collider other)
         {
             _player.CurrentLives.Value--;
-            
-            _lastDeathTime = Time.realtimeSinceStartup;
-        }
-        
-        private void CheckIfPlayerShouldRespawn()
-        {
-            if (_player.IsDead && _player.CurrentLives.Value >= 0 &&
-                Time.realtimeSinceStartup - _lastDeathTime >= _playerData.respawnDelay)
-            {
-                _player.MeshRenderer.enabled = true;
-                _player.MeshCollider.enabled = false;
+
+            Observable
+                .Timer(TimeSpan.FromSeconds(_playerData.respawnDelay))
+                .Subscribe(_ =>
+                {
+                    if (_player.IsDead && _player.CurrentLives.Value >= 0)
+                    {
+                        _player.MeshRenderer.enabled = true;
+                        _player.MeshCollider.enabled = false;
                 
-                _player.Facing = Vector3.zero;
-                _player.Position = new Vector3(0,1,0);
-                _player.Rotation = Vector3.up;
+                        _player.Facing = Vector3.zero;
+                        _player.Position = new Vector3(0,1,0);
+                        _player.Rotation = Vector3.up;
                 
-                _player.JustRespawned.Value = true;
-                _player.IsDead = false;
-            }
+                        _player.JustRespawned.Value = true;
+                        _player.IsDead = false;
+                    }
+                })
+                .AddTo(_disposables);
         }
     }
 }

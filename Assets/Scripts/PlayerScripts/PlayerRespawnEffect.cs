@@ -5,15 +5,13 @@ using Zenject;
 
 namespace PlayerScripts
 {
-    public class PlayerRespawnEffect : IInitializable, ITickable
+    public class PlayerRespawnEffect : IInitializable
     {
         private readonly Player _player;
         private readonly Settings _settings;
         
         private bool _isTogglingTransparency;
-        private float _whenRespawnEffectStarted;
-        private float _whenLastToggleOccurred;
-        
+
         // TODO: clear on game over
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
@@ -33,36 +31,41 @@ namespace PlayerScripts
                 }
             }).AddTo(_disposables);
         }
-        
-        public void Tick()
-        {
-            if (_isTogglingTransparency &&
-                Time.realtimeSinceStartup - _whenLastToggleOccurred >= _settings.toggleEffectDuration)
-            {
-                TogglePlayerTransparency();
-            }
 
-            if (_player.JustRespawned.Value && Time.realtimeSinceStartup - _whenRespawnEffectStarted >=
-                _settings.totalRespawnEffectDuration)
-            {
-                CleanupRespawnEffect();
-            }
-        }
-        
         private void TogglePlayerTransparency()
         {
             _player.MeshRenderer.material = _player.MeshRenderer.material.name == $"{_settings.defaultMat.name} (Instance)"
                 ? _settings.transparentMat
                 : _settings.defaultMat;
-            _whenLastToggleOccurred = Time.realtimeSinceStartup;
+            
+            Observable
+                .Timer(TimeSpan.FromSeconds(_settings.toggleEffectDuration))
+                .Subscribe(_ =>
+                {
+                    if (_isTogglingTransparency)
+                    {
+                        TogglePlayerTransparency();
+                    }
+                })
+                .AddTo(_disposables);
         }
 
         private void InitiateRespawnEffect()
         {
             _isTogglingTransparency = true;
-            _whenRespawnEffectStarted = Time.realtimeSinceStartup;
             
             TogglePlayerTransparency();
+
+            Observable
+                .Timer(TimeSpan.FromSeconds(_settings.totalRespawnEffectDuration))
+                .Subscribe(_ =>
+                {
+                    if (_player.JustRespawned.Value)
+                    {
+                        CleanupRespawnEffect();
+                    }
+                })
+                .AddTo(_disposables);
         }
 
         private void CleanupRespawnEffect()

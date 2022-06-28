@@ -19,17 +19,14 @@ namespace Installers
         {
             Container.BindInterfacesAndSelfTo<AsteroidSpawner>().AsSingle();
             Container.BindInterfacesAndSelfTo<GameLevelHandler>().AsSingle();
-            
+
             Container.Bind<BoundHandler>().FromComponentInHierarchy().AsCached();
             Container.Bind<GameState>().FromComponentInHierarchy().AsCached();
             
             Container.Bind<ScoreHandler>().AsSingle();
-            // Container.BindInterfacesAndSelfTo<ExplosionHandler>().AsSingle();
             
             Container.Bind<ScoreUI>().FromComponentInHierarchy().AsCached();
             Container.Bind<LivesUI>().FromComponentInHierarchy().AsCached();
-            
-            Container.Bind<ExplosionHandler>().FromComponentInHierarchy().AsCached();
             
             Container
                 .BindFactory<float, float, BulletProjectileTypes, BulletProjectile, BulletProjectile.Factory>()
@@ -39,7 +36,7 @@ namespace Installers
                     .UnderTransformGroup("BulletProjectiles"));
             
             // Container.BindInterfacesAndSelfTo<UfoSpawner>().AsSingle();
-        
+
             Container
                 .BindFactory<int, AsteroidFacade.AsteroidSizes, AsteroidFacade, AsteroidFacade.Factory>()
                 .FromPoolableMemoryPool<int, AsteroidFacade.AsteroidSizes, AsteroidFacade, AsteroidFacadePool>(x => x
@@ -47,8 +44,7 @@ namespace Installers
                     .FromSubContainerResolve()
                     .ByNewPrefabInstaller<AsteroidInstaller>(_settings.asteroidPrefab)
                     .UnderTransformGroup("Asteroids"));
-            
-            
+
             // Container
             //     .BindFactory<UfoFacade, UfoFacade.Factory>()
             //     .FromPoolableMemoryPool<UfoFacade, UfoFacadePool>(x => x
@@ -57,7 +53,7 @@ namespace Installers
             //         .ByNewPrefabInstaller<UfoInstaller>(_settings.ufoPrefab)
             //         .UnderTransformGroup("Ufos"));
             //
-            
+
             //
             // Container
             //     .BindFactory<ExplosionP, ExplosionP.Factory>()
@@ -65,7 +61,7 @@ namespace Installers
             //         .WithInitialSize(20)
             //         .FromComponentInNewPrefab(_settings.explosionPrefab)
             //         .UnderTransformGroup("Explosions"));
-            
+
 
         }
     

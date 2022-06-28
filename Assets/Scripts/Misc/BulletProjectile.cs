@@ -1,4 +1,5 @@
 using System;
+using UniRx;
 using UnityEngine;
 using Zenject;
 
@@ -14,11 +15,13 @@ namespace Misc
     {
         private BoundHandler _boundHandler;
 
-        private float _whenSpawned;
         private float _speed;
         private float _lifespan;
 
         private IMemoryPool _pool;
+        private IDisposable _spawnTimer;
+
+        private readonly CompositeDisposable _disposables = new CompositeDisposable();
         
         [Inject]
         public void Construct(BoundHandler boundHandler)
@@ -31,16 +34,13 @@ namespace Misc
             var projTransform = transform;
             
             var position = projTransform.position + projTransform.forward * (_speed * Time.deltaTime);
-            projTransform.position = _boundHandler.EnforceBounds(position); 
-
-            if (Time.realtimeSinceStartup - _whenSpawned >= _lifespan)
-            {
-                _pool.Despawn(this);
-            }
+            projTransform.position = _boundHandler.EnforceBounds(position);
         }
 
         public void OnTriggerEnter(Collider other)
         {
+            _spawnTimer.Dispose();
+            
             _pool.Despawn(this);
         }
         
@@ -49,8 +49,14 @@ namespace Misc
             _speed = speed;
             _lifespan = lifespan;
             _pool = pool;
-            
-            _whenSpawned = Time.realtimeSinceStartup;
+
+            _spawnTimer = Observable
+                .Timer(TimeSpan.FromSeconds(_lifespan))
+                .Subscribe(_ =>
+                {
+                    _pool?.Despawn(this);
+                })
+                .AddTo(_disposables);
         }
 
         public void OnDespawned()

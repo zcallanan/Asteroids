@@ -59,6 +59,6 @@ namespace PlayerScripts
         
         public ReactiveProperty<bool> JustRespawned { get; set; }
 
-        public GameObject GameObj => _playerFacade.GameObj;
+        public GameObject GameObj => _playerFacade.gameObject;
     }
 }

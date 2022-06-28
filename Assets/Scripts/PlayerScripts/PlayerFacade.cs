@@ -17,9 +17,7 @@ namespace PlayerScripts
         public Vector3 Facing => _player.Facing;
 
         public Vector3 Position => _player.Position;
-
-        public GameObject GameObj => gameObject;
-
+        
         public ReactiveProperty<int> CurrentLives { get; private set; }
         
         [Inject]

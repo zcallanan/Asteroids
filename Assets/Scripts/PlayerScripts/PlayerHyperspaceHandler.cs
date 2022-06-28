@@ -1,11 +1,13 @@
+using System;
 using Misc;
 using UniRx;
 using UnityEngine;
 using Zenject;
+using Random = UnityEngine.Random;
 
 namespace PlayerScripts
 {
-    public class PlayerHyperspaceHandler : IInitializable, ITickable
+    public class PlayerHyperspaceHandler : IInitializable
     {
         private readonly PlayerInputState _playerInputState;
         private readonly Player _player;
@@ -15,8 +17,6 @@ namespace PlayerScripts
         private Vector3 _minBounds;
 
         private bool _hyperspaceWasTriggered;
-
-        private float _whenHyperspaceTriggered;
         
         // TODO: clear on game over
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
@@ -44,22 +44,24 @@ namespace PlayerScripts
                 }
             }).AddTo(_disposables);
         }
-        
-        public void Tick()
-        {
-            if (_hyperspaceWasTriggered && Time.realtimeSinceStartup - _whenHyperspaceTriggered >= 2f)
-            {
-                _player.MeshRenderer.enabled = true;
-                _player.AdjustedSpeed = 0;
-            
-                _hyperspaceWasTriggered = false;
-            }
-        }
-        
+
         private void HyperSpaceTriggered()
         {
             _hyperspaceWasTriggered = true;
-            _whenHyperspaceTriggered = Time.realtimeSinceStartup;
+
+            Observable
+                .Timer(TimeSpan.FromSeconds(2f))
+                .Subscribe(_ =>
+                {
+                    if (_hyperspaceWasTriggered && !_player.IsDead)
+                    {
+                        _player.MeshRenderer.enabled = true;
+                        _player.AdjustedSpeed = 0;
+            
+                        _hyperspaceWasTriggered = false;
+                    }
+                })
+                .AddTo(_disposables);
 
             _player.MeshRenderer.enabled = false;
             _player.Position = DetermineRandomHyperspacePosition();

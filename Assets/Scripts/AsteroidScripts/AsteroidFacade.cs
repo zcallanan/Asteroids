@@ -61,8 +61,9 @@ namespace AsteroidScripts
 
             _randomRotation = new Vector3(Random.value / 10, Random.value / 10, Random.value / 10);
             _randomDirection = new Vector3(Random.Range(-5, 5), 1, Random.Range(-5, 5));
-            
-            if (gameObject.GetComponent<ObservableTriggerTrigger>() == null) {
+
+            if (gameObject.GetComponent<ObservableTriggerTrigger>() == null)
+            {
                 gameObject
                     .AddComponent<ObservableTriggerTrigger>()
                     .UpdateAsObservable()
@@ -85,7 +86,7 @@ namespace AsteroidScripts
         {
             _pool.Despawn(this);
         }
-        
+
         public Vector3 Position
         {
             get => transform.position;
