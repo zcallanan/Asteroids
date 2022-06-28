@@ -30,6 +30,8 @@ namespace AsteroidScripts
 
         private float _asteroidSpeed;
         private float _asteroidRotSpeed;
+        
+        private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
         [Inject]
         public void Construct(
@@ -68,7 +70,15 @@ namespace AsteroidScripts
                     .AddComponent<ObservableTriggerTrigger>()
                     .UpdateAsObservable()
                     .SampleFrame(60)
-                    .Subscribe(_ => Debug.Log($"Observable added"));
+                    .Subscribe(_ => Debug.Log($"Collision trigger added"))
+                    .AddTo(_disposables);
+
+                gameObject
+                    .AddComponent<ObservableEnableTrigger>()
+                    .UpdateAsObservable()
+                    .SampleFrame(60)
+                    .Subscribe(_ => Debug.Log("Enable trigger added"))
+                    .AddTo(_disposables);
             }
         }
 

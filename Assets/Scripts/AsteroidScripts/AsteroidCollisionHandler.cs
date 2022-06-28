@@ -22,6 +22,8 @@ namespace AsteroidScripts
         private int _mediumPerLarge;
         private int _smallPerMedium;
         
+        private readonly CompositeDisposable _disposables = new CompositeDisposable();
+
         public AsteroidCollisionHandler(
             AsteroidFacade asteroidFacade,
             ScoreHandler scoreHandler,
@@ -50,7 +52,8 @@ namespace AsteroidScripts
 
             _asteroidFacade
                 .OnTriggerEnterAsObservable()
-                .Subscribe(_ => HandleCollision());
+                .Subscribe(_ => HandleCollision())
+                .AddTo(_disposables);
         }
         
         private void HandleCollision()

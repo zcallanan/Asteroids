@@ -54,13 +54,13 @@ namespace Installers
             //         .UnderTransformGroup("Ufos"));
             //
 
-            //
-            // Container
-            //     .BindFactory<ExplosionP, ExplosionP.Factory>()
-            //     .FromPoolableMemoryPool<ExplosionP, ExplosionPool>(x => x
-            //         .WithInitialSize(20)
-            //         .FromComponentInNewPrefab(_settings.explosionPrefab)
-            //         .UnderTransformGroup("Explosions"));
+            
+            Container
+                .BindFactory<Explosion, Explosion.Factory>()
+                .FromPoolableMemoryPool<Explosion, ExplosionPool>(x => x
+                    .WithInitialSize(20)
+                    .FromComponentInNewPrefab(_settings.explosionPrefab)
+                    .UnderTransformGroup("Explosions"));
 
 
         }
@@ -86,7 +86,7 @@ namespace Installers
         {
         }
     
-        class ExplosionPool : MonoPoolableMemoryPool<IMemoryPool, ExplosionP>
+        class ExplosionPool : MonoPoolableMemoryPool<IMemoryPool, Explosion>
         {
         }
     }
