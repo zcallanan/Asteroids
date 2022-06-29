@@ -8,7 +8,7 @@ using Random = UnityEngine.Random;
 
 namespace Misc
 {
-    public class AsteroidSpawner : IInitializable
+    public class AsteroidSpawner : IInitializable, IDisposable
     {
         private readonly Settings _settings;
         private readonly Difficulty.Settings _difficultySettings;
@@ -46,42 +46,42 @@ namespace Misc
             _initLargeAsteroids = _difficultySettings.difficulties[_gameDifficulty].initLargeAsteroids;
             
             DetermineAsteroidSpawnBoundValues();
-            
-            _boundHandler.MaxBounds.Subscribe(maxGameBounds =>
-            {
-                _maxBounds = maxGameBounds;
-                DetermineAsteroidSpawnBoundValues();
-            }).AddTo(_disposables);
-            
-            _boundHandler.MinBounds.Subscribe(minGameBounds =>
-            {
-                _minBounds = minGameBounds;
-                DetermineAsteroidSpawnBoundValues();
-            }).AddTo(_disposables);
 
-            _gameState.CurrentLevel.Subscribe(level =>
-            {
-                for (int i = 0; i < _initLargeAsteroids + _gameState.CurrentLevel.Value; i++)
+            UpdateAsteroidSpawnBounds();
+
+            SpawnAsteroidsWithinBoundsAtTheStartOfALevel();
+            
+            Dispose();
+        }
+        
+        public void Dispose()
+        {
+            _gameState.CurrentLives
+                .Subscribe(lives =>
                 {
-                    var renderValue = Random.Range(0, 4);
-                    SpawnAsteroid(renderValue, AsteroidFacade.AsteroidSizes.LargeAsteroid, Vector3.zero);
-                }
-            }).AddTo(_disposables);
+                    if (lives < 0)
+                    {
+                        _disposables.Clear();
+                    }
+                })
+                .AddTo(_disposables);
         }
         
         public void SpawnAsteroid(int renderValue, AsteroidFacade.AsteroidSizes asteroidSize, Vector3 largerAsteroidPosition)
         {
-            AsteroidFacade asteroidFacade = _asteroidFactory.Create(renderValue, asteroidSize);
+            var asteroidFacade = _asteroidFactory.Create(renderValue, asteroidSize);
 
             Vector3 tempPosition;
             
-            if (asteroidSize == AsteroidFacade.AsteroidSizes.SmallAsteroid || asteroidSize == AsteroidFacade.AsteroidSizes.MediumAsteroid)
+            if (asteroidSize == AsteroidFacade.AsteroidSizes.SmallAsteroid ||
+                asteroidSize == AsteroidFacade.AsteroidSizes.MediumAsteroid)
             {
                 tempPosition = largerAsteroidPosition;
             }
             else
             {
-                tempPosition = DetermineLargeAsteroidsPosition();
+                tempPosition = AsteroidSpawnLocation.DetermineLargeAsteroidsPosition(_minBounds, _maxBounds,
+                    _innerMinBounds, _innerMaxBounds);
             }
             
             asteroidFacade.Position = tempPosition;
@@ -119,19 +119,32 @@ namespace Misc
              _innerMinBounds = new Vector3(_minBounds.x + 1, 1, _minBounds.z + 1);
          }
 
-        private Vector3 DetermineLargeAsteroidsPosition()
-         {
-             var side = Random.Range(0, 4);
-             var positionResult = side switch
-             {
-                 0 => new Vector3(Random.Range(_minBounds.x, _maxBounds.x), 1.0f, Random.Range(_innerMaxBounds.z, _maxBounds.z)), // Top
-                 1 => new Vector3(Random.Range(_innerMaxBounds.x, _maxBounds.x), 1.0f, Random.Range(_minBounds.z, _maxBounds.z)), // Right
-                 2 => new Vector3(Random.Range(_minBounds.x, _maxBounds.x), 1.0f, Random.Range(_innerMinBounds.z, _minBounds.z)), // Bottom
-                 3 => new Vector3(Random.Range(_innerMinBounds.x, _minBounds.x), 1.0f, Random.Range(_minBounds.z, _maxBounds.z)), // Left
-                 _ => throw new ArgumentOutOfRangeException(nameof(side), $"Not expected side value: {side}"),
-             };
-             return positionResult;
-         }
+        private void UpdateAsteroidSpawnBounds()
+        {
+            _boundHandler.MaxBounds.Subscribe(maxGameBounds =>
+            {
+                _maxBounds = maxGameBounds;
+                DetermineAsteroidSpawnBoundValues();
+            }).AddTo(_disposables);
+            
+            _boundHandler.MinBounds.Subscribe(minGameBounds =>
+            {
+                _minBounds = minGameBounds;
+                DetermineAsteroidSpawnBoundValues();
+            }).AddTo(_disposables);
+        }
+        
+        private void SpawnAsteroidsWithinBoundsAtTheStartOfALevel()
+        {
+            _gameState.CurrentLevel.Subscribe(level =>
+            {
+                for (int i = 0; i < _initLargeAsteroids + _gameState.CurrentLevel.Value; i++)
+                {
+                    var renderValue = Random.Range(0, 4);
+                    SpawnAsteroid(renderValue, AsteroidFacade.AsteroidSizes.LargeAsteroid, Vector3.zero);
+                }
+            }).AddTo(_disposables);
+        }
         
         [Serializable]
         public class Settings
