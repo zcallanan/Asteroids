@@ -7,7 +7,7 @@ using Zenject;
 
 namespace UI
 {
-    public class LivesUI : MonoBehaviour
+    public class LivesUI : MonoBehaviour, IDisposable
     {
         [SerializeField] private Sprite[] lifeCountSprite;
 
@@ -25,14 +25,32 @@ namespace UI
 
         void Start()
         {
-            // GameManager.sharedInstance.IsGameOver.Subscribe(HandleGameOver).AddTo(_disposables);
+            _imageComponent = gameObject.GetComponent<Image>();
             
+            CheckForChangeToCurrentLivesAfterDelay();
+            
+            Dispose();
+        }
+        
+        public void Dispose()
+        {
+            _gameState.CurrentLives
+                .Subscribe(lives =>
+                {
+                    if (lives < 0)
+                    {
+                        _disposables.Clear();
+                    }
+                })
+                .AddTo(_disposables);
+        }
+
+        private void CheckForChangeToCurrentLivesAfterDelay()
+        {
             _gameState.CurrentLives
                 .Throttle(TimeSpan.FromSeconds(.5))
                 .Subscribe(ChangeNumberOfLivesSprite)
                 .AddTo(_disposables);
-            
-            _imageComponent = gameObject.GetComponent<Image>();
         }
 
         private void ChangeNumberOfLivesSprite(int currentLives)
@@ -102,13 +120,5 @@ namespace UI
                 }
             }
         }
-        
-        // private void HandleGameOver(bool isGameOver)
-        // {
-        //     if (isGameOver)
-        //     {
-        //         _disposables.Clear();
-        //     }
-        // }
     }
 }

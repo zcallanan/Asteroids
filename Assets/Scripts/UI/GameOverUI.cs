@@ -28,6 +28,11 @@ namespace UI
             _gameOverText = GetComponent<Text>();
             _gameOverText.enabled = false;
 
+            CheckForChangeToCurrentLives();
+        }
+
+        private void CheckForChangeToCurrentLives()
+        {
             _gameState.CurrentLives
                 .Subscribe(WhenLivesAreBelowZeroDelayThenShowGameOver)
                 .AddTo(_disposables);

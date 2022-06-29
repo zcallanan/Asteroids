@@ -14,6 +14,8 @@ namespace PlayerScripts
         
         private int _previousScore;
         private int _getALifeEveryTenK = 10000;
+
+        private bool _gameIsOver;
         
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
@@ -35,16 +37,16 @@ namespace PlayerScripts
 
         private void Start()
         {
-            IncrementCurrentLivesEveryTenKScore();
+            IncrementCurrentLivesEveryTenKScoreUnlessGameIsOver();
             
             Dispose();
         }
 
-        private void IncrementCurrentLivesEveryTenKScore()
+        private void IncrementCurrentLivesEveryTenKScoreUnlessGameIsOver()
         {
             _gameState.Score.Subscribe(currentScore =>
             {
-                if (_previousScore < _getALifeEveryTenK && currentScore >= _getALifeEveryTenK)
+                if (_previousScore < _getALifeEveryTenK && currentScore >= _getALifeEveryTenK && !_gameIsOver)
                 {  
                     _getALifeEveryTenK += 10000;
                     
@@ -69,6 +71,7 @@ namespace PlayerScripts
                 {
                     if (lives < 0)
                     {
+                        _gameIsOver = true;
                         _disposables.Clear();
                     }
                 })
