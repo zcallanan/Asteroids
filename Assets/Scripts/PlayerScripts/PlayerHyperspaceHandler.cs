@@ -7,11 +7,12 @@ using Random = UnityEngine.Random;
 
 namespace PlayerScripts
 {
-    public class PlayerHyperspaceHandler : IInitializable
+    public class PlayerHyperspaceHandler : IInitializable, IDisposable
     {
         private readonly PlayerInputState _playerInputState;
         private readonly Player _player;
         private readonly BoundHandler _boundHandler;
+        private readonly GameState _gameState;
 
         private Vector3 _maxBounds;
         private Vector3 _minBounds;
@@ -24,18 +25,38 @@ namespace PlayerScripts
         public PlayerHyperspaceHandler(
             PlayerInputState playerInputState, 
             Player player,
-            BoundHandler boundHandler)
+            BoundHandler boundHandler,
+            GameState gameState)
         {
             _playerInputState = playerInputState;
             _player = player;
             _boundHandler = boundHandler;
+            _gameState = gameState;
         }
         
         public void Initialize()
         {
             _boundHandler.MaxBounds.Subscribe(maxGameBounds => _maxBounds = maxGameBounds);
             _boundHandler.MinBounds.Subscribe(minGameBounds => _minBounds = minGameBounds);
-            
+
+            HandleHyperspaceInput();
+        }
+        
+        public void Dispose()
+        {
+            _gameState.CurrentLives
+                .Subscribe(lives =>
+                {
+                    if (lives < 0)
+                    {
+                        _disposables.Clear();
+                    }
+                })
+                .AddTo(_disposables);
+        }
+
+        private void HandleHyperspaceInput()
+        {
             _playerInputState.IsHyperspaceActive.Subscribe(hyperspaceInput =>
             {
                 if (hyperspaceInput && !_hyperspaceWasTriggered && _player.MeshRenderer.enabled)
@@ -48,7 +69,16 @@ namespace PlayerScripts
         private void HyperSpaceTriggered()
         {
             _hyperspaceWasTriggered = true;
+            
+            _player.MeshRenderer.enabled = false;
+            _player.Position = DetermineRandomHyperspacePosition();
+            
+            EndHyperspaceAfterDelay();
 
+        }
+
+        private void EndHyperspaceAfterDelay()
+        {
             Observable
                 .Timer(TimeSpan.FromSeconds(2f))
                 .Subscribe(_ =>
@@ -62,9 +92,6 @@ namespace PlayerScripts
                     }
                 })
                 .AddTo(_disposables);
-
-            _player.MeshRenderer.enabled = false;
-            _player.Position = DetermineRandomHyperspacePosition();
         }
 
         private Vector3 DetermineRandomHyperspacePosition()

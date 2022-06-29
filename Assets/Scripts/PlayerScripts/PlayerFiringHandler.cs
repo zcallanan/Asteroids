@@ -56,7 +56,7 @@ namespace PlayerScripts
             {
                 if (hasFired && !_player.IsDead && !_firingDisabled)
                 {
-                    Fire();
+                    FireProjectileBullets();
                     _firingDisabled = true;
 
                     Observable
@@ -67,7 +67,7 @@ namespace PlayerScripts
             }).AddTo(_disposables);
         }
 
-        private void Fire()
+        private void FireProjectileBullets()
         {
             var bulletProjectile = _bulletProjectileFactory.Create(
                 _settings.projectileSpeed, _settings.projectileLifespan, BulletProjectileTypes.FromPlayer);
