@@ -6,31 +6,51 @@ using Zenject;
 
 namespace PlayerScripts
 {
-    public class PlayerFiringHandler : IInitializable
+    public class PlayerFiringHandler : IInitializable, IDisposable
     {
         private readonly Player _player;
         private readonly BulletProjectile.Factory _bulletProjectileFactory;
         private readonly PlayerInputState _playerInputState;
         private readonly Settings _settings;
+        private readonly GameState _gameState;
 
         private bool _firingDisabled;
         
-        // TODO: clear on game over
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
         public PlayerFiringHandler(
             Player player,
             BulletProjectile.Factory bulletProjectileFactory,
             PlayerInputState playerInputState,
-            Settings settings)
+            Settings settings,
+            GameState gameState)
         {
             _player = player;
             _bulletProjectileFactory = bulletProjectileFactory;
             _playerInputState = playerInputState;
             _settings = settings;
+            _gameState = gameState;
         }
 
         public void Initialize()
+        {
+            FireProjectileAndEnforceCooldownDelay();
+        }
+        
+        public void Dispose()
+        {
+            _gameState.CurrentLives
+                .Subscribe(lives =>
+                {
+                    if (lives < 0)
+                    {
+                        _disposables.Clear();
+                    }
+                })
+                .AddTo(_disposables);
+        }
+
+        private void FireProjectileAndEnforceCooldownDelay()
         {
             _playerInputState.IsFiring.Subscribe(hasFired =>
             {

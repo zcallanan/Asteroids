@@ -9,20 +9,16 @@ namespace PlayerScripts
 {
     public class PlayerFacade : MonoBehaviour, IDisposable
     {
-        private Player _player;
         private GameState _gameState;
         private PlayerInputState _playerInputState;
 
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
-
         
         [Inject]
         public void Construct(
-            Player player,
             GameState gameState,
             PlayerInputState playerInputState)
         {
-            _player = player;
             _gameState = gameState;
             _playerInputState = playerInputState;
         }
