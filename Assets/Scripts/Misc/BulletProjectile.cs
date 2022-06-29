@@ -32,6 +32,11 @@ namespace Misc
             _boundHandler = boundHandler;
             _gameState = gameState;
         }
+
+        public void Start()
+        {
+            Dispose();
+        }
         
         public void Update()
         {

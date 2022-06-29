@@ -4,7 +4,7 @@ using Zenject;
 
 namespace Misc
 {
-    public class GameLevelHandler : IInitializable
+    public class GameLevelHandler : IInitializable, IDisposable
     {
 
         private readonly GameState _gameState;
@@ -39,6 +39,8 @@ namespace Misc
             _smallPerMedium = _difficultySettings.difficulties[_gameDifficulty].smallPerMedium;
 
             DetermineTotalSmallAsteroidsInThisLevel();
+            
+            Dispose();
         }
 
         private void DetermineTotalSmallAsteroidsInThisLevel()
@@ -71,6 +73,19 @@ namespace Misc
                     })
                     .AddTo(_disposables);
             }
+        }
+        
+        public void Dispose()
+        {
+            _gameState.CurrentLives
+                .Subscribe(lives =>
+                {
+                    if (lives < 0)
+                    {
+                        _disposables.Clear();
+                    }
+                })
+                .AddTo(_disposables);
         }
 
         [Serializable]
