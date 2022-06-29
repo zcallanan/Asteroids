@@ -1,5 +1,4 @@
 using System;
-using Misc;
 using UnityEngine;
 using Zenject;
 
@@ -45,11 +44,8 @@ namespace PlayerScripts
         {
             _currentPosition = _player.Transform.position;
 
-            if (_playerInputState.VerticalInput >= 0)
-            {
-                _forwardInputValue = _playerInputState.VerticalInput;
-            }
-            
+            OnlyRegisterWhenPlayerInputsForwardMovement();
+
             _currentSpeed = Vector3.Distance(Abs(_player.PreviousPosition), Abs(_currentPosition)) * 100f;
             
             CalculateAdjustedSpeed();
@@ -57,6 +53,14 @@ namespace PlayerScripts
             _player.PreviousPosition = _currentPosition;
 
             MovePlayerShip();
+        }
+
+        private void OnlyRegisterWhenPlayerInputsForwardMovement()
+        {
+            if (_playerInputState.VerticalInput >= 0)
+            {
+                _forwardInputValue = _playerInputState.VerticalInput;
+            }
         }
 
         private void CalculateAdjustedSpeed()
