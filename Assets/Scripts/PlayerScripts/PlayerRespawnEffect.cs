@@ -29,6 +29,8 @@ namespace PlayerScripts
         public void Initialize()
         {
             InitializeRespawnEffect();
+            
+            Dispose();
         }
         
         public void Dispose()

@@ -36,11 +36,23 @@ namespace PlayerScripts
         {
             _startColor = new Color(0, 1, 1, 1f);
             
+            ExplodeOnTriggerEnter();
+
+            DelayThenDespawnExplosion();
+            
+            Dispose();
+        }
+
+        private void ExplodeOnTriggerEnter()
+        {
             _player.GameObj
                 .OnTriggerEnterAsObservable()
                 .Subscribe(_ => CreateExplosion())
                 .AddTo(_disposables);
-            
+        }
+        
+        private void DelayThenDespawnExplosion()
+        {
             _player.GameObj
                 .OnEnableAsObservable()
                 .Subscribe(_ =>
@@ -52,7 +64,7 @@ namespace PlayerScripts
                 })
                 .AddTo(_disposables);
         }
-        
+
         public void Dispose()
         {
             _gameState.CurrentLives

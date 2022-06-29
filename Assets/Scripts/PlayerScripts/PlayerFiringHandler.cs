@@ -35,6 +35,8 @@ namespace PlayerScripts
         public void Initialize()
         {
             FireProjectileAndEnforceCooldownDelay();
+            
+            Dispose();
         }
         
         public void Dispose()

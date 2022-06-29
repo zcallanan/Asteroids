@@ -35,6 +35,13 @@ namespace PlayerScripts
 
         private void Start()
         {
+            IncrementCurrentLivesEveryTenKScore();
+            
+            Dispose();
+        }
+
+        private void IncrementCurrentLivesEveryTenKScore()
+        {
             _gameState.Score.Subscribe(currentScore =>
             {
                 if (_previousScore < _getALifeEveryTenK && currentScore >= _getALifeEveryTenK)

@@ -40,6 +40,8 @@ namespace PlayerScripts
             _boundHandler.MinBounds.Subscribe(minGameBounds => _minBounds = minGameBounds);
 
             HandleHyperspaceInput();
+            
+            Dispose();
         }
         
         public void Dispose()
