@@ -6,7 +6,7 @@ using Zenject;
 
 namespace PlayerScripts
 {
-    public class PlayerLifecycleHandler : MonoBehaviour
+    public class PlayerLifecycleHandler : MonoBehaviour, IDisposable
     {
         private Player _player;
         private PlayerData.Settings _playerData;
@@ -52,6 +52,24 @@ namespace PlayerScripts
         {
             _gameState.CurrentLives.Value--;
 
+            RestorePlayerFromDeathAfterDelay();
+        }
+
+        public void Dispose()
+        {
+            _gameState.CurrentLives
+                .Subscribe(lives =>
+                {
+                    if (lives < 0)
+                    {
+                        _disposables.Clear();
+                    }
+                })
+                .AddTo(_disposables);
+        }
+        
+        private void RestorePlayerFromDeathAfterDelay()
+        {
             Observable
                 .Timer(TimeSpan.FromSeconds(_playerData.respawnDelay))
                 .Subscribe(_ =>
