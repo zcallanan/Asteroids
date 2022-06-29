@@ -27,7 +27,8 @@ namespace Installers
             
             Container.Bind<ScoreUI>().FromComponentInHierarchy().AsCached();
             Container.Bind<LivesUI>().FromComponentInHierarchy().AsCached();
-            
+            Container.Bind<GameOverUI>().FromComponentInHierarchy().AsCached();
+
             Container
                 .BindFactory<float, float, BulletProjectileTypes, BulletProjectile, BulletProjectile.Factory>()
                 .FromPoolableMemoryPool<float, float, BulletProjectileTypes, BulletProjectile, BulletProjectilePool>(x => x

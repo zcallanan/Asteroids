@@ -1,3 +1,4 @@
+using System;
 using Misc;
 using UniRx;
 using UniRx.Triggers;
@@ -8,7 +9,7 @@ using Vector3 = UnityEngine.Vector3;
 
 namespace AsteroidScripts
 {
-    public class AsteroidFacade : MonoBehaviour, IPoolable<int, AsteroidFacade.AsteroidSizes, IMemoryPool>
+    public class AsteroidFacade : MonoBehaviour, IPoolable<int, AsteroidFacade.AsteroidSizes, IMemoryPool>, IDisposable
     {
         private BoundHandler _boundHandler;
         private AsteroidData.Settings _asteroidData;
@@ -61,25 +62,11 @@ namespace AsteroidScripts
             _randomRotation = new Vector3(Random.value / 10, Random.value / 10, Random.value / 10);
             _randomDirection = new Vector3(Random.Range(-5, 5), 1, Random.Range(-5, 5));
 
-            if (gameObject.GetComponent<ObservableTriggerTrigger>() == null)
-            {
-                gameObject
-                    .AddComponent<ObservableTriggerTrigger>()
-                    .UpdateAsObservable()
-                    .SampleFrame(60)
-                    .Subscribe(_ => Debug.Log($"Collision trigger added"))
-                    .AddTo(_disposables);
-            }
+            AddOnTriggerEnterObservable();
 
-            if (gameObject.GetComponent<ObservableEnableTrigger>() == null)
-            {
-                gameObject
-                    .AddComponent<ObservableEnableTrigger>()
-                    .UpdateAsObservable()
-                    .SampleFrame(60)
-                    .Subscribe(_ => Debug.Log("Enable trigger added"))
-                    .AddTo(_disposables);
-            }
+            AddOnEnabledTriggerObservable();
+            
+            Dispose();
         }
 
         private void Update()
@@ -133,6 +120,19 @@ namespace AsteroidScripts
         {
             _pool = null;
         }
+        
+        public void Dispose()
+        {
+            _gameState.CurrentLives
+                .Subscribe(lives =>
+                {
+                    if (lives < 0)
+                    {
+                        _disposables.Clear();
+                    }
+                })
+                .AddTo(_disposables);
+        }
 
         public class Factory : PlaceholderFactory<int, AsteroidSizes, AsteroidFacade>
         {
@@ -148,6 +148,32 @@ namespace AsteroidScripts
         private Vector3 Rotation
         {
             set => transform.Rotate(value);
+        }
+        
+        private void AddOnTriggerEnterObservable()
+        {
+            if (gameObject.GetComponent<ObservableTriggerTrigger>() == null)
+            {
+                gameObject
+                    .AddComponent<ObservableTriggerTrigger>()
+                    .UpdateAsObservable()
+                    .SampleFrame(60)
+                    .Subscribe(_ => Debug.Log($"Collision trigger added"))
+                    .AddTo(_disposables);
+            }
+        }
+        
+        private void AddOnEnabledTriggerObservable()
+        {
+            if (gameObject.GetComponent<ObservableEnableTrigger>() == null)
+            {
+                gameObject
+                    .AddComponent<ObservableEnableTrigger>()
+                    .UpdateAsObservable()
+                    .SampleFrame(60)
+                    .Subscribe(_ => Debug.Log("Enable trigger added"))
+                    .AddTo(_disposables);
+            }
         }
     }
 }

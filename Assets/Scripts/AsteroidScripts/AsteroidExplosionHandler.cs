@@ -7,10 +7,11 @@ using Zenject;
 
 namespace AsteroidScripts
 {
-    public class AsteroidExplosionHandler : IInitializable
+    public class AsteroidExplosionHandler : IInitializable, IDisposable
     {
         private readonly AsteroidFacade _asteroidFacade;
         private readonly Explosion.Factory _explosionFactory;
+        private readonly GameState _gameState;
 
         private Explosion _explosion;
         
@@ -27,10 +28,12 @@ namespace AsteroidScripts
 
         public AsteroidExplosionHandler(
             AsteroidFacade asteroidFacade,
-            Explosion.Factory explosionFactory)
+            Explosion.Factory explosionFactory,
+            GameState gameState)
         {
             _asteroidFacade = asteroidFacade;
             _explosionFactory = explosionFactory;
+            _gameState = gameState;
         }
         
         public void Initialize()
@@ -41,19 +44,22 @@ namespace AsteroidScripts
 
             _startColor = new Color(0.5176471f, 0.5019608f, 0.4313726f, 1f);
             
-            _asteroidFacade
-                .OnTriggerEnterAsObservable()
-                .Subscribe(_ => CreateExplosion())
-                .AddTo(_disposables);
-            
-            _asteroidFacade
-                .OnEnableAsObservable()
-                .Subscribe(_ =>
+            ExplodeOnTriggerEnter();
+
+            DelayThenDespawnExplosion();
+
+            Dispose();
+        }
+        
+        public void Dispose()
+        {
+            _gameState.CurrentLives
+                .Subscribe(lives =>
                 {
-                    Observable
-                        .Timer(TimeSpan.FromSeconds(1))
-                        .Subscribe(_ => _explosion.Dispose())
-                        .AddTo(_disposables);
+                    if (lives < 0)
+                    {
+                        _disposables.Clear();
+                    }
                 })
                 .AddTo(_disposables);
         }
@@ -85,6 +91,28 @@ namespace AsteroidScripts
             
             _expParticleSystem.Clear();
             _expParticleSystem.Play();
+        }
+
+        private void ExplodeOnTriggerEnter()
+        {
+            _asteroidFacade
+                .OnTriggerEnterAsObservable()
+                .Subscribe(_ => CreateExplosion())
+                .AddTo(_disposables);
+        }
+
+        private void DelayThenDespawnExplosion()
+        {
+            _asteroidFacade
+                .OnEnableAsObservable()
+                .Subscribe(_ =>
+                {
+                    Observable
+                        .Timer(TimeSpan.FromSeconds(1))
+                        .Subscribe(_ => _explosion.Dispose())
+                        .AddTo(_disposables);
+                })
+                .AddTo(_disposables);
         }
     }
 }

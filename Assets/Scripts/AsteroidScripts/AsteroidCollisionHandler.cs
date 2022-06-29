@@ -1,3 +1,4 @@
+using System;
 using Misc;
 using UniRx;
 using UniRx.Triggers;
@@ -5,7 +6,7 @@ using Zenject;
 
 namespace AsteroidScripts
 {
-    public class AsteroidCollisionHandler : IInitializable
+    public class AsteroidCollisionHandler : IInitializable, IDisposable
     {
         private readonly AsteroidFacade _asteroidFacade;
         private readonly ScoreHandler _scoreHandler;
@@ -50,12 +51,24 @@ namespace AsteroidScripts
             _medium = AsteroidFacade.AsteroidSizes.MediumAsteroid;
             _small = AsteroidFacade.AsteroidSizes.SmallAsteroid;
 
-            _asteroidFacade
-                .OnTriggerEnterAsObservable()
-                .Subscribe(_ => HandleCollision())
-                .AddTo(_disposables);
+            HandleCollisionOnTriggerEnter();
+            
+            Dispose();
         }
         
+        public void Dispose()
+        {
+            _gameState.CurrentLives
+                .Subscribe(lives =>
+                {
+                    if (lives < 0)
+                    {
+                        _disposables.Clear();
+                    }
+                })
+                .AddTo(_disposables);
+        }
+
         private void HandleCollision()
         {
             if (_asteroidFacade.Size == _small)
@@ -82,6 +95,14 @@ namespace AsteroidScripts
 
                 _scoreHandler.UpdateScore(ScoreTypes.LargeAsteroid);
             }
+        }
+        
+        private void HandleCollisionOnTriggerEnter()
+        {
+            _asteroidFacade
+                .OnTriggerEnterAsObservable()
+                .Subscribe(_ => HandleCollision())
+                .AddTo(_disposables);
         }
     }
 }

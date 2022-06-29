@@ -17,6 +17,8 @@ namespace PlayerScripts
         private ParticleSystem _expParticleSystem;
         private ParticleSystem.MainModule _expMain;
 
+        private Color _startColor;
+
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
         public PlayerExplosionHandler(
@@ -29,6 +31,8 @@ namespace PlayerScripts
         
         public void Initialize()
         {
+            _startColor = new Color(0, 1, 1, 1f);
+            
             _player.GameObj
                 .OnTriggerEnterAsObservable()
                 .Subscribe(_ => CreateExplosion())
@@ -56,6 +60,7 @@ namespace PlayerScripts
             _expMain = _expParticleSystem.main;
             
             _expMain.startSpeed = 1f;
+            _expMain.startColor = _startColor;
 
             _expParticleSystem.Clear();
             _expParticleSystem.Play();
