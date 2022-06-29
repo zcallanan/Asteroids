@@ -24,6 +24,8 @@ namespace PlayerScripts
         public void Initialize()
         {
             HandleCollisionOnTriggerEnter();
+            
+            Dispose();
         }
         
         public void Dispose()

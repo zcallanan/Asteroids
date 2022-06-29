@@ -1,3 +1,4 @@
+using System;
 using Misc;
 using UniRx;
 using UniRx.Triggers;
@@ -6,19 +7,12 @@ using Zenject;
 
 namespace PlayerScripts
 {
-    public class PlayerFacade : MonoBehaviour
+    public class PlayerFacade : MonoBehaviour, IDisposable
     {
         private Player _player;
         private GameState _gameState;
         private PlayerInputState _playerInputState;
 
-        public MeshCollider MeshCollider => _player.MeshCollider;
-        public MeshRenderer MeshRenderer => _player.MeshRenderer;
-
-        public Vector3 Facing => _player.Facing;
-
-        public Vector3 Position => _player.Position;
-        
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
         
@@ -41,6 +35,28 @@ namespace PlayerScripts
 
         private void Start()
         {
+            AddOnTriggerEnterObservable();
+
+            AddOnEnabledTriggerObservable();
+
+            Dispose();
+        }
+        
+        public void Dispose()
+        {
+            _gameState.CurrentLives
+                .Subscribe(lives =>
+                {
+                    if (lives < 0)
+                    {
+                        _disposables.Clear();
+                    }
+                })
+                .AddTo(_disposables);
+        }
+
+        private void AddOnTriggerEnterObservable()
+        {
             if (gameObject.GetComponent<ObservableTriggerTrigger>() == null)
             {
                 gameObject
@@ -50,7 +66,10 @@ namespace PlayerScripts
                     .Subscribe(_ => Debug.Log($"Observable added"))
                     .AddTo(_disposables);
             }
-
+        }
+        
+        private void AddOnEnabledTriggerObservable()
+        {
             if (gameObject.GetComponent<ObservableEnableTrigger>() == null)
             {
                 gameObject
