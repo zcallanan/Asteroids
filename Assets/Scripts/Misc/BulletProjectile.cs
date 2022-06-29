@@ -11,9 +11,10 @@ namespace Misc
         FromPlayer
     }
     
-    public class BulletProjectile : MonoBehaviour, IPoolable<float, float, BulletProjectileTypes, IMemoryPool>
+    public class BulletProjectile : MonoBehaviour, IPoolable<float, float, BulletProjectileTypes, IMemoryPool>, IDisposable
     {
         private BoundHandler _boundHandler;
+        private GameState _gameState;
 
         private float _speed;
         private float _lifespan;
@@ -24,9 +25,12 @@ namespace Misc
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
         
         [Inject]
-        public void Construct(BoundHandler boundHandler)
+        public void Construct(
+            GameState gameState,
+            BoundHandler boundHandler)
         {
             _boundHandler = boundHandler;
+            _gameState = gameState;
         }
         
         public void Update()
@@ -62,6 +66,19 @@ namespace Misc
         public void OnDespawned()
         {
             _pool = null;
+        }
+        
+        public void Dispose()
+        {
+            _gameState.CurrentLives
+                .Subscribe(lives =>
+                {
+                    if (lives < 0)
+                    {
+                        _disposables.Clear();
+                    }
+                })
+                .AddTo(_disposables);
         }
 
         public class Factory : PlaceholderFactory<float, float, BulletProjectileTypes, BulletProjectile>
