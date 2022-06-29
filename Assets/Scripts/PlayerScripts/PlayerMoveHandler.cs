@@ -10,7 +10,6 @@ namespace PlayerScripts
         private readonly Player _player;
         private readonly PlayerInputState _playerInputState;
         private readonly Settings _settings;
-        private readonly BoundHandler _boundHandler;
         
         private Vector3 _currentPosition;
         private Vector3 _facing;
@@ -23,13 +22,11 @@ namespace PlayerScripts
         public PlayerMoveHandler(
             Player player,
             PlayerInputState playerInputState,
-            Settings settings,
-            BoundHandler boundHandler)
+            Settings settings)
         {
             _player = player;
             _playerInputState = playerInputState;
             _settings = settings;
-            _boundHandler = boundHandler;
         }
         
         public void Initialize()
@@ -85,7 +82,7 @@ namespace PlayerScripts
             if (_forwardInputValue > 0 || _forwardInputValue == 0 && _currentSpeed > 0 && _player.AdjustedSpeed != 0)
             {
                 _currentPosition += _facing * (Time.fixedDeltaTime * _player.AdjustedSpeed);
-                _player.Position = _boundHandler.EnforceBounds(_currentPosition);
+                _player.Position = _currentPosition;
             }
         }
         

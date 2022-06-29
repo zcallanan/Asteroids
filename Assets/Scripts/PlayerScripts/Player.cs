@@ -1,3 +1,4 @@
+using Misc;
 using UniRx;
 using UnityEngine;
 
@@ -5,26 +6,22 @@ namespace PlayerScripts
 {
     public class Player
     {
-        private readonly MeshFilter _meshFilter;
-        private readonly Rigidbody _rigidBody;
         private readonly Transform _transform;
         private readonly PlayerFacade _playerFacade;
+        private readonly BoundHandler _boundHandler;
         
         public Player(
             MeshRenderer meshRenderer,
-            MeshFilter meshFilter,
             MeshCollider meshCollider,
-            Rigidbody rigidBody,
             Transform transform,
-            PlayerFacade playerFacade
-            )
+            PlayerFacade playerFacade,
+            BoundHandler boundHandler)
         {
             MeshRenderer = meshRenderer;
-            _meshFilter = meshFilter;
             MeshCollider = meshCollider;
-            _rigidBody = rigidBody;
             _transform = transform;
             _playerFacade = playerFacade;
+            _boundHandler = boundHandler;
         }
         public MeshCollider MeshCollider { get; }
 
@@ -39,7 +36,7 @@ namespace PlayerScripts
         public Vector3 Position
         {
             get => _transform.position;
-            set => _transform.position = value;
+            set => _transform.position = _boundHandler.EnforceBounds(value);
         }
         
         public Vector3 PreviousPosition { get; set; }
