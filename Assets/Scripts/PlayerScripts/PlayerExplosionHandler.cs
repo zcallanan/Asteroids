@@ -7,10 +7,11 @@ using Zenject;
 
 namespace PlayerScripts
 {
-    public class PlayerExplosionHandler : IInitializable
+    public class PlayerExplosionHandler : IInitializable, IDisposable
     {
         private readonly Player _player;
         private readonly Explosion.Factory _explosionFactory;
+        private readonly GameState _gameState;
 
         private Explosion _explosion;
         
@@ -23,10 +24,12 @@ namespace PlayerScripts
 
         public PlayerExplosionHandler(
             Player player,
-            Explosion.Factory explosionFactory)
+            Explosion.Factory explosionFactory,
+            GameState gameState)
         {
             _player = player;
             _explosionFactory = explosionFactory;
+            _gameState = gameState;
         }
         
         public void Initialize()
@@ -46,6 +49,19 @@ namespace PlayerScripts
                         .Timer(TimeSpan.FromSeconds(1))
                         .Subscribe(_ => _explosion.Dispose())
                         .AddTo(_disposables);
+                })
+                .AddTo(_disposables);
+        }
+        
+        public void Dispose()
+        {
+            _gameState.CurrentLives
+                .Subscribe(lives =>
+                {
+                    if (lives < 0)
+                    {
+                        _disposables.Clear();
+                    }
                 })
                 .AddTo(_disposables);
         }
