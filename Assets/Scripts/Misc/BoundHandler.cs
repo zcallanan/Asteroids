@@ -10,8 +10,6 @@ namespace Misc
         
         private Camera _mainCamera;
         
-        // private readonly CompositeDisposable _disposables = new CompositeDisposable();
-
         private void Awake()
         {
             MaxBounds = new ReactiveProperty<Vector3>(Vector3.zero);
@@ -19,20 +17,13 @@ namespace Misc
             
             _mainCamera = Camera.main;
             SetScreenBounds();
-            
-            // GameManager.sharedInstance.IsGameOver
-            //     .Subscribe(HandleGameOver)
-            //     .AddTo(_disposables);
-            //
-            // GameManager.sharedInstance.LatestScreenSize
-            //     .Subscribe(unit => SetScreenBounds())
-            //     .AddTo(_disposables);
         }
 
         public Vector3 EnforceBounds(Vector3 currentPosition)
         {
             {
                 var boundsAppliedToCurrentPosition = currentPosition;
+                
                 if (currentPosition.x > MaxBounds.Value.x)
                 {
                     boundsAppliedToCurrentPosition.x = MinBounds.Value.x;
@@ -69,15 +60,5 @@ namespace Misc
             MaxBounds.Value = new Vector3(topCorner.x, 1, topCorner.z);
             MinBounds.Value = new Vector3(bottomCorner.x, 1, bottomCorner.z);
         }
-        
-        // private void HandleGameOver(bool isGameOver)
-        // {
-        //     if (isGameOver)
-        //     {
-        //         _disposables.Clear();
-        //     }
-        // }
-        
-        
     }
 }
