@@ -30,6 +30,8 @@ namespace Installers
             Container.BindInterfacesTo<PlayerMoveHandler>().AsSingle();
             Container.BindInterfacesTo<PlayerRespawnEffect>().AsSingle();
             Container.BindInterfacesTo<PlayerFiringHandler>().AsSingle();
+            Container.BindInterfacesTo<PlayerExplosionHandler>().AsSingle();
+            
             Container.BindInterfacesAndSelfTo<PlayerCollisionHandler>().AsSingle();
         }
 

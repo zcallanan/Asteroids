@@ -20,6 +20,9 @@ namespace PlayerScripts
         
         public ReactiveProperty<int> CurrentLives { get; private set; }
         
+        private readonly CompositeDisposable _disposables = new CompositeDisposable();
+
+        
         [Inject]
         public void Construct(Player player, PlayerInputState playerInputState)
         {
@@ -44,7 +47,18 @@ namespace PlayerScripts
                     .AddComponent<ObservableTriggerTrigger>()
                     .UpdateAsObservable()
                     .SampleFrame(60)
-                    .Subscribe(_ => Debug.Log($"Observable added"));
+                    .Subscribe(_ => Debug.Log($"Observable added"))
+                    .AddTo(_disposables);
+            }
+
+            if (gameObject.GetComponent<ObservableEnableTrigger>() == null)
+            {
+                gameObject
+                    .AddComponent<ObservableEnableTrigger>()
+                    .UpdateAsObservable()
+                    .SampleFrame(60)
+                    .Subscribe(_ => Debug.Log("Enable trigger added"))
+                    .AddTo(_disposables);
             }
         }
     }

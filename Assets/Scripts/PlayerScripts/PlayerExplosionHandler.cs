@@ -5,11 +5,11 @@ using UniRx.Triggers;
 using UnityEngine;
 using Zenject;
 
-namespace AsteroidScripts
+namespace PlayerScripts
 {
-    public class AsteroidExplosionHandler : IInitializable
+    public class PlayerExplosionHandler : IInitializable
     {
-        private readonly AsteroidFacade _asteroidFacade;
+        private readonly Player _player;
         private readonly Explosion.Factory _explosionFactory;
 
         private Explosion _explosion;
@@ -17,36 +17,24 @@ namespace AsteroidScripts
         private ParticleSystem _expParticleSystem;
         private ParticleSystem.MainModule _expMain;
 
-        private Color _startColor;
-
-        private AsteroidFacade.AsteroidSizes _small;
-        private AsteroidFacade.AsteroidSizes _medium;
-        private AsteroidFacade.AsteroidSizes _large;
-        
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
-        public AsteroidExplosionHandler(
-            AsteroidFacade asteroidFacade,
+        public PlayerExplosionHandler(
+            Player player,
             Explosion.Factory explosionFactory)
         {
-            _asteroidFacade = asteroidFacade;
+            _player = player;
             _explosionFactory = explosionFactory;
         }
         
         public void Initialize()
         {
-            _small = AsteroidFacade.AsteroidSizes.SmallAsteroid;
-            _medium = AsteroidFacade.AsteroidSizes.MediumAsteroid;
-            _large = AsteroidFacade.AsteroidSizes.LargeAsteroid;
-
-            _startColor = new Color(0.5176471f, 0.5019608f, 0.4313726f, 1f);
-            
-            _asteroidFacade
+            _player.GameObj
                 .OnTriggerEnterAsObservable()
                 .Subscribe(_ => CreateExplosion())
                 .AddTo(_disposables);
             
-            _asteroidFacade
+            _player.GameObj
                 .OnEnableAsObservable()
                 .Subscribe(_ =>
                 {
@@ -62,27 +50,13 @@ namespace AsteroidScripts
         {
             _explosion = _explosionFactory.Create();
 
-            _explosion.transform.position = _asteroidFacade.Position;
+            _explosion.transform.position = _player.Position;
             
             _expParticleSystem = _explosion.GetComponent<ParticleSystem>();
             _expMain = _expParticleSystem.main;
-
-            if (_asteroidFacade.Size == _small)
-            {
-                _expMain.startSpeed = .5f;
-                _expMain.startColor = _startColor;
-            }
-            else if (_asteroidFacade.Size == _medium)
-            {
-                _expMain.startSpeed = .75f;
-                _expMain.startColor = _startColor;
-            }
-            else if (_asteroidFacade.Size == _large)
-            {
-                _expMain.startSpeed = 1f;
-                _expMain.startColor = _startColor;
-            }
             
+            _expMain.startSpeed = 1f;
+
             _expParticleSystem.Clear();
             _expParticleSystem.Play();
         }

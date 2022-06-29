@@ -8,12 +8,6 @@ namespace Misc
     {
         private IMemoryPool _pool;
 
-        // [Inject]
-        // public void Construct()
-        // {
-        //     
-        // }
-
         public void OnDespawned()
         {
             _pool = null;

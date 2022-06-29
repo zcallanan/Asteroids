@@ -14,7 +14,6 @@ namespace AsteroidScripts
         private AsteroidData.Settings _asteroidData;
         private Difficulty.Settings _difficultySettings;
         private GameState _gameState;
-        private AsteroidCollisionHandler _asteroidCollisionHandler;
 
         private IMemoryPool _pool;
 
@@ -38,14 +37,12 @@ namespace AsteroidScripts
             BoundHandler boundHandler,
             AsteroidData.Settings asteroidData,
             Difficulty.Settings difficultySettings,
-            GameState gameState,
-            AsteroidCollisionHandler asteroidCollisionHandler)
+            GameState gameState)
         {
             _boundHandler = boundHandler;
             _asteroidData = asteroidData;
             _difficultySettings = difficultySettings;
             _gameState = gameState;
-            _asteroidCollisionHandler = asteroidCollisionHandler;
         }
 
         private void Start()
@@ -72,7 +69,10 @@ namespace AsteroidScripts
                     .SampleFrame(60)
                     .Subscribe(_ => Debug.Log($"Collision trigger added"))
                     .AddTo(_disposables);
+            }
 
+            if (gameObject.GetComponent<ObservableEnableTrigger>() == null)
+            {
                 gameObject
                     .AddComponent<ObservableEnableTrigger>()
                     .UpdateAsObservable()
