@@ -5,6 +5,7 @@ namespace Misc
 {
     public class GameState : MonoBehaviour
     {
+        public ReactiveProperty<int> CurrentLives { get; set; }
         public ReactiveProperty<int> CurrentLevel { get; private set; }
         public ReactiveProperty<int> Score { get; set; }
         
@@ -17,6 +18,7 @@ namespace Misc
             GameDifficulty = 1; 
             GameMode = 0;
             
+            CurrentLives = new ReactiveProperty<int>(2);
             CurrentLevel = new ReactiveProperty<int>(0);
             Score = new ReactiveProperty<int>(0);
         }

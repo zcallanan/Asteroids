@@ -1,5 +1,5 @@
 using System;
-using PlayerScripts;
+using Misc;
 using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,23 +11,23 @@ namespace UI
     {
         [SerializeField] private Sprite[] lifeCountSprite;
 
-        private PlayerFacade _playerFacade;
+        private GameState _gameState;
 
         private Image _imageComponent;
         
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
         
         [Inject]
-        public void Construct(PlayerFacade playerFacade)
+        public void Construct(GameState gameState)
         {
-            _playerFacade = playerFacade;
+            _gameState = gameState;
         }
 
         void Start()
         {
             // GameManager.sharedInstance.IsGameOver.Subscribe(HandleGameOver).AddTo(_disposables);
             
-            _playerFacade.CurrentLives
+            _gameState.CurrentLives
                 .Throttle(TimeSpan.FromSeconds(.5))
                 .Subscribe(ChangeNumberOfLivesSprite)
                 .AddTo(_disposables);

@@ -31,7 +31,6 @@ namespace PlayerScripts
         private void Awake()
         {
             _player.JustRespawned = new ReactiveProperty<bool>(false);
-            _player.CurrentLives = new ReactiveProperty<int>(2);
         }
 
         private void Start()
@@ -42,7 +41,7 @@ namespace PlayerScripts
                 {  
                     _getALifeEveryTenK += 10000;
                     
-                    _player.CurrentLives.Value++;
+                    _gameState.CurrentLives.Value++;
                 }
                 
                 _previousScore = currentScore;
@@ -51,13 +50,13 @@ namespace PlayerScripts
 
         private void OnTriggerEnter(Collider other)
         {
-            _player.CurrentLives.Value--;
+            _gameState.CurrentLives.Value--;
 
             Observable
                 .Timer(TimeSpan.FromSeconds(_playerData.respawnDelay))
                 .Subscribe(_ =>
                 {
-                    if (_player.IsDead && _player.CurrentLives.Value >= 0)
+                    if (_player.IsDead && _gameState.CurrentLives.Value >= 0)
                     {
                         _player.MeshRenderer.enabled = true;
                         _player.MeshCollider.enabled = false;

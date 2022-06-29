@@ -53,8 +53,6 @@ namespace PlayerScripts
         
         public float AdjustedSpeed { get; set; }
 
-        public ReactiveProperty<int> CurrentLives { get; set; }
-        
         public bool IsDead { get; set; }
         
         public ReactiveProperty<bool> JustRespawned { get; set; }

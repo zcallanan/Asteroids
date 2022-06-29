@@ -1,4 +1,4 @@
-using System;
+using Misc;
 using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
@@ -9,6 +9,7 @@ namespace PlayerScripts
     public class PlayerFacade : MonoBehaviour
     {
         private Player _player;
+        private GameState _gameState;
         private PlayerInputState _playerInputState;
 
         public MeshCollider MeshCollider => _player.MeshCollider;
@@ -18,15 +19,17 @@ namespace PlayerScripts
 
         public Vector3 Position => _player.Position;
         
-        public ReactiveProperty<int> CurrentLives { get; private set; }
-        
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
         
         [Inject]
-        public void Construct(Player player, PlayerInputState playerInputState)
+        public void Construct(
+            Player player,
+            GameState gameState,
+            PlayerInputState playerInputState)
         {
             _player = player;
+            _gameState = gameState;
             _playerInputState = playerInputState;
         }
 
@@ -34,13 +37,10 @@ namespace PlayerScripts
         {
             _playerInputState.IsHyperspaceActive = new ReactiveProperty<bool>(false);
             _playerInputState.IsFiring = new ReactiveProperty<bool>(false);
-            CurrentLives = new ReactiveProperty<int>(0);
         }
 
         private void Start()
         {
-            _player.CurrentLives.Subscribe(lives => CurrentLives.Value = lives);
-            
             if (gameObject.GetComponent<ObservableTriggerTrigger>() == null)
             {
                 gameObject
