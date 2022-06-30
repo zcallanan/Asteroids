@@ -16,10 +16,7 @@ namespace PlayerScripts
 
         private Vector3 _maxBounds;
         private Vector3 _minBounds;
-
-        private bool _hyperspaceWasTriggered;
         
-        // TODO: clear on game over
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
         public PlayerHyperspaceHandler(
@@ -61,7 +58,7 @@ namespace PlayerScripts
         {
             _playerInputState.IsHyperspaceActive.Subscribe(hyperspaceInput =>
             {
-                if (hyperspaceInput && !_hyperspaceWasTriggered && _player.MeshRenderer.enabled)
+                if (hyperspaceInput && !_player.HyperspaceWasTriggered.Value && _player.MeshRenderer.enabled)
                 {
                     HyperSpaceTriggered();
                 }
@@ -70,7 +67,7 @@ namespace PlayerScripts
 
         private void HyperSpaceTriggered()
         {
-            _hyperspaceWasTriggered = true;
+            _player.HyperspaceWasTriggered.Value = true;
             
             _player.MeshRenderer.enabled = false;
             _player.Position = DetermineRandomHyperspacePosition();
@@ -85,12 +82,12 @@ namespace PlayerScripts
                 .Timer(TimeSpan.FromSeconds(2f))
                 .Subscribe(_ =>
                 {
-                    if (_hyperspaceWasTriggered && !_player.IsDead)
+                    if (_player.HyperspaceWasTriggered.Value && !_player.IsDead)
                     {
                         _player.MeshRenderer.enabled = true;
                         _player.AdjustedSpeed = 0;
             
-                        _hyperspaceWasTriggered = false;
+                        _player.HyperspaceWasTriggered.Value = false;
                     }
                 })
                 .AddTo(_disposables);

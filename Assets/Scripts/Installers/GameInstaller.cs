@@ -34,12 +34,19 @@ namespace Installers
                     .FromComponentInNewPrefab(_settings.bulletProjectilePrefab)
                     .UnderTransformGroup("BulletProjectiles"));
             
+            Container
+                .BindFactory<Thrust, Thrust.Factory>()
+                .FromPoolableMemoryPool<Thrust, ThrustPool>(x => x
+                    .WithInitialSize(2)
+                    .FromComponentInNewPrefab(_settings.thrustPrefab)
+                    .UnderTransformGroup("Thrusts"));
+            
             // Container.BindInterfacesAndSelfTo<UfoSpawner>().AsSingle();
 
             Container
                 .BindFactory<int, Asteroid.AsteroidSizes, Asteroid, Asteroid.Factory>()
                 .FromPoolableMemoryPool<int, Asteroid.AsteroidSizes, Asteroid, AsteroidPool>(x => x
-                    .WithInitialSize(60)
+                    .WithInitialSize(30)
                     .FromSubContainerResolve()
                     .ByNewPrefabInstaller<AsteroidInstaller>(_settings.asteroidPrefab)
                     .UnderTransformGroup("Asteroids"));
@@ -71,12 +78,17 @@ namespace Installers
             public GameObject bulletProjectilePrefab;
             public GameObject ufoPrefab;
             public GameObject explosionPrefab;
-            public GameObject boundManagerPrefab;
+            public GameObject thrustPrefab;
         }
     
         class BulletProjectilePool : MonoPoolableMemoryPool<float, float, BulletProjectileTypes, IMemoryPool, BulletProjectile>
         {
         }
+        
+        class ThrustPool : MonoPoolableMemoryPool<IMemoryPool, Thrust>
+        {
+        }
+        
         class AsteroidPool : MonoPoolableMemoryPool<int, Asteroid.AsteroidSizes, IMemoryPool, Asteroid>
         {
         }

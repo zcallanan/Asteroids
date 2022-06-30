@@ -73,7 +73,7 @@ namespace AsteroidScripts
         {
             if (_asteroid.Size == _small)
             {
-                _scoreHandler.UpdateScore(ScoreTypes.SmallAsteroid);
+                _scoreHandler.UpdateScore(ObjectTypes.SmallAsteroid);
                 
                 _gameLevelHandler.RegisterSmallDeathToDetermineNextLevel();
             }
@@ -84,7 +84,7 @@ namespace AsteroidScripts
                     _asteroidSpawner.SpawnAsteroid(_asteroid.RenderValue, _small, _asteroid.transform.position);
                 }
 
-                _scoreHandler.UpdateScore(ScoreTypes.MediumAsteroid);
+                _scoreHandler.UpdateScore(ObjectTypes.MediumAsteroid);
             }
             else if (_asteroid.Size == _large)
             {
@@ -93,7 +93,7 @@ namespace AsteroidScripts
                     _asteroidSpawner.SpawnAsteroid(_asteroid.RenderValue, _medium, _asteroid.transform.position);
                 }
 
-                _scoreHandler.UpdateScore(ScoreTypes.LargeAsteroid);
+                _scoreHandler.UpdateScore(ObjectTypes.LargeAsteroid);
             }
         }
         

@@ -3,6 +3,16 @@ using UnityEngine;
 
 namespace Misc
 {
+    public enum ObjectTypes
+    {
+        SmallAsteroid,
+        MediumAsteroid,
+        LargeAsteroid,
+        SmallUfo,
+        LargeUfo,
+        OtherPlayer
+    }
+    
     public class GameState : MonoBehaviour
     {
         public ReactiveProperty<int> CurrentLives { get; set; }

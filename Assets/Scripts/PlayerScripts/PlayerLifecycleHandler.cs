@@ -89,8 +89,8 @@ namespace PlayerScripts
                         _player.MeshRenderer.enabled = true;
                         _player.MeshCollider.enabled = false;
                 
-                        _player.Facing = Vector3.zero;
-                        _player.Position = new Vector3(0,1,0);
+                        _player.Facing = Vector3.forward;
+                        _player.Position = Vector3.up;
                         _player.Rotation = Vector3.up;
                 
                         _player.JustRespawned.Value = true;

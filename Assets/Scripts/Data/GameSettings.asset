@@ -31,7 +31,7 @@ MonoBehaviour:
     bulletProjectilePrefab: {fileID: 9033534424328100445, guid: 5d46797b9a6dc420fbf9761f62531082, type: 3}
     ufoPrefab: {fileID: 1449967967273523445, guid: 311599e2534effb4fbb4eead92e22bcd, type: 3}
     explosionPrefab: {fileID: 8917179331539235180, guid: 827056dd9127245689b1f891afcd3e85, type: 3}
-    boundManagerPrefab: {fileID: 5513947491739451442, guid: a9245f9f1b9e74bb8993c54b20e25e61, type: 3}
+    thrustPrefab: {fileID: 1002203793942768099, guid: 420a1a66197ab4ab7bd3ebaaae424e8a, type: 3}
   gameSettings:
     gameLevelHandler:
       levelStartDelay: 1

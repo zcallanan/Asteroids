@@ -2,16 +2,6 @@ using System;
 
 namespace Misc
 {
-    public enum ScoreTypes
-    {
-        SmallAsteroid,
-        MediumAsteroid,
-        LargeAsteroid,
-        SmallUfo,
-        LargeUfo,
-        OtherPlayer
-    }
-    
     public class ScoreHandler
     {
         private readonly Settings _settings;
@@ -25,26 +15,26 @@ namespace Misc
             _gameState = gameState;
         }
 
-        public void UpdateScore(ScoreTypes scoreTypes)
+        public void UpdateScore(ObjectTypes scoreTypes)
         {
             switch (scoreTypes)
             {
-                case ScoreTypes.SmallAsteroid:
+                case ObjectTypes.SmallAsteroid:
                     _gameState.Score.Value += _settings.smallAstVal;
                     break;
-                case ScoreTypes.MediumAsteroid:
+                case ObjectTypes.MediumAsteroid:
                     _gameState.Score.Value += _settings.mediumAstVal;
                     break;
-                case ScoreTypes.LargeAsteroid:
+                case ObjectTypes.LargeAsteroid:
                     _gameState.Score.Value += _settings.largeAstVal;
                     break;
-                case ScoreTypes.SmallUfo:
+                case ObjectTypes.SmallUfo:
                     _gameState.Score.Value += _settings.smallUfoVal;
                     break;
-                case ScoreTypes.LargeUfo:
+                case ObjectTypes.LargeUfo:
                     _gameState.Score.Value += _settings.largeUfoVal;
                     break;
-                case ScoreTypes.OtherPlayer:
+                case ObjectTypes.OtherPlayer:
                     _gameState.Score.Value += _settings.otherPlayerVal;
                     break;
                 default:

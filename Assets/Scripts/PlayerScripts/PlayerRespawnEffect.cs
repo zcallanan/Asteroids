@@ -52,6 +52,8 @@ namespace PlayerScripts
             {
                 if (shouldTriggerEffect)
                 {
+                    _player.JustRespawned.Value = false;
+
                     _isTogglingTransparency = true;
             
                     TogglePlayerTransparency();
@@ -90,15 +92,11 @@ namespace PlayerScripts
                 .Timer(TimeSpan.FromSeconds(_settings.totalRespawnEffectDuration))
                 .Subscribe(_ =>
                 {
-                    if (_player.JustRespawned.Value)
-                    {
-                        _player.MeshCollider.enabled = true;
-                        _player.JustRespawned.Value = false;
-                
-                        _player.MeshRenderer.material = _settings.defaultMat;
-                
-                        _isTogglingTransparency = false;
-                    }
+                    _player.MeshCollider.enabled = true;
+            
+                    _player.MeshRenderer.material = _settings.defaultMat;
+            
+                    _isTogglingTransparency = false;
                 })
                 .AddTo(_disposables);
         }

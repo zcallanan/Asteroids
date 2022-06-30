@@ -6,7 +6,6 @@ namespace PlayerScripts
 {
     public class Player
     {
-        private readonly Transform _transform;
         private readonly PlayerFacade _playerFacade;
         private readonly BoundHandler _boundHandler;
         
@@ -19,7 +18,7 @@ namespace PlayerScripts
         {
             MeshRenderer = meshRenderer;
             MeshCollider = meshCollider;
-            _transform = transform;
+            Transform = transform;
             _playerFacade = playerFacade;
             _boundHandler = boundHandler;
         }
@@ -29,23 +28,23 @@ namespace PlayerScripts
 
         public Vector3 Facing
         {
-            get => _transform.forward;
-            set => _transform.forward = value;
+            get => Transform.forward;
+            set => Transform.forward = value;
         }
 
         public Vector3 Position
         {
-            get => _transform.position;
-            set => _transform.position = _boundHandler.EnforceBounds(value);
+            get => Transform.position;
+            set => Transform.position = _boundHandler.EnforceBounds(value);
         }
         
         public Vector3 PreviousPosition { get; set; }
-
-        public Transform Transform => _transform;
         
+        public Transform Transform { get; }
+
         public Vector3 Rotation
         {
-            set => _transform.Rotate(value, Space.Self);
+            set => Transform.Rotate(value, Space.Self);
         }
         
         public float AdjustedSpeed { get; set; }
@@ -53,6 +52,8 @@ namespace PlayerScripts
         public bool IsDead { get; set; }
         
         public ReactiveProperty<bool> JustRespawned { get; set; }
+        
+        public ReactiveProperty<bool> HyperspaceWasTriggered { get; set; }
 
         public GameObject GameObj => _playerFacade.gameObject;
     }
