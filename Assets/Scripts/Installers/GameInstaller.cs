@@ -1,10 +1,8 @@
 using System;
 using AsteroidScripts;
 using Misc;
-using PlayerScripts;
-using Ufo;
+using UfoScripts;
 using UI;
-using UniRx;
 using UnityEngine;
 using Zenject;
 
@@ -39,16 +37,16 @@ namespace Installers
             // Container.BindInterfacesAndSelfTo<UfoSpawner>().AsSingle();
 
             Container
-                .BindFactory<int, AsteroidFacade.AsteroidSizes, AsteroidFacade, AsteroidFacade.Factory>()
-                .FromPoolableMemoryPool<int, AsteroidFacade.AsteroidSizes, AsteroidFacade, AsteroidFacadePool>(x => x
+                .BindFactory<int, Asteroid.AsteroidSizes, Asteroid, Asteroid.Factory>()
+                .FromPoolableMemoryPool<int, Asteroid.AsteroidSizes, Asteroid, AsteroidPool>(x => x
                     .WithInitialSize(60)
                     .FromSubContainerResolve()
                     .ByNewPrefabInstaller<AsteroidInstaller>(_settings.asteroidPrefab)
                     .UnderTransformGroup("Asteroids"));
 
             // Container
-            //     .BindFactory<UfoFacade, UfoFacade.Factory>()
-            //     .FromPoolableMemoryPool<UfoFacade, UfoFacadePool>(x => x
+            //     .BindFactory<Ufo, Ufo.Factory>()
+            //     .FromPoolableMemoryPool<Ufo, UfoPool>(x => x
             //         .WithInitialSize(4)
             //         .FromSubContainerResolve()
             //         .ByNewPrefabInstaller<UfoInstaller>(_settings.ufoPrefab)
@@ -79,11 +77,11 @@ namespace Installers
         class BulletProjectilePool : MonoPoolableMemoryPool<float, float, BulletProjectileTypes, IMemoryPool, BulletProjectile>
         {
         }
-        class AsteroidFacadePool : MonoPoolableMemoryPool<int, AsteroidFacade.AsteroidSizes, IMemoryPool, AsteroidFacade>
+        class AsteroidPool : MonoPoolableMemoryPool<int, Asteroid.AsteroidSizes, IMemoryPool, Asteroid>
         {
         }
         
-        class UfoFacadePool : MonoPoolableMemoryPool<IMemoryPool, UfoFacade>
+        class UfoPool : MonoPoolableMemoryPool<IMemoryPool, Ufo>
         {
         }
     

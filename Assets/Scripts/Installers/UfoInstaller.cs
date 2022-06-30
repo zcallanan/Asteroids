@@ -1,4 +1,4 @@
-using Ufo;
+using UfoScripts;
 using Zenject;
 
 namespace Installers
@@ -7,7 +7,7 @@ namespace Installers
     {
         public override void InstallBindings()
         {
-            Container.Bind<UfoFacade>().AsSingle();
+            Container.Bind<Ufo>().AsSingle();
         }
     }
 }

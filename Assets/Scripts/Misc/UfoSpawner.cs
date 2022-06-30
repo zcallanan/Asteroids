@@ -1,6 +1,6 @@
 using Zenject;
 
-namespace Ufo
+namespace Misc
 {
     public class UfoSpawner : ITickable, IInitializable
     {

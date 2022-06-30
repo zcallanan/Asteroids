@@ -9,7 +9,7 @@ using Vector3 = UnityEngine.Vector3;
 
 namespace AsteroidScripts
 {
-    public class AsteroidFacade : MonoBehaviour, IPoolable<int, AsteroidFacade.AsteroidSizes, IMemoryPool>, IDisposable
+    public class Asteroid : MonoBehaviour, IPoolable<int, Asteroid.AsteroidSizes, IMemoryPool>, IDisposable
     {
         private BoundHandler _boundHandler;
         private AsteroidData.Settings _asteroidData;
@@ -134,7 +134,7 @@ namespace AsteroidScripts
                 .AddTo(_disposables);
         }
 
-        public class Factory : PlaceholderFactory<int, AsteroidSizes, AsteroidFacade>
+        public class Factory : PlaceholderFactory<int, AsteroidSizes, Asteroid>
         {
         }
         

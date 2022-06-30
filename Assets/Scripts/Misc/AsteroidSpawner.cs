@@ -13,7 +13,7 @@ namespace Misc
         private readonly Settings _settings;
         private readonly Difficulty.Settings _difficultySettings;
         private readonly GameState _gameState;
-        private readonly AsteroidFacade.Factory _asteroidFactory;
+        private readonly Asteroid.Factory _asteroidFactory;
         private readonly BoundHandler _boundHandler;
 
         private int _gameDifficulty;
@@ -30,7 +30,7 @@ namespace Misc
             Settings settings,
             Difficulty.Settings difficultySettings,
             GameState gameState,
-            AsteroidFacade.Factory asteroidFactory,
+            Asteroid.Factory asteroidFactory,
             BoundHandler boundHandler)
         { 
             _settings = settings;
@@ -67,14 +67,14 @@ namespace Misc
                 .AddTo(_disposables);
         }
         
-        public void SpawnAsteroid(int renderValue, AsteroidFacade.AsteroidSizes asteroidSize, Vector3 largerAsteroidPosition)
+        public void SpawnAsteroid(int renderValue, Asteroid.AsteroidSizes asteroidSize, Vector3 largerAsteroidPosition)
         {
-            var asteroidFacade = _asteroidFactory.Create(renderValue, asteroidSize);
+            var asteroid = _asteroidFactory.Create(renderValue, asteroidSize);
 
             Vector3 tempPosition;
             
-            if (asteroidSize == AsteroidFacade.AsteroidSizes.SmallAsteroid ||
-                asteroidSize == AsteroidFacade.AsteroidSizes.MediumAsteroid)
+            if (asteroidSize == Asteroid.AsteroidSizes.SmallAsteroid ||
+                asteroidSize == Asteroid.AsteroidSizes.MediumAsteroid)
             {
                 tempPosition = largerAsteroidPosition;
             }
@@ -84,32 +84,32 @@ namespace Misc
                     _innerMinBounds, _innerMaxBounds);
             }
             
-            asteroidFacade.Position = tempPosition;
-            asteroidFacade.name = $"{asteroidFacade.Size} {asteroidFacade.RenderValue}";
+            asteroid.Position = tempPosition;
+            asteroid.name = $"{asteroid.Size} {asteroid.RenderValue}";
 
-            RenderAsteroid(asteroidFacade);
-            ScaleAsteroid(asteroidFacade);
+            RenderAsteroid(asteroid);
+            ScaleAsteroid(asteroid);
         }
 
-        private void RenderAsteroid(AsteroidFacade asteroidFacade)
+        private void RenderAsteroid(Asteroid asteroid)
         {
-            asteroidFacade.MeshFilterMesh = _settings.meshFilterMesh[asteroidFacade.RenderValue];
-            asteroidFacade.MeshRendererMaterial = _settings.meshRendererMaterials[asteroidFacade.RenderValue];
+            asteroid.MeshFilterMesh = _settings.meshFilterMesh[asteroid.RenderValue];
+            asteroid.MeshRendererMaterial = _settings.meshRendererMaterials[asteroid.RenderValue];
         }
 
-        private void ScaleAsteroid(AsteroidFacade asteroidFacade)
+        private void ScaleAsteroid(Asteroid asteroid)
         {
-            if (asteroidFacade.Size == AsteroidFacade.AsteroidSizes.SmallAsteroid)
+            if (asteroid.Size == Asteroid.AsteroidSizes.SmallAsteroid)
             {
-                asteroidFacade.Scale = _settings.smallScale * Vector3.one;
+                asteroid.Scale = _settings.smallScale * Vector3.one;
             }
-            else if (asteroidFacade.Size == AsteroidFacade.AsteroidSizes.MediumAsteroid)
+            else if (asteroid.Size == Asteroid.AsteroidSizes.MediumAsteroid)
             {
-                asteroidFacade.Scale = _settings.mediumScale * Vector3.one;
+                asteroid.Scale = _settings.mediumScale * Vector3.one;
             }
-            else if (asteroidFacade.Size == AsteroidFacade.AsteroidSizes.LargeAsteroid)
+            else if (asteroid.Size == Asteroid.AsteroidSizes.LargeAsteroid)
             {
-                asteroidFacade.Scale = _settings.largeScale * Vector3.one;
+                asteroid.Scale = _settings.largeScale * Vector3.one;
             }
         }
         
@@ -141,7 +141,7 @@ namespace Misc
                 for (int i = 0; i < _initLargeAsteroids + _gameState.CurrentLevel.Value; i++)
                 {
                     var renderValue = Random.Range(0, 4);
-                    SpawnAsteroid(renderValue, AsteroidFacade.AsteroidSizes.LargeAsteroid, Vector3.zero);
+                    SpawnAsteroid(renderValue, Asteroid.AsteroidSizes.LargeAsteroid, Vector3.zero);
                 }
             }).AddTo(_disposables);
         }

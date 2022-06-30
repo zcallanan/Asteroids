@@ -2,9 +2,9 @@ using System;
 using UnityEngine;
 using Zenject;
 
-namespace Ufo
+namespace UfoScripts
 {
-    public class UfoFacade : MonoBehaviour, IPoolable<IMemoryPool>, IDisposable
+    public class Ufo : MonoBehaviour, IPoolable<IMemoryPool>, IDisposable
     {
         // Start is called before the first frame update
         void Start()
@@ -33,7 +33,7 @@ namespace Ufo
             throw new NotImplementedException();
         }
         
-        public class Factory : PlaceholderFactory<UfoFacade>
+        public class Factory : PlaceholderFactory<Ufo>
         {
         }
     }
