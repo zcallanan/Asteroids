@@ -14,9 +14,6 @@ namespace PlayerScripts
         private readonly GameState _gameState;
 
         private Explosion _explosion;
-        
-        private ParticleSystem _expParticleSystem;
-        private ParticleSystem.MainModule _expMain;
 
         private Color _startColor;
 
@@ -84,14 +81,14 @@ namespace PlayerScripts
 
             _explosion.transform.position = _player.Position;
             
-            _expParticleSystem = _explosion.GetComponent<ParticleSystem>();
-            _expMain = _expParticleSystem.main;
+            var expParticleSystem = _explosion.GetComponent<ParticleSystem>();
+            var expMain = expParticleSystem.main;
             
-            _expMain.startSpeed = 1f;
-            _expMain.startColor = _startColor;
+            expMain.startSpeed = 1f;
+            expMain.startColor = _startColor;
 
-            _expParticleSystem.Clear();
-            _expParticleSystem.Play();
+            expParticleSystem.Clear();
+            expParticleSystem.Play();
         }
     }
 }
