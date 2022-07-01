@@ -1,7 +1,6 @@
 using System;
 using Misc;
 using UniRx;
-using UniRx.Triggers;
 using UnityEngine;
 using Zenject;
 
@@ -38,10 +37,6 @@ namespace PlayerScripts
 
         private void Start()
         {
-            AddOnTriggerEnterObservable();
-
-            AddOnEnabledTriggerObservable();
-
             Dispose();
         }
         
@@ -56,32 +51,6 @@ namespace PlayerScripts
                     }
                 })
                 .AddTo(_disposables);
-        }
-
-        private void AddOnTriggerEnterObservable()
-        {
-            if (gameObject.GetComponent<ObservableTriggerTrigger>() == null)
-            {
-                gameObject
-                    .AddComponent<ObservableTriggerTrigger>()
-                    .UpdateAsObservable()
-                    .SampleFrame(60)
-                    .Subscribe(_ => Debug.Log($"Observable added"))
-                    .AddTo(_disposables);
-            }
-        }
-        
-        private void AddOnEnabledTriggerObservable()
-        {
-            if (gameObject.GetComponent<ObservableEnableTrigger>() == null)
-            {
-                gameObject
-                    .AddComponent<ObservableEnableTrigger>()
-                    .UpdateAsObservable()
-                    .SampleFrame(60)
-                    .Subscribe(_ => Debug.Log("Enable trigger added"))
-                    .AddTo(_disposables);
-            }
         }
     }
 }

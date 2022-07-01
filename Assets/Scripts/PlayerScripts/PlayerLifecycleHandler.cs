@@ -62,6 +62,8 @@ namespace PlayerScripts
             _gameState.CurrentLives.Value--;
 
             RestorePlayerFromDeathAfterDelay();
+
+            DisablePlayerObjectOnDeath();
         }
 
         public void Dispose()
@@ -76,6 +78,14 @@ namespace PlayerScripts
                     }
                 })
                 .AddTo(_disposables);
+        }
+        
+        private void DisablePlayerObjectOnDeath()
+        {
+            if (_gameState.CurrentLives.Value < 0)
+            {
+                _player.GameObj.SetActive(false);
+            }
         }
         
         private void RestorePlayerFromDeathAfterDelay()

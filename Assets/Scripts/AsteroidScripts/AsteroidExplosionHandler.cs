@@ -15,7 +15,6 @@ namespace AsteroidScripts
 
         private Explosion _explosion;
         
-        private ParticleSystem _expParticleSystem;
         private ParticleSystem.MainModule _expMain;
 
         private Color _startColor;
@@ -70,8 +69,8 @@ namespace AsteroidScripts
 
             _explosion.transform.position = _asteroid.Position;
             
-            _expParticleSystem = _explosion.GetComponent<ParticleSystem>();
-            _expMain = _expParticleSystem.main;
+            var expParticleSystem = _explosion.GetComponent<ParticleSystem>();
+            _expMain = expParticleSystem.main;
 
             if (_asteroid.Size == _small)
             {
@@ -89,8 +88,8 @@ namespace AsteroidScripts
                 _expMain.startColor = _startColor;
             }
             
-            _expParticleSystem.Clear();
-            _expParticleSystem.Play();
+            expParticleSystem.Clear();
+            expParticleSystem.Play();
         }
 
         private void ExplodeOnTriggerEnter()

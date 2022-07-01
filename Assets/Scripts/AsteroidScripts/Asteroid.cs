@@ -1,7 +1,6 @@
 using System;
 using Misc;
 using UniRx;
-using UniRx.Triggers;
 using UnityEngine;
 using Zenject;
 using Random = UnityEngine.Random;
@@ -17,16 +16,9 @@ namespace AsteroidScripts
         private GameState _gameState;
 
         private IMemoryPool _pool;
-
-        private int _gameDifficulty;
-
+        
         private Vector3 _randomDirection;
         private Vector3 _randomRotation;
-
-        private float _maxSpeed;
-        private float _minSpeed;
-        private float _maxRotSpeed;
-        private float _minRotSpeed;
 
         private float _asteroidSpeed;
         private float _asteroidRotSpeed;
@@ -48,24 +40,20 @@ namespace AsteroidScripts
 
         private void Start()
         {
-            _gameDifficulty = _gameState.GameDifficulty;
+            var gameDifficulty = _gameState.GameDifficulty;
+            
+            var maxSpeed = _difficultySettings.difficulties[gameDifficulty].astMaxSpeed;
+            var minSpeed = _difficultySettings.difficulties[gameDifficulty].astMinSpeed;
 
-            _maxSpeed = _difficultySettings.difficulties[_gameDifficulty].astMaxSpeed;
-            _minSpeed = _difficultySettings.difficulties[_gameDifficulty].astMinSpeed;
+            var maxRotSpeed = _asteroidData.maxRotSpeed;
+            var minRotSpeed = _asteroidData.minRotSpeed;
 
-            _maxRotSpeed = _asteroidData.maxRotSpeed;
-            _minRotSpeed = _asteroidData.minRotSpeed;
-
-            _asteroidRotSpeed = Random.Range(_minRotSpeed, _maxRotSpeed);
-            _asteroidSpeed = Random.Range(_minSpeed, _maxSpeed);
+            _asteroidRotSpeed = Random.Range(minRotSpeed, maxRotSpeed);
+            _asteroidSpeed = Random.Range(minSpeed, maxSpeed);
 
             _randomRotation = new Vector3(Random.value / 10, Random.value / 10, Random.value / 10);
             _randomDirection = new Vector3(Random.Range(-5, 5), 1, Random.Range(-5, 5));
 
-            AddOnTriggerEnterObservable();
-
-            AddOnEnabledTriggerObservable();
-            
             Dispose();
         }
 
@@ -148,32 +136,6 @@ namespace AsteroidScripts
         private Vector3 Rotation
         {
             set => transform.Rotate(value);
-        }
-        
-        private void AddOnTriggerEnterObservable()
-        {
-            if (gameObject.GetComponent<ObservableTriggerTrigger>() == null)
-            {
-                gameObject
-                    .AddComponent<ObservableTriggerTrigger>()
-                    .UpdateAsObservable()
-                    .SampleFrame(60)
-                    .Subscribe(_ => Debug.Log($"Collision trigger added"))
-                    .AddTo(_disposables);
-            }
-        }
-        
-        private void AddOnEnabledTriggerObservable()
-        {
-            if (gameObject.GetComponent<ObservableEnableTrigger>() == null)
-            {
-                gameObject
-                    .AddComponent<ObservableEnableTrigger>()
-                    .UpdateAsObservable()
-                    .SampleFrame(60)
-                    .Subscribe(_ => Debug.Log("Enable trigger added"))
-                    .AddTo(_disposables);
-            }
         }
     }
 }
