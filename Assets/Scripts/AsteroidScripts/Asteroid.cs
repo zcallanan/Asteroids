@@ -22,6 +22,8 @@ namespace AsteroidScripts
 
         private float _asteroidSpeed;
         private float _asteroidRotSpeed;
+
+        private MeshRenderer _meshRenderer;
         
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
@@ -47,7 +49,7 @@ namespace AsteroidScripts
 
             var maxRotSpeed = _asteroidData.maxRotSpeed;
             var minRotSpeed = _asteroidData.minRotSpeed;
-
+            
             _asteroidRotSpeed = Random.Range(minRotSpeed, maxRotSpeed);
             _asteroidSpeed = Random.Range(minSpeed, maxSpeed);
 
@@ -60,7 +62,7 @@ namespace AsteroidScripts
         private void Update()
         {
             // TODO: Fix the rate
-            Rotation = _randomRotation * (Time.deltaTime * _asteroidRotSpeed);
+            Rotation(_randomRotation * (Time.deltaTime * _asteroidRotSpeed));
 
             var position = transform.position;
             position += _randomDirection * (Time.deltaTime * _asteroidSpeed);
@@ -84,16 +86,6 @@ namespace AsteroidScripts
         }
 
         public int RenderValue { get; private set; }
-
-        public Material MeshRendererMaterial
-        {
-            set => GetComponent<MeshRenderer>().material = value;
-        }
-
-        public Mesh MeshFilterMesh
-        {
-            set => GetComponent<MeshFilter>().mesh = value;
-        }
 
         public AsteroidSizes Size { get; private set; }
 
@@ -121,6 +113,16 @@ namespace AsteroidScripts
                 })
                 .AddTo(_disposables);
         }
+        
+        public void MeshRendererMaterial(Material mat)
+        {
+            GetComponent<MeshRenderer>().material = mat;
+        }
+
+        public void MeshFilterMesh(Mesh mesh)
+        {
+            GetComponent<MeshFilter>().mesh = mesh;
+        }
 
         public class Factory : PlaceholderFactory<int, AsteroidSizes, Asteroid>
         {
@@ -133,9 +135,9 @@ namespace AsteroidScripts
             LargeAsteroid
         }
         
-        private Vector3 Rotation
+        private void Rotation(Vector3 rot)
         {
-            set => transform.Rotate(value);
+            transform.Rotate(rot, Space.Self);
         }
     }
 }

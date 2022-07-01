@@ -93,8 +93,8 @@ namespace Misc
 
         private void RenderAsteroid(Asteroid asteroid)
         {
-            asteroid.MeshFilterMesh = _settings.meshFilterMesh[asteroid.RenderValue];
-            asteroid.MeshRendererMaterial = _settings.meshRendererMaterials[asteroid.RenderValue];
+            asteroid.MeshFilterMesh(_settings.meshFilterMesh[asteroid.RenderValue]);
+            asteroid.MeshRendererMaterial(_settings.meshRendererMaterials[asteroid.RenderValue]);
         }
 
         private void ScaleAsteroid(Asteroid asteroid)

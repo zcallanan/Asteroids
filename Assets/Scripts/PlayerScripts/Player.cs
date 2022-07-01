@@ -42,11 +42,6 @@ namespace PlayerScripts
         
         public Transform Transform { get; }
 
-        public Vector3 Rotation
-        {
-            set => Transform.Rotate(value, Space.Self);
-        }
-        
         public float AdjustedSpeed { get; set; }
 
         public bool IsDead { get; set; }
@@ -56,5 +51,10 @@ namespace PlayerScripts
         public ReactiveProperty<bool> HyperspaceWasTriggered { get; set; }
 
         public GameObject GameObj => _playerFacade.gameObject;
+        
+        public void Rotation(Vector3 rot)
+        {
+            Transform.Rotate(rot, Space.Self);
+        }
     }
 }

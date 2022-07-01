@@ -101,7 +101,7 @@ namespace PlayerScripts
                 
                         _player.Facing = Vector3.forward;
                         _player.Position = Vector3.up;
-                        _player.Rotation = Vector3.up;
+                        _player.Rotation(Vector3.up);
                 
                         _player.JustRespawned.Value = true;
                         _player.IsDead = false;

@@ -26,7 +26,7 @@ namespace PlayerScripts
                              (_playerInputState.HorizontalInput * Time.fixedDeltaTime *
                               _settings.rotationSpeed);
             
-            _player.Rotation = adjustedAngle;
+            _player.Rotation(adjustedAngle);
         }
         
         [Serializable]
