@@ -4,14 +4,13 @@ using Zenject;
 
 namespace Misc
 {
-    public class GameLevelHandler : IInitializable, IDisposable
+    public class GameLevelHandler : IInitializable
     {
 
         private readonly GameState _gameState;
         private readonly Settings _settings;
         private readonly Difficulty.Settings _difficultySettings;
 
-        private int _gameDifficulty;
         private int _initLargeAsteroids;
         private int _smallPerMedium;
         
@@ -20,8 +19,6 @@ namespace Misc
 
         private bool _isReadyToStartNewLevel;
         
-        private readonly CompositeDisposable _disposables = new CompositeDisposable();
-
         public GameLevelHandler(
             Settings settings,
             Difficulty.Settings difficultySettings,
@@ -34,13 +31,12 @@ namespace Misc
 
         public void Initialize()
         {
-            _gameDifficulty = _gameState.GameDifficulty;
-            _initLargeAsteroids = _difficultySettings.difficulties[_gameDifficulty].initLargeAsteroids;
-            _smallPerMedium = _difficultySettings.difficulties[_gameDifficulty].smallPerMedium;
+            var gameDifficulty = _gameState.GameDifficulty;
+            
+            _initLargeAsteroids = _difficultySettings.difficulties[gameDifficulty].initLargeAsteroids;
+            _smallPerMedium = _difficultySettings.difficulties[gameDifficulty].smallPerMedium;
 
             DetermineTotalSmallAsteroidsInThisLevel();
-            
-            Dispose();
         }
 
         private void DetermineTotalSmallAsteroidsInThisLevel()
@@ -71,21 +67,8 @@ namespace Misc
                             _isReadyToStartNewLevel = false;
                         } 
                     })
-                    .AddTo(_disposables);
+                    .AddTo(_gameState.gameObject);
             }
-        }
-        
-        public void Dispose()
-        {
-            _gameState.CurrentLives
-                .Subscribe(lives =>
-                {
-                    if (lives < 0)
-                    {
-                        _disposables.Clear();
-                    }
-                })
-                .AddTo(_disposables);
         }
 
         [Serializable]

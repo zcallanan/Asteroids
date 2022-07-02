@@ -1,5 +1,4 @@
 using UniRx;
-using Zenject;
 
 namespace PlayerScripts
 {

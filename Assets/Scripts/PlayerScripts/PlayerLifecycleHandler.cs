@@ -6,7 +6,7 @@ using Zenject;
 
 namespace PlayerScripts
 {
-    public class PlayerLifecycleHandler : MonoBehaviour, IDisposable
+    public class PlayerLifecycleHandler : MonoBehaviour
     {
         private Player _player;
         private PlayerData.Settings _playerData;
@@ -17,8 +17,6 @@ namespace PlayerScripts
 
         private bool _gameIsOver;
         
-        private readonly CompositeDisposable _disposables = new CompositeDisposable();
-
         [Inject]
         public void Construct(
             Player player,
@@ -38,8 +36,6 @@ namespace PlayerScripts
         private void Start()
         {
             IncrementCurrentLivesEveryTenKScoreUnlessGameIsOver();
-            
-            Dispose();
         }
 
         private void IncrementCurrentLivesEveryTenKScoreUnlessGameIsOver()
@@ -64,9 +60,11 @@ namespace PlayerScripts
             RestorePlayerFromDeathAfterDelay();
 
             DisablePlayerObjectOnDeath();
+
+            SetGameOver();
         }
 
-        public void Dispose()
+        private void SetGameOver()
         {
             _gameState.CurrentLives
                 .Subscribe(lives =>
@@ -74,10 +72,9 @@ namespace PlayerScripts
                     if (lives < 0)
                     {
                         _gameIsOver = true;
-                        _disposables.Clear();
                     }
                 })
-                .AddTo(_disposables);
+                .AddTo(_player.GameObj);
         }
         
         private void DisablePlayerObjectOnDeath()
@@ -101,13 +98,13 @@ namespace PlayerScripts
                 
                         _player.Facing = Vector3.forward;
                         _player.Position = Vector3.up;
-                        _player.Rotation(Vector3.up);
+                        _player.SetRotation(Vector3.up);
                 
                         _player.JustRespawned.Value = true;
                         _player.IsDead = false;
                     }
                 })
-                .AddTo(_disposables);
+                .AddTo(_player.GameObj);
         }
     }
 }

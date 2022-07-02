@@ -6,44 +6,24 @@ using Zenject;
 
 namespace PlayerScripts
 {
-    public class PlayerRespawnEffect : IInitializable, IDisposable
+    public class PlayerRespawnEffect : IInitializable
     {
         private readonly Player _player;
         private readonly Settings _settings;
-        private readonly GameState _gameState;
         
         private bool _isTogglingTransparency;
-
-        private readonly CompositeDisposable _disposables = new CompositeDisposable();
-
+        
         public PlayerRespawnEffect(
             Player player,
-            Settings settings,
-            GameState gameState)
+            Settings settings)
         {
             _player = player;
             _settings = settings;
-            _gameState = gameState;
         }
     
         public void Initialize()
         {
             InitializeRespawnEffect();
-            
-            Dispose();
-        }
-        
-        public void Dispose()
-        {
-            _gameState.CurrentLives
-                .Subscribe(lives =>
-                {
-                    if (lives < 0)
-                    {
-                        _disposables.Clear();
-                    }
-                })
-                .AddTo(_disposables);
         }
 
         private void InitializeRespawnEffect()
@@ -60,7 +40,7 @@ namespace PlayerScripts
                     
                     CleanupRespawnEffectAfterDelay();
                 }
-            }).AddTo(_disposables);
+            }).AddTo(_player.GameObj);
         }
 
         private void TogglePlayerTransparency()
@@ -83,7 +63,7 @@ namespace PlayerScripts
                         TogglePlayerTransparency();
                     }
                 })
-                .AddTo(_disposables);
+                .AddTo(_player.GameObj);
         }
 
         private void CleanupRespawnEffectAfterDelay()
@@ -98,7 +78,7 @@ namespace PlayerScripts
             
                     _isTogglingTransparency = false;
                 })
-                .AddTo(_disposables);
+                .AddTo(_player.GameObj);
         }
 
         [Serializable]

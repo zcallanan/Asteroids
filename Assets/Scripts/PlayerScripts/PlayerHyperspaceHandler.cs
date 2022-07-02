@@ -7,28 +7,23 @@ using Random = UnityEngine.Random;
 
 namespace PlayerScripts
 {
-    public class PlayerHyperspaceHandler : IInitializable, IDisposable
+    public class PlayerHyperspaceHandler : IInitializable
     {
         private readonly PlayerInputState _playerInputState;
         private readonly Player _player;
         private readonly BoundHandler _boundHandler;
-        private readonly GameState _gameState;
 
         private Vector3 _maxBounds;
         private Vector3 _minBounds;
         
-        private readonly CompositeDisposable _disposables = new CompositeDisposable();
-
         public PlayerHyperspaceHandler(
             PlayerInputState playerInputState, 
             Player player,
-            BoundHandler boundHandler,
-            GameState gameState)
+            BoundHandler boundHandler)
         {
             _playerInputState = playerInputState;
             _player = player;
             _boundHandler = boundHandler;
-            _gameState = gameState;
         }
         
         public void Initialize()
@@ -37,21 +32,6 @@ namespace PlayerScripts
             _boundHandler.MinBounds.Subscribe(minGameBounds => _minBounds = minGameBounds);
 
             HandleHyperspaceInput();
-            
-            Dispose();
-        }
-        
-        public void Dispose()
-        {
-            _gameState.CurrentLives
-                .Subscribe(lives =>
-                {
-                    if (lives < 0)
-                    {
-                        _disposables.Clear();
-                    }
-                })
-                .AddTo(_disposables);
         }
 
         private void HandleHyperspaceInput()
@@ -62,7 +42,7 @@ namespace PlayerScripts
                 {
                     HyperSpaceTriggered();
                 }
-            }).AddTo(_disposables);
+            }).AddTo(_player.GameObj);
         }
 
         private void HyperSpaceTriggered()
@@ -90,7 +70,7 @@ namespace PlayerScripts
                         _player.HyperspaceWasTriggered.Value = false;
                     }
                 })
-                .AddTo(_disposables);
+                .AddTo(_player.GameObj);
         }
 
         private Vector3 DetermineRandomHyperspacePosition()

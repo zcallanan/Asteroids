@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UniRx;
 using UnityEngine;
 
@@ -15,9 +16,10 @@ namespace Misc
     
     public class GameState : MonoBehaviour
     {
-        public ReactiveProperty<int> CurrentLives { get; set; }
+        public ReactiveProperty<int> CurrentLives { get; private set; }
         public ReactiveProperty<int> CurrentLevel { get; private set; }
-        public ReactiveProperty<int> Score { get; set; }
+        public ReactiveProperty<int> Score { get; private set; }
+        
         
         public int GameDifficulty { get; set; }
         public int GameMode { get; set; }

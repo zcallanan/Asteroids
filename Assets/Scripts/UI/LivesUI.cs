@@ -7,15 +7,13 @@ using Zenject;
 
 namespace UI
 {
-    public class LivesUI : MonoBehaviour, IDisposable
+    public class LivesUI : MonoBehaviour
     {
         [SerializeField] private Sprite[] lifeCountSprite;
 
         private GameState _gameState;
 
         private Image _imageComponent;
-        
-        private readonly CompositeDisposable _disposables = new CompositeDisposable();
         
         [Inject]
         public void Construct(GameState gameState)
@@ -28,21 +26,6 @@ namespace UI
             _imageComponent = gameObject.GetComponent<Image>();
             
             CheckForChangeToCurrentLivesAfterDelay();
-            
-            Dispose();
-        }
-        
-        public void Dispose()
-        {
-            _gameState.CurrentLives
-                .Subscribe(lives =>
-                {
-                    if (lives < 0)
-                    {
-                        _disposables.Clear();
-                    }
-                })
-                .AddTo(_disposables);
         }
 
         private void CheckForChangeToCurrentLivesAfterDelay()
@@ -50,7 +33,7 @@ namespace UI
             _gameState.CurrentLives
                 .Throttle(TimeSpan.FromSeconds(.5))
                 .Subscribe(ChangeNumberOfLivesSprite)
-                .AddTo(_disposables);
+                .AddTo(this);
         }
 
         private void ChangeNumberOfLivesSprite(int currentLives)

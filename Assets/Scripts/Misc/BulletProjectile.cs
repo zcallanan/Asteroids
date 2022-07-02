@@ -11,33 +11,22 @@ namespace Misc
         FromPlayer
     }
     
-    public class BulletProjectile : MonoBehaviour, IPoolable<float, float, BulletProjectileTypes, IMemoryPool>, IDisposable
+    public class BulletProjectile : MonoBehaviour, IPoolable<float, float, BulletProjectileTypes, IMemoryPool>
     {
         private BoundHandler _boundHandler;
-        private GameState _gameState;
 
         private float _speed;
-        private float _lifespan;
 
         private IMemoryPool _pool;
         private IDisposable _spawnTimer;
-
-        private readonly CompositeDisposable _disposables = new CompositeDisposable();
         
         [Inject]
         public void Construct(
-            GameState gameState,
             BoundHandler boundHandler)
         {
             _boundHandler = boundHandler;
-            _gameState = gameState;
         }
 
-        public void Start()
-        {
-            Dispose();
-        }
-        
         public void Update()
         {
             var projTransform = transform;
@@ -56,34 +45,20 @@ namespace Misc
         public void OnSpawned(float speed, float lifespan, BulletProjectileTypes types, IMemoryPool pool)
         {
             _speed = speed;
-            _lifespan = lifespan;
             _pool = pool;
 
             _spawnTimer = Observable
-                .Timer(TimeSpan.FromSeconds(_lifespan))
+                .Timer(TimeSpan.FromSeconds(lifespan))
                 .Subscribe(_ =>
                 {
                     _pool?.Despawn(this);
                 })
-                .AddTo(_disposables);
+                .AddTo(this);
         }
 
         public void OnDespawned()
         {
             _pool = null;
-        }
-        
-        public void Dispose()
-        {
-            _gameState.CurrentLives
-                .Subscribe(lives =>
-                {
-                    if (lives < 0)
-                    {
-                        _disposables.Clear();
-                    }
-                })
-                .AddTo(_disposables);
         }
 
         public class Factory : PlaceholderFactory<float, float, BulletProjectileTypes, BulletProjectile>

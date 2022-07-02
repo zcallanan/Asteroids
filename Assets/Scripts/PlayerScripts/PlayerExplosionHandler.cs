@@ -7,26 +7,21 @@ using Zenject;
 
 namespace PlayerScripts
 {
-    public class PlayerExplosionHandler : IInitializable, IDisposable
+    public class PlayerExplosionHandler : IInitializable
     {
         private readonly Player _player;
         private readonly Explosion.Factory _explosionFactory;
-        private readonly GameState _gameState;
 
         private Explosion _explosion;
 
         private Color _startColor;
-
-        private readonly CompositeDisposable _disposables = new CompositeDisposable();
-
+        
         public PlayerExplosionHandler(
             Player player,
-            Explosion.Factory explosionFactory,
-            GameState gameState)
+            Explosion.Factory explosionFactory)
         {
             _player = player;
             _explosionFactory = explosionFactory;
-            _gameState = gameState;
         }
         
         public void Initialize()
@@ -36,8 +31,6 @@ namespace PlayerScripts
             ExplodeOnTriggerEnter();
 
             DelayThenDespawnExplosion();
-            
-            Dispose();
         }
 
         private void ExplodeOnTriggerEnter()
@@ -45,7 +38,7 @@ namespace PlayerScripts
             _player.GameObj
                 .OnTriggerEnterAsObservable()
                 .Subscribe(_ => CreateExplosion())
-                .AddTo(_disposables);
+                .AddTo(_player.GameObj);
         }
         
         private void DelayThenDespawnExplosion()
@@ -57,24 +50,11 @@ namespace PlayerScripts
                     Observable
                         .Timer(TimeSpan.FromSeconds(1))
                         .Subscribe(_ => _explosion.Dispose())
-                        .AddTo(_disposables);
+                        .AddTo(_player.GameObj);
                 })
-                .AddTo(_disposables);
+                .AddTo(_player.GameObj);
         }
 
-        public void Dispose()
-        {
-            _gameState.CurrentLives
-                .Subscribe(lives =>
-                {
-                    if (lives < 0)
-                    {
-                        _disposables.Clear();
-                    }
-                })
-                .AddTo(_disposables);
-        }
-        
         private void CreateExplosion()
         {
             _explosion = _explosionFactory.Create();

@@ -6,39 +6,19 @@ using Zenject;
 
 namespace PlayerScripts
 {
-    public class PlayerCollisionHandler : IInitializable, IDisposable
+    public class PlayerCollisionHandler : IInitializable
     {
         private readonly Player _player;
-        private readonly GameState _gameState;
         
-        private readonly CompositeDisposable _disposables = new CompositeDisposable();
-
         public PlayerCollisionHandler(
-            Player player,
-            GameState gameState)
+            Player player)
         {
             _player = player;
-            _gameState = gameState;
         }
         
         public void Initialize()
         {
             HandleCollisionOnTriggerEnter();
-            
-            Dispose();
-        }
-        
-        public void Dispose()
-        {
-            _gameState.CurrentLives
-                .Subscribe(lives =>
-                {
-                    if (lives < 0)
-                    {
-                        _disposables.Clear();
-                    }
-                })
-                .AddTo(_disposables);
         }
 
         private void HandleCollisionOnTriggerEnter()
@@ -46,7 +26,7 @@ namespace PlayerScripts
             _player.GameObj
                 .OnTriggerEnterAsObservable()
                 .Subscribe(_ => SetupPlayerDeathState())
-                .AddTo(_disposables);
+                .AddTo(_player.GameObj);
         }
 
         private void SetupPlayerDeathState()

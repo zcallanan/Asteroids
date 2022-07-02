@@ -6,7 +6,7 @@ using Zenject;
 
 namespace PlayerScripts
 {
-    public class PlayerThrustHandler : IInitializable, IDisposable
+    public class PlayerThrustHandler : IInitializable
     {
         private readonly Player _player;
         private readonly PlayerInputState _playerInputState;
@@ -15,9 +15,7 @@ namespace PlayerScripts
 
         private GameObject _thrustAttach;
         private Thrust _thrust;
-
-        private readonly CompositeDisposable _disposables = new CompositeDisposable();
-
+        
         public PlayerThrustHandler(
             Player player,
             PlayerInputState playerInputState,
@@ -36,10 +34,10 @@ namespace PlayerScripts
 
             EnableThrustEffectUponForwardInput();
             
-            Dispose();
+            DisposeOfThrust();
         }
         
-        public void Dispose()
+        private void DisposeOfThrust()
         {
             _gameState.CurrentLives
                 .Subscribe(lives =>
@@ -47,10 +45,9 @@ namespace PlayerScripts
                     if (lives < 0)
                     {
                         _thrust.Dispose();
-                        _disposables.Clear();
                     }
                 })
-                .AddTo(_disposables);
+                .AddTo(_player.GameObj);
         }
 
         private void EnableThrustEffectUponForwardInput()
@@ -70,7 +67,7 @@ namespace PlayerScripts
                         }
                     }
                 })
-                .AddTo(_disposables);
+                .AddTo(_player.GameObj);
         }
         
         private void CreateAndAttachThrust()
@@ -78,8 +75,8 @@ namespace PlayerScripts
             _thrust = _thrustFactory.Create();
             
             _thrust.Parent = _thrustAttach.transform;
-            _thrust.Position = _thrust.Parent.position;
-            _thrust.Facing = -_thrust.Parent.forward;
+            _thrust.SetPosition(_thrust.Parent.position);
+            _thrust.SetFacing(-_thrust.Parent.forward);
         }
     }
 }

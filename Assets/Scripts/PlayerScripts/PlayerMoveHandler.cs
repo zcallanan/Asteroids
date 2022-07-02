@@ -6,12 +6,11 @@ using Zenject;
 
 namespace PlayerScripts
 {
-    public class PlayerMoveHandler : IInitializable, IFixedTickable, IDisposable
+    public class PlayerMoveHandler : IInitializable, IFixedTickable
     {
         private readonly Player _player;
         private readonly PlayerInputState _playerInputState;
         private readonly Settings _settings;
-        private readonly GameState _gameState;
         
         private Vector3 _currentPosition;
         private Vector3 _facing;
@@ -21,18 +20,14 @@ namespace PlayerScripts
         
         private float _forwardInputValue;
         
-        private readonly CompositeDisposable _disposables = new CompositeDisposable();
-
         public PlayerMoveHandler(
             Player player,
             PlayerInputState playerInputState,
-            Settings settings,
-            GameState gameState)
+            Settings settings)
         {
             _player = player;
             _playerInputState = playerInputState;
             _settings = settings;
-            _gameState = gameState;
         }
         
         public void Initialize()
@@ -62,19 +57,6 @@ namespace PlayerScripts
             _player.PreviousPosition = _currentPosition;
 
             MovePlayerShip();
-        }
-        
-        public void Dispose()
-        {
-            _gameState.CurrentLives
-                .Subscribe(lives =>
-                {
-                    if (lives < 0)
-                    {
-                        _disposables.Clear();
-                    }
-                })
-                .AddTo(_disposables);
         }
 
         private void OnlyRegisterWhenPlayerInputsForwardMovement()
@@ -116,11 +98,11 @@ namespace PlayerScripts
         {
             _player.JustRespawned
                 .Subscribe(ResetSpeedFollowingDeathOrHyperspace)
-                .AddTo(_disposables);
+                .AddTo(_player.GameObj);
             
             _player.HyperspaceWasTriggered
                 .Subscribe(ResetSpeedFollowingDeathOrHyperspace)
-                .AddTo(_disposables);
+                .AddTo(_player.GameObj);
         }
         
         private void ResetSpeedFollowingDeathOrHyperspace(bool shouldReset)

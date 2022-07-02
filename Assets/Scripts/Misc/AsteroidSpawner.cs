@@ -8,7 +8,7 @@ using Random = UnityEngine.Random;
 
 namespace Misc
 {
-    public class AsteroidSpawner : IInitializable, IDisposable
+    public class AsteroidSpawner : IInitializable
     {
         private readonly Settings _settings;
         private readonly Difficulty.Settings _difficultySettings;
@@ -16,7 +16,6 @@ namespace Misc
         private readonly Asteroid.Factory _asteroidFactory;
         private readonly BoundHandler _boundHandler;
 
-        private int _gameDifficulty;
         private int _initLargeAsteroids;
 
         private Vector3 _maxBounds;
@@ -24,8 +23,6 @@ namespace Misc
         private Vector3 _innerMaxBounds;
         private Vector3 _innerMinBounds;
         
-        private readonly CompositeDisposable _disposables = new CompositeDisposable();
-
         public AsteroidSpawner(
             Settings settings,
             Difficulty.Settings difficultySettings,
@@ -42,31 +39,16 @@ namespace Misc
         
         public void Initialize()
         {
-            _gameDifficulty = _gameState.GameDifficulty;
-            _initLargeAsteroids = _difficultySettings.difficulties[_gameDifficulty].initLargeAsteroids;
+            var gameDifficulty = _gameState.GameDifficulty;
+            _initLargeAsteroids = _difficultySettings.difficulties[gameDifficulty].initLargeAsteroids;
             
             DetermineAsteroidSpawnBoundValues();
 
             UpdateAsteroidSpawnBounds();
 
             SpawnAsteroidsWithinBoundsAtTheStartOfALevel();
-            
-            Dispose();
         }
-        
-        public void Dispose()
-        {
-            _gameState.CurrentLives
-                .Subscribe(lives =>
-                {
-                    if (lives < 0)
-                    {
-                        _disposables.Clear();
-                    }
-                })
-                .AddTo(_disposables);
-        }
-        
+
         public void SpawnAsteroid(int renderValue, Asteroid.AsteroidSizes asteroidSize, Vector3 largerAsteroidPosition)
         {
             var asteroid = _asteroidFactory.Create(renderValue, asteroidSize);
@@ -93,23 +75,23 @@ namespace Misc
 
         private void RenderAsteroid(Asteroid asteroid)
         {
-            asteroid.MeshFilterMesh(_settings.meshFilterMesh[asteroid.RenderValue]);
-            asteroid.MeshRendererMaterial(_settings.meshRendererMaterials[asteroid.RenderValue]);
+            asteroid.SetMeshFilterMesh(_settings.meshFilterMesh[asteroid.RenderValue]);
+            asteroid.SetMeshRendererMaterial(_settings.meshRendererMaterials[asteroid.RenderValue]);
         }
 
         private void ScaleAsteroid(Asteroid asteroid)
         {
             if (asteroid.Size == Asteroid.AsteroidSizes.SmallAsteroid)
             {
-                asteroid.Scale = _settings.smallScale * Vector3.one;
+                asteroid.SetScale(_settings.smallScale * Vector3.one);
             }
             else if (asteroid.Size == Asteroid.AsteroidSizes.MediumAsteroid)
             {
-                asteroid.Scale = _settings.mediumScale * Vector3.one;
+                asteroid.SetScale(_settings.mediumScale * Vector3.one);
             }
             else if (asteroid.Size == Asteroid.AsteroidSizes.LargeAsteroid)
             {
-                asteroid.Scale = _settings.largeScale * Vector3.one;
+                asteroid.SetScale(_settings.largeScale * Vector3.one);
             }
         }
         
@@ -125,13 +107,13 @@ namespace Misc
             {
                 _maxBounds = maxGameBounds;
                 DetermineAsteroidSpawnBoundValues();
-            }).AddTo(_disposables);
+            }).AddTo(_gameState.gameObject);
             
             _boundHandler.MinBounds.Subscribe(minGameBounds =>
             {
                 _minBounds = minGameBounds;
                 DetermineAsteroidSpawnBoundValues();
-            }).AddTo(_disposables);
+            }).AddTo(_gameState.gameObject);
         }
         
         private void SpawnAsteroidsWithinBoundsAtTheStartOfALevel()
@@ -143,7 +125,7 @@ namespace Misc
                     var renderValue = Random.Range(0, 4);
                     SpawnAsteroid(renderValue, Asteroid.AsteroidSizes.LargeAsteroid, Vector3.zero);
                 }
-            }).AddTo(_disposables);
+            }).AddTo(_gameState.gameObject);
         }
         
         [Serializable]

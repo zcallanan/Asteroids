@@ -52,7 +52,7 @@ namespace PlayerScripts
 
         public GameObject GameObj => _playerFacade.gameObject;
         
-        public void Rotation(Vector3 rot)
+        public void SetRotation(Vector3 rot)
         {
             Transform.Rotate(rot, Space.Self);
         }

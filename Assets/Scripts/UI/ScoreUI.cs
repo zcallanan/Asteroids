@@ -1,4 +1,3 @@
-using System;
 using Misc;
 using UniRx;
 using UnityEngine;
@@ -7,14 +6,12 @@ using Zenject;
 
 namespace UI
 {
-    public class ScoreUI : MonoBehaviour, IDisposable
+    public class ScoreUI : MonoBehaviour
     {
         [SerializeField] private Text scoreText;
 
         private GameState _gameState;
         
-        private readonly CompositeDisposable _disposables = new CompositeDisposable();
-
         [Inject]
         public void Construct(GameState gameState)
         {
@@ -26,28 +23,13 @@ namespace UI
             scoreText.text = "0";
             
             CheckIfScoreChanges();
-            
-            Dispose();
-        }
-        
-        public void Dispose()
-        {
-            _gameState.CurrentLives
-                .Subscribe(lives =>
-                {
-                    if (lives < 0)
-                    {
-                        _disposables.Clear();
-                    }
-                })
-                .AddTo(_disposables);
         }
 
         private void CheckIfScoreChanges()
         {
             _gameState.Score
                 .Subscribe(HandleScoreUpdate)
-                .AddTo(_disposables);
+                .AddTo(this);
         }
 
         private void HandleScoreUpdate(int score)
