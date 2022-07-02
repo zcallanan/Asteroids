@@ -49,14 +49,14 @@ namespace Misc
             SpawnAsteroidsWithinBoundsAtTheStartOfALevel();
         }
 
-        public void SpawnAsteroid(int renderValue, Asteroid.AsteroidSizes asteroidSize, Vector3 largerAsteroidPosition)
+        public void SpawnAsteroid(int renderValue, ObjectTypes asteroidSize, Vector3 largerAsteroidPosition)
         {
             var asteroid = _asteroidFactory.Create(renderValue, asteroidSize);
 
             Vector3 tempPosition;
             
-            if (asteroidSize == Asteroid.AsteroidSizes.SmallAsteroid ||
-                asteroidSize == Asteroid.AsteroidSizes.MediumAsteroid)
+            if (asteroidSize == ObjectTypes.SmallAsteroid ||
+                asteroidSize == ObjectTypes.MediumAsteroid)
             {
                 tempPosition = largerAsteroidPosition;
             }
@@ -81,15 +81,15 @@ namespace Misc
 
         private void ScaleAsteroid(Asteroid asteroid)
         {
-            if (asteroid.Size == Asteroid.AsteroidSizes.SmallAsteroid)
+            if (asteroid.Size == ObjectTypes.SmallAsteroid)
             {
                 asteroid.SetScale(_settings.smallScale * Vector3.one);
             }
-            else if (asteroid.Size == Asteroid.AsteroidSizes.MediumAsteroid)
+            else if (asteroid.Size == ObjectTypes.MediumAsteroid)
             {
                 asteroid.SetScale(_settings.mediumScale * Vector3.one);
             }
-            else if (asteroid.Size == Asteroid.AsteroidSizes.LargeAsteroid)
+            else if (asteroid.Size == ObjectTypes.LargeAsteroid)
             {
                 asteroid.SetScale(_settings.largeScale * Vector3.one);
             }
@@ -123,7 +123,7 @@ namespace Misc
                 for (int i = 0; i < _initLargeAsteroids + _gameState.CurrentLevel.Value; i++)
                 {
                     var renderValue = Random.Range(0, 4);
-                    SpawnAsteroid(renderValue, Asteroid.AsteroidSizes.LargeAsteroid, Vector3.zero);
+                    SpawnAsteroid(renderValue, ObjectTypes.LargeAsteroid, Vector3.zero);
                 }
             }).AddTo(_gameState.gameObject);
         }

@@ -11,7 +11,8 @@ namespace Misc
         LargeAsteroid,
         SmallUfo,
         LargeUfo,
-        OtherPlayer
+        OtherPlayer,
+        Player
     }
     
     public class GameState : MonoBehaviour

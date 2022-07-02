@@ -28,8 +28,8 @@ namespace Installers
             Container.Bind<GameOverUI>().FromComponentInHierarchy().AsCached();
 
             Container
-                .BindFactory<float, float, BulletProjectileTypes, BulletProjectile, BulletProjectile.Factory>()
-                .FromPoolableMemoryPool<float, float, BulletProjectileTypes, BulletProjectile, BulletProjectilePool>(x => x
+                .BindFactory<float, float, ObjectTypes, BulletProjectile, BulletProjectile.Factory>()
+                .FromPoolableMemoryPool<float, float, ObjectTypes, BulletProjectile, BulletProjectilePool>(x => x
                     .WithInitialSize(20)
                     .FromComponentInNewPrefab(_settings.bulletProjectilePrefab)
                     .UnderTransformGroup("BulletProjectiles"));
@@ -44,8 +44,8 @@ namespace Installers
             // Container.BindInterfacesAndSelfTo<UfoSpawner>().AsSingle();
 
             Container
-                .BindFactory<int, Asteroid.AsteroidSizes, Asteroid, Asteroid.Factory>()
-                .FromPoolableMemoryPool<int, Asteroid.AsteroidSizes, Asteroid, AsteroidPool>(x => x
+                .BindFactory<int, ObjectTypes, Asteroid, Asteroid.Factory>()
+                .FromPoolableMemoryPool<int, ObjectTypes, Asteroid, AsteroidPool>(x => x
                     .WithInitialSize(30)
                     .FromSubContainerResolve()
                     .ByNewPrefabInstaller<AsteroidInstaller>(_settings.asteroidPrefab)
@@ -81,7 +81,7 @@ namespace Installers
             public GameObject thrustPrefab;
         }
     
-        class BulletProjectilePool : MonoPoolableMemoryPool<float, float, BulletProjectileTypes, IMemoryPool, BulletProjectile>
+        class BulletProjectilePool : MonoPoolableMemoryPool<float, float, ObjectTypes, IMemoryPool, BulletProjectile>
         {
         }
         
@@ -89,7 +89,7 @@ namespace Installers
         {
         }
         
-        class AsteroidPool : MonoPoolableMemoryPool<int, Asteroid.AsteroidSizes, IMemoryPool, Asteroid>
+        class AsteroidPool : MonoPoolableMemoryPool<int, ObjectTypes, IMemoryPool, Asteroid>
         {
         }
         

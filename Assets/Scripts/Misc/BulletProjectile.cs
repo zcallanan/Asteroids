@@ -5,17 +5,13 @@ using Zenject;
 
 namespace Misc
 {
-    public enum BulletProjectileTypes
-    {
-        FromUfo,
-        FromPlayer
-    }
-    
-    public class BulletProjectile : MonoBehaviour, IPoolable<float, float, BulletProjectileTypes, IMemoryPool>
+    public class BulletProjectile : MonoBehaviour, IPoolable<float, float, ObjectTypes, IMemoryPool>
     {
         private BoundHandler _boundHandler;
 
         private float _speed;
+        
+        private ObjectTypes _originType;
 
         private IMemoryPool _pool;
         private IDisposable _spawnTimer;
@@ -42,10 +38,11 @@ namespace Misc
             _pool.Despawn(this);
         }
         
-        public void OnSpawned(float speed, float lifespan, BulletProjectileTypes types, IMemoryPool pool)
+        public void OnSpawned(float speed, float lifespan, ObjectTypes originType, IMemoryPool pool)
         {
             _speed = speed;
             _pool = pool;
+            _originType = originType;
 
             _spawnTimer = Observable
                 .Timer(TimeSpan.FromSeconds(lifespan))
@@ -61,7 +58,7 @@ namespace Misc
             _pool = null;
         }
 
-        public class Factory : PlaceholderFactory<float, float, BulletProjectileTypes, BulletProjectile>
+        public class Factory : PlaceholderFactory<float, float, ObjectTypes, BulletProjectile>
         {
         }
     }

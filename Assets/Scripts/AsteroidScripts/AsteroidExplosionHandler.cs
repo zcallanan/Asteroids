@@ -18,9 +18,9 @@ namespace AsteroidScripts
 
         private Color _startColor;
 
-        private Asteroid.AsteroidSizes _small;
-        private Asteroid.AsteroidSizes _medium;
-        private Asteroid.AsteroidSizes _large;
+        private ObjectTypes _small;
+        private ObjectTypes _medium;
+        private ObjectTypes _large;
         
         public AsteroidExplosionHandler(
             Asteroid asteroid,
@@ -32,9 +32,9 @@ namespace AsteroidScripts
         
         public void Initialize()
         {
-            _small = Asteroid.AsteroidSizes.SmallAsteroid;
-            _medium = Asteroid.AsteroidSizes.MediumAsteroid;
-            _large = Asteroid.AsteroidSizes.LargeAsteroid;
+            _small = ObjectTypes.SmallAsteroid;
+            _medium = ObjectTypes.MediumAsteroid;
+            _large = ObjectTypes.LargeAsteroid;
 
             _startColor = new Color(0.5176471f, 0.5019608f, 0.4313726f, 1f);
             

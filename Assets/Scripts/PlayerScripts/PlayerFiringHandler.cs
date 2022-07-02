@@ -52,7 +52,7 @@ namespace PlayerScripts
         private void FireProjectileBullets()
         {
             var bulletProjectile = _bulletProjectileFactory.Create(
-                _settings.projectileSpeed, _settings.projectileLifespan, BulletProjectileTypes.FromPlayer);
+                _settings.projectileSpeed, _settings.projectileLifespan, ObjectTypes.Player);
 
             var transform = bulletProjectile.transform;
             transform.position = _player.Position;

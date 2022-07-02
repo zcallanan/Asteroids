@@ -14,9 +14,9 @@ namespace AsteroidScripts
         private readonly Difficulty.Settings _difficultySettings;
         private readonly GameState _gameState;
 
-        private Asteroid.AsteroidSizes _large;
-        private Asteroid.AsteroidSizes _medium;
-        private Asteroid.AsteroidSizes _small;
+        private ObjectTypes _large;
+        private ObjectTypes _medium;
+        private ObjectTypes _small;
         
         private int _mediumPerLarge;
         private int _smallPerMedium;
@@ -43,9 +43,9 @@ namespace AsteroidScripts
             _mediumPerLarge = _difficultySettings.difficulties[gameDifficulty].mediumPerLarge;
             _smallPerMedium = _difficultySettings.difficulties[gameDifficulty].smallPerMedium;
 
-            _large = Asteroid.AsteroidSizes.LargeAsteroid;
-            _medium = Asteroid.AsteroidSizes.MediumAsteroid;
-            _small = Asteroid.AsteroidSizes.SmallAsteroid;
+            _large = ObjectTypes.LargeAsteroid;
+            _medium = ObjectTypes.MediumAsteroid;
+            _small = ObjectTypes.SmallAsteroid;
 
             HandleCollisionOnTriggerEnter();
         }

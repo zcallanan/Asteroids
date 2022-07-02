@@ -6,7 +6,7 @@ using Vector3 = UnityEngine.Vector3;
 
 namespace AsteroidScripts
 {
-    public class Asteroid : MonoBehaviour, IPoolable<int, Asteroid.AsteroidSizes, IMemoryPool>
+    public class Asteroid : MonoBehaviour, IPoolable<int, ObjectTypes, IMemoryPool>
     {
         private BoundHandler _boundHandler;
         private AsteroidData.Settings _asteroidData;
@@ -54,7 +54,7 @@ namespace AsteroidScripts
         private void Update()
         {
             // TODO: Fix the rate
-            Rotation(_randomRotation * (Time.deltaTime * _asteroidRotSpeed));
+            SetRotation(_randomRotation * (Time.deltaTime * _asteroidRotSpeed));
 
             var position = transform.position;
             position += _randomDirection * (Time.deltaTime * _asteroidSpeed);
@@ -74,9 +74,9 @@ namespace AsteroidScripts
 
         public int RenderValue { get; private set; }
 
-        public AsteroidSizes Size { get; private set; }
+        public ObjectTypes Size { get; private set; }
 
-        public void OnSpawned(int renderValue, AsteroidSizes type, IMemoryPool pool)
+        public void OnSpawned(int renderValue, ObjectTypes type, IMemoryPool pool)
         {
             RenderValue = renderValue;
             Size = type;
@@ -102,21 +102,14 @@ namespace AsteroidScripts
         {
             transform.localScale = scale;
         }
-
-        public class Factory : PlaceholderFactory<int, AsteroidSizes, Asteroid>
-        {
-        }
         
-        public enum AsteroidSizes
-        {
-            SmallAsteroid,
-            MediumAsteroid,
-            LargeAsteroid
-        }
-        
-        private void Rotation(Vector3 rot)
+        private void SetRotation(Vector3 rot)
         {
             transform.Rotate(rot, Space.Self);
+        }
+
+        public class Factory : PlaceholderFactory<int, ObjectTypes, Asteroid>
+        {
         }
     }
 }
