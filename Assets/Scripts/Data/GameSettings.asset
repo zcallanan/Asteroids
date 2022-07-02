@@ -26,6 +26,9 @@ MonoBehaviour:
     - {fileID: 4300000, guid: 5b3fffef11ac2450c9a33d4371fbbe64, type: 3}
     - {fileID: 4300000, guid: 2111b6ad5e475457587cca11988811e9, type: 3}
     - {fileID: 4300000, guid: de0ade0b8b7154794bb1dbc5193ef21e, type: 3}
+  ufoSpawner:
+    largeScale: 0.045
+    smallScale: 0.025
   gameInstaller:
     asteroidPrefab: {fileID: 2942051580892192243, guid: d57d6419728ca4fa486055a9b54eb326, type: 3}
     bulletProjectilePrefab: {fileID: 9033534424328100445, guid: 5d46797b9a6dc420fbf9761f62531082, type: 3}
@@ -49,21 +52,45 @@ MonoBehaviour:
         initLargeAsteroids: 2
         astMinSpeed: 0.2
         astMaxSpeed: 0.4
+        isUfoSpawnableInThisDifficulty: 0
+        smallUfoLevelToSpawn: 0
+        ufoMinSpeed: 0
+        ufoMaxSpeed: 0
+        ufoMinSpawnDelay: 0
+        ufoMaxSpawnDelay: 0
       - smallPerMedium: 2
         mediumPerLarge: 2
         initLargeAsteroids: 3
         astMinSpeed: 0.34
         astMaxSpeed: 0.5
+        isUfoSpawnableInThisDifficulty: 1
+        smallUfoLevelToSpawn: 5
+        ufoMinSpeed: 1.5
+        ufoMaxSpeed: 3
+        ufoMinSpawnDelay: 20
+        ufoMaxSpawnDelay: 35
       - smallPerMedium: 3
         mediumPerLarge: 3
         initLargeAsteroids: 3
         astMinSpeed: 0.4
         astMaxSpeed: 0.6
+        isUfoSpawnableInThisDifficulty: 1
+        smallUfoLevelToSpawn: 4
+        ufoMinSpeed: 2.5
+        ufoMaxSpeed: 4
+        ufoMinSpawnDelay: 16
+        ufoMaxSpawnDelay: 31
       - smallPerMedium: 4
         mediumPerLarge: 4
         initLargeAsteroids: 4
         astMinSpeed: 0.45
         astMaxSpeed: 0.65
+        isUfoSpawnableInThisDifficulty: 1
+        smallUfoLevelToSpawn: 3
+        ufoMinSpeed: 3
+        ufoMaxSpeed: 5
+        ufoMinSpawnDelay: 12
+        ufoMaxSpawnDelay: 27
   playerSettings:
     playerDirectionHandler:
       rotationAngle: {x: 0, y: 100, z: 0}

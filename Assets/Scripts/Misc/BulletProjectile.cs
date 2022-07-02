@@ -5,7 +5,7 @@ using Zenject;
 
 namespace Misc
 {
-    public class BulletProjectile : MonoBehaviour, IPoolable<float, float, ObjectTypes, IMemoryPool>
+    public class BulletProjectile : MonoBehaviour, IPoolable<float, float, ObjectTypes, IMemoryPool>, IDisposable
     {
         private BoundHandler _boundHandler;
 
@@ -35,7 +35,7 @@ namespace Misc
         {
             _spawnTimer.Dispose();
             
-            _pool.Despawn(this);
+            Dispose();
         }
         
         public void OnSpawned(float speed, float lifespan, ObjectTypes originType, IMemoryPool pool)
@@ -48,7 +48,7 @@ namespace Misc
                 .Timer(TimeSpan.FromSeconds(lifespan))
                 .Subscribe(_ =>
                 {
-                    _pool?.Despawn(this);
+                    Dispose();
                 })
                 .AddTo(this);
         }
@@ -56,6 +56,11 @@ namespace Misc
         public void OnDespawned()
         {
             _pool = null;
+        }
+
+        public void Dispose()
+        {
+            _pool?.Despawn(this);
         }
 
         public class Factory : PlaceholderFactory<float, float, ObjectTypes, BulletProjectile>

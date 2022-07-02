@@ -11,6 +11,7 @@ namespace Installers
     public class GameSettingsInstaller : ScriptableObjectInstaller<GameSettingsInstaller>
     {
         public AsteroidSpawner.Settings asteroidSpawner;
+        public UfoSpawner.Settings ufoSpawner;
         public GameInstaller.Settings gameInstaller;
         public GameSettings gameSettings;
         public PlayerSettings playerSettings;
@@ -49,7 +50,8 @@ namespace Installers
             Container.BindInstance(gameSettings.scoreHandler).IfNotBound();
             
             Container.BindInstance(asteroidSpawner).IfNotBound();
-            
+            Container.BindInstance(ufoSpawner).IfNotBound();
+
             Container.BindInstance(asteroidSettings.asteroidData).IfNotBound();
 
             Container.BindInstance(playerSettings.playerDirectionHandler).IfNotBound();

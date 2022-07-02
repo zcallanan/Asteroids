@@ -18,13 +18,13 @@ namespace Misc
             _pool = pool;
         }
         
-        public class Factory : PlaceholderFactory<Explosion>
-        {
-        }
-
         public void Dispose()
         {
             _pool?.Despawn(this);
+        }
+        
+        public class Factory : PlaceholderFactory<Explosion>
+        {
         }
     }
 }

@@ -12,8 +12,9 @@ GameObject:
   - component: {fileID: 2953051935012802026}
   - component: {fileID: 1089781358691563808}
   - component: {fileID: 4750865052279632617}
-  - component: {fileID: -5413704340392773266}
   - component: {fileID: 6329192722424424638}
+  - component: {fileID: 8889036368409834079}
+  - component: {fileID: 1073811260380309659}
   m_Layer: 0
   m_Name: UFO
   m_TagString: Untagged
@@ -98,21 +99,6 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 8427236552508146419, guid: 4ebfda7f71102f0448881548a80d9a50, type: 3}
---- !u!114 &-5413704340392773266
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1449967967273523445}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 86ed8e31804f5435e9ddc4819b792762, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ufoData: {fileID: 11400000, guid: 6915cc3ceb54844649d77726a7430092, type: 2}
-  scales: []
-  names: []
 --- !u!54 &6329192722424424638
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -129,3 +115,33 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &8889036368409834079
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1449967967273523445}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a0000801b2244220ad92f7a07eb2ee8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1073811260380309659
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1449967967273523445}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0166d8ff8d905b048b2448179e1f5d11, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _components:
+  - {fileID: 8889036368409834079}
+  _identifier: 
+  _useSceneContext: 0
+  _context: {fileID: 0}
+  _bindType: 0

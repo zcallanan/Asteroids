@@ -7,7 +7,6 @@ namespace Installers
     {
         public override void InstallBindings()
         {
-            Container.Bind<Ufo>().AsSingle();
         }
     }
 }

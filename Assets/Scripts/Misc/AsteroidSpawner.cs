@@ -39,8 +39,8 @@ namespace Misc
         
         public void Initialize()
         {
-            var gameDifficulty = _gameState.GameDifficulty;
-            _initLargeAsteroids = _difficultySettings.difficulties[gameDifficulty].initLargeAsteroids;
+            var difficulties = _difficultySettings.difficulties[_gameState.GameDifficulty];
+            _initLargeAsteroids = difficulties.initLargeAsteroids;
             
             DetermineAsteroidSpawnBoundValues();
 

@@ -1,3 +1,4 @@
+using System;
 using Misc;
 using UnityEngine;
 using Zenject;
@@ -6,7 +7,7 @@ using Vector3 = UnityEngine.Vector3;
 
 namespace AsteroidScripts
 {
-    public class Asteroid : MonoBehaviour, IPoolable<int, ObjectTypes, IMemoryPool>
+    public class Asteroid : MonoBehaviour, IPoolable<int, ObjectTypes, IMemoryPool>, IDisposable
     {
         private BoundHandler _boundHandler;
         private AsteroidData.Settings _asteroidData;
@@ -32,6 +33,15 @@ namespace AsteroidScripts
             _asteroidData = asteroidData;
             _difficultySettings = difficultySettings;
             _gameState = gameState;
+        }
+        
+        public void Dispose()
+        {
+            _pool.Despawn(this);
+        }
+        
+        public class Factory : PlaceholderFactory<int, ObjectTypes, Asteroid>
+        {
         }
 
         private void Start()
@@ -63,7 +73,7 @@ namespace AsteroidScripts
 
         private void OnTriggerEnter(Collider other)
         {
-            _pool.Despawn(this);
+            Dispose();
         }
 
         public Vector3 Position
@@ -76,10 +86,10 @@ namespace AsteroidScripts
 
         public ObjectTypes Size { get; private set; }
 
-        public void OnSpawned(int renderValue, ObjectTypes type, IMemoryPool pool)
+        public void OnSpawned(int renderValue, ObjectTypes size, IMemoryPool pool)
         {
             RenderValue = renderValue;
-            Size = type;
+            Size = size;
             _pool = pool;
         }
         
@@ -106,10 +116,6 @@ namespace AsteroidScripts
         private void SetRotation(Vector3 rot)
         {
             transform.Rotate(rot, Space.Self);
-        }
-
-        public class Factory : PlaceholderFactory<int, ObjectTypes, Asteroid>
-        {
         }
     }
 }

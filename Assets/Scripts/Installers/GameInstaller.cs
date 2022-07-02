@@ -16,6 +16,8 @@ namespace Installers
         public override void InstallBindings()
         {
             Container.BindInterfacesAndSelfTo<AsteroidSpawner>().AsSingle();
+            Container.BindInterfacesAndSelfTo<UfoSpawner>().AsSingle();
+
             Container.BindInterfacesAndSelfTo<GameLevelHandler>().AsSingle();
 
             Container.Bind<BoundHandler>().FromComponentInHierarchy().AsCached();
@@ -41,8 +43,6 @@ namespace Installers
                     .FromComponentInNewPrefab(_settings.thrustPrefab)
                     .UnderTransformGroup("Thrusts"));
             
-            // Container.BindInterfacesAndSelfTo<UfoSpawner>().AsSingle();
-
             Container
                 .BindFactory<int, ObjectTypes, Asteroid, Asteroid.Factory>()
                 .FromPoolableMemoryPool<int, ObjectTypes, Asteroid, AsteroidPool>(x => x
@@ -51,15 +51,13 @@ namespace Installers
                     .ByNewPrefabInstaller<AsteroidInstaller>(_settings.asteroidPrefab)
                     .UnderTransformGroup("Asteroids"));
 
-            // Container
-            //     .BindFactory<Ufo, Ufo.Factory>()
-            //     .FromPoolableMemoryPool<Ufo, UfoPool>(x => x
-            //         .WithInitialSize(4)
-            //         .FromSubContainerResolve()
-            //         .ByNewPrefabInstaller<UfoInstaller>(_settings.ufoPrefab)
-            //         .UnderTransformGroup("Ufos"));
-            //
-
+            Container
+                .BindFactory<ObjectTypes, Ufo, Ufo.Factory>()
+                .FromPoolableMemoryPool<ObjectTypes, Ufo, UfoPool>(x => x
+                    .WithInitialSize(4)
+                    .FromSubContainerResolve()
+                    .ByNewPrefabInstaller<UfoInstaller>(_settings.ufoPrefab)
+                    .UnderTransformGroup("Ufos"));
             
             Container
                 .BindFactory<Explosion, Explosion.Factory>()
@@ -93,7 +91,7 @@ namespace Installers
         {
         }
         
-        class UfoPool : MonoPoolableMemoryPool<IMemoryPool, Ufo>
+        class UfoPool : MonoPoolableMemoryPool<ObjectTypes, IMemoryPool, Ufo>
         {
         }
     

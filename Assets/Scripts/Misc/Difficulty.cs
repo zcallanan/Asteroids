@@ -19,6 +19,13 @@ namespace Misc
             public int initLargeAsteroids;
             public float astMinSpeed;
             public float astMaxSpeed;
+            
+            public bool isUfoSpawnableInThisDifficulty;
+            public int smallUfoLevelToSpawn;
+            public float ufoMinSpeed;
+            public float ufoMaxSpeed;
+            public float ufoMinSpawnDelay;
+            public float ufoMaxSpawnDelay;
         }
     }
 }

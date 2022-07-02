@@ -854,6 +854,14 @@ PrefabInstance:
       propertyPath: _components.Array.data[2]
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 2351170684658985026, guid: 06b1719f3e8a809468cb747aac74807f, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7387099618304983695, guid: 06b1719f3e8a809468cb747aac74807f, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8561082489666402784, guid: 06b1719f3e8a809468cb747aac74807f, type: 3}
       propertyPath: m_RootOrder
       value: 9
