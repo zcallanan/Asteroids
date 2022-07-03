@@ -5,28 +5,27 @@ using UniRx.Triggers;
 using UnityEngine;
 using Zenject;
 
-namespace PlayerScripts
+namespace UfoScripts
 {
-    public class PlayerExplosionHandler : IInitializable
+    public class UfoExplosionHandler : IInitializable
     {
-        private readonly Player _player;
+        private readonly Ufo _ufo;
         private readonly Explosion.Factory _explosionFactory;
 
         private Explosion _explosion;
-
         private Color _startColor;
-        
-        public PlayerExplosionHandler(
-            Player player,
+
+        public UfoExplosionHandler(
+            Ufo ufo,
             Explosion.Factory explosionFactory)
         {
-            _player = player;
+            _ufo = ufo;
             _explosionFactory = explosionFactory;
         }
-        
+
         public void Initialize()
         {
-            _startColor = new Color(0, 1, 1, 1f);
+            _startColor = new Color(0, 0.674f, 1f, 1f);
             
             ExplodeOnTriggerEnter();
 
@@ -37,38 +36,46 @@ namespace PlayerScripts
         {
             _explosion = _explosionFactory.Create();
 
-            _explosion.transform.position = _player.Position;
+            _explosion.transform.position = _ufo.transform.position;
             
             var expParticleSystem = _explosion.GetComponent<ParticleSystem>();
             var expMain = expParticleSystem.main;
+
+            if (_ufo.Size == ObjectTypes.SmallUfo)
+            {
+                expMain.startSpeed = 0.55f;
+            }
+            else if (_ufo.Size == ObjectTypes.LargeUfo)
+            {
+                expMain.startSpeed = 0.85f;
+            }
             
-            expMain.startSpeed = 1f;
             expMain.startColor = _startColor;
 
             expParticleSystem.Clear();
             expParticleSystem.Play();
         }
-
+        
         private void ExplodeOnTriggerEnter()
         {
-            _player.GameObj
+            _ufo
                 .OnTriggerEnterAsObservable()
                 .Subscribe(_ => CreateExplosion())
-                .AddTo(_player.GameObj);
+                .AddTo(_ufo.gameObject);
         }
         
         private void DelayThenDespawnExplosion()
         {
-            _player.GameObj
+            _ufo
                 .OnEnableAsObservable()
                 .Subscribe(_ =>
                 {
                     Observable
                         .Timer(TimeSpan.FromSeconds(1))
                         .Subscribe(_ => _explosion.Dispose())
-                        .AddTo(_player.GameObj);
+                        .AddTo(_ufo.gameObject);
                 })
-                .AddTo(_player.GameObj);
+                .AddTo(_ufo.gameObject);
         }
     }
 }

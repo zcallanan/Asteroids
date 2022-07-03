@@ -7,6 +7,7 @@ namespace Installers
     {
         public override void InstallBindings()
         {
+            Container.BindInterfacesAndSelfTo<UfoExplosionHandler>().AsSingle();
         }
     }
 }
