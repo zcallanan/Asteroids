@@ -1,28 +1,39 @@
 using System;
-using Controllers;
+using Misc;
 using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
+using Zenject;
 
 namespace UI
 {
     public class LivesUI : MonoBehaviour
     {
         [SerializeField] private Sprite[] lifeCountSprite;
+
+        private GameState _gameState;
+
         private Image _imageComponent;
         
-        private readonly CompositeDisposable _disposables = new CompositeDisposable();
+        [Inject]
+        public void Construct(GameState gameState)
+        {
+            _gameState = gameState;
+        }
 
         void Start()
         {
-            GameManager.sharedInstance.GameOver.Subscribe(HandleGameOver).AddTo(_disposables);
-            
-            GameManager.sharedInstance.CurrentLives
-                .Throttle(TimeSpan.FromSeconds(1))
-                .Subscribe(ChangeNumberOfLivesSprite)
-                .AddTo(_disposables);
-            
             _imageComponent = gameObject.GetComponent<Image>();
+            
+            CheckForChangeToCurrentLivesAfterDelay();
+        }
+
+        private void CheckForChangeToCurrentLivesAfterDelay()
+        {
+            _gameState.CurrentLives
+                .Throttle(TimeSpan.FromSeconds(.5))
+                .Subscribe(ChangeNumberOfLivesSprite)
+                .AddTo(this);
         }
 
         private void ChangeNumberOfLivesSprite(int currentLives)
@@ -90,14 +101,6 @@ namespace UI
                     _imageComponent.sprite = lifeCountSprite[10];
                     break;
                 }
-            }
-        }
-        
-        private void HandleGameOver(bool gameOver)
-        {
-            if (gameOver)
-            {
-                _disposables.Clear();
             }
         }
     }

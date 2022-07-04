@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1002203793942768126}
   - component: {fileID: 1002203793942768125}
   - component: {fileID: 1002203793942768124}
-  - component: {fileID: -4319741339298275239}
+  - component: {fileID: -7471850997746731640}
   m_Layer: 0
   m_Name: Thrust
   m_TagString: Untagged
@@ -4805,7 +4805,7 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
---- !u!114 &-4319741339298275239
+--- !u!114 &-7471850997746731640
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4814,8 +4814,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 1002203793942768099}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8c616d3f0b22040f09f8cd10a6cca91f, type: 3}
+  m_Script: {fileID: 11500000, guid: 5e42c4b3e2fd14bbd8ae5a58dc88acd9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  particleData: {fileID: 11400000, guid: dfea143e2bcba4328a72a3964f42bff0, type: 2}
-  scales: []

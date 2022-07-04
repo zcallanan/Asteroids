@@ -1,0 +1,141 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6095b07d0329845f894d8cd2023f84cf, type: 3}
+  m_Name: GameSettings
+  m_EditorClassIdentifier: 
+  asteroidSpawner:
+    largeScale: 47
+    mediumScale: 36
+    smallScale: 25
+    meshRendererMaterials:
+    - {fileID: 2100000, guid: 4a81d6c5819c847a6a46c6ecfe84c60a, type: 2}
+    - {fileID: 2100000, guid: 443d49db2da184f60b9a1ca1ddca60f8, type: 2}
+    - {fileID: 2100000, guid: d89e3e2cf10054b0ab7bac50c51f0e77, type: 2}
+    - {fileID: 2100000, guid: f7244c98095f64982b9ac3654f88d268, type: 2}
+    meshFilterMesh:
+    - {fileID: 4300000, guid: a46c36ec5cfaf40a5ab1ac90231bbaab, type: 3}
+    - {fileID: 4300000, guid: 5b3fffef11ac2450c9a33d4371fbbe64, type: 3}
+    - {fileID: 4300000, guid: 2111b6ad5e475457587cca11988811e9, type: 3}
+    - {fileID: 4300000, guid: de0ade0b8b7154794bb1dbc5193ef21e, type: 3}
+  ufoSpawner:
+    largeScale: 0.045
+    smallScale: 0.025
+  gameInstaller:
+    asteroidPrefab: {fileID: 2942051580892192243, guid: d57d6419728ca4fa486055a9b54eb326, type: 3}
+    bulletProjectilePrefab: {fileID: 9033534424328100445, guid: 5d46797b9a6dc420fbf9761f62531082, type: 3}
+    ufoPrefab: {fileID: 1449967967273523445, guid: 311599e2534effb4fbb4eead92e22bcd, type: 3}
+    explosionPrefab: {fileID: 8917179331539235180, guid: 827056dd9127245689b1f891afcd3e85, type: 3}
+    thrustPrefab: {fileID: 1002203793942768099, guid: 420a1a66197ab4ab7bd3ebaaae424e8a, type: 3}
+  gameSettings:
+    gameLevelHandler:
+      levelStartDelay: 1
+    scoreHandler:
+      smallAstVal: 100
+      mediumAstVal: 50
+      largeAstVal: 10
+      smallUfoVal: 1000
+      largeUfoVal: 200
+      otherPlayerVal: 500
+    difficulty:
+      difficulties:
+      - smallPerMedium: 2
+        mediumPerLarge: 2
+        initLargeAsteroids: 2
+        astMinSpeed: 0.2
+        astMaxSpeed: 0.4
+        isUfoSpawnableInThisDifficulty: 0
+        smallUfoLevelToSpawn: 0
+        ufoMinSpeed: 0
+        ufoMaxSpeed: 0
+        ufoMinSpawnDelay: 0
+        ufoMaxSpawnDelay: 0
+        ufoMinFireDelay: 0
+        ufoMaxFireDelay: 0
+        ufoOffsetConstant: 0
+        ufoOffsetMin: 0
+        ufoOffsetMax: 0
+      - smallPerMedium: 2
+        mediumPerLarge: 2
+        initLargeAsteroids: 3
+        astMinSpeed: 0.34
+        astMaxSpeed: 0.5
+        isUfoSpawnableInThisDifficulty: 1
+        smallUfoLevelToSpawn: 5
+        ufoMinSpeed: 1.5
+        ufoMaxSpeed: 3
+        ufoMinSpawnDelay: 20
+        ufoMaxSpawnDelay: 35
+        ufoMinFireDelay: 2.25
+        ufoMaxFireDelay: 3.25
+        ufoOffsetConstant: 0.8
+        ufoOffsetMin: 0.5
+        ufoOffsetMax: 1
+      - smallPerMedium: 3
+        mediumPerLarge: 3
+        initLargeAsteroids: 3
+        astMinSpeed: 0.4
+        astMaxSpeed: 0.6
+        isUfoSpawnableInThisDifficulty: 1
+        smallUfoLevelToSpawn: 4
+        ufoMinSpeed: 2.5
+        ufoMaxSpeed: 4
+        ufoMinSpawnDelay: 16
+        ufoMaxSpawnDelay: 31
+        ufoMinFireDelay: 2
+        ufoMaxFireDelay: 3
+        ufoOffsetConstant: 0.6
+        ufoOffsetMin: 0.4
+        ufoOffsetMax: 0.9
+      - smallPerMedium: 4
+        mediumPerLarge: 4
+        initLargeAsteroids: 4
+        astMinSpeed: 0.45
+        astMaxSpeed: 0.65
+        isUfoSpawnableInThisDifficulty: 1
+        smallUfoLevelToSpawn: 3
+        ufoMinSpeed: 3
+        ufoMaxSpeed: 5
+        ufoMinSpawnDelay: 12
+        ufoMaxSpawnDelay: 27
+        ufoMinFireDelay: 1.75
+        ufoMaxFireDelay: 2.75
+        ufoOffsetConstant: 0.4
+        ufoOffsetMin: 0.3
+        ufoOffsetMax: 0.8
+  playerSettings:
+    playerDirectionHandler:
+      rotationAngle: {x: 0, y: 100, z: 0}
+      rotationSpeed: 5
+    playerMoveHandler:
+      playerMoveSpeedConstant: 10
+      movementModifier: 120
+    playerData:
+      respawnDelay: 2
+    playerRespawnEffect:
+      totalRespawnEffectDuration: 2
+      toggleEffectDuration: 0.2
+      defaultMat: {fileID: 2100000, guid: d79a83adef48e0c41bf93a4d0491ac1d, type: 2}
+      transparentMat: {fileID: 2100000, guid: 1353c69cab1e24a68bdb263ab6156ea3, type: 2}
+    playerFiringHandler:
+      fireCooldown: 0.08
+      projectileSpeed: 8.5
+      projectileLifespan: 1
+    playerThrustHandler:
+      thrustScale: {x: 0.1, y: 0.3, z: 0.1}
+  asteroidSettings:
+    asteroidData:
+      minRotSpeed: 30
+      maxRotSpeed: 60
+  ufoSettings:
+    ufoFiringHandler:
+      ufoProjSpeed: 6
+      ufoProjLifespan: 1.1

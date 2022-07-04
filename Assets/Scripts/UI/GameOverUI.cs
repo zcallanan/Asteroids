@@ -1,40 +1,55 @@
+using System;
 using System.Collections;
-using Controllers;
+using Misc;
 using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
+using Zenject;
 
 namespace UI
 {
     public class GameOverUI : MonoBehaviour
     {
         private Text _gameOverText;
+
+        private GameState _gameState;
         
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
+
+        [Inject]
+        public void Construct(
+            GameState gameState)
+        {
+            _gameState = gameState;
+        }
 
         private void Start()
         {
             _gameOverText = GetComponent<Text>();
             _gameOverText.enabled = false;
-            
-            GameManager.sharedInstance.GameOver
-                .Subscribe(HandleGameOver)
-                .AddTo(_disposables);
-        }
-        
-        private void HandleGameOver(bool gameOver)
-        {
-            if (gameOver)
-            {
-                StartCoroutine(EnableGameOverTextCoroutine());
-                _disposables.Clear();
-            }
+
+            CheckForChangeToCurrentLives();
         }
 
-        private IEnumerator EnableGameOverTextCoroutine()
+        private void CheckForChangeToCurrentLives()
         {
-            yield return new WaitForSeconds(2f);
-            _gameOverText.enabled = true;
+            _gameState.CurrentLives
+                .Subscribe(WhenLivesAreBelowZeroDelayThenShowGameOver)
+                .AddTo(_disposables);
+        }
+
+        private void WhenLivesAreBelowZeroDelayThenShowGameOver(int lives)
+        {
+            if (lives < 0)
+            {
+                Observable.Timer(TimeSpan.FromSeconds(2))
+                    .Subscribe(_ =>
+                    {
+                        _gameOverText.enabled = true;
+                        _disposables.Clear();
+                    })
+                    .AddTo(_disposables);
+            }
         }
     }
 }
