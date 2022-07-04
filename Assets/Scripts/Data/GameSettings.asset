@@ -137,5 +137,5 @@ MonoBehaviour:
       maxRotSpeed: 60
   ufoSettings:
     ufoFiringHandler:
-      ufoProjSpeed: 0
-      ufoProjLifespan: 0
+      ufoProjSpeed: 6
+      ufoProjLifespan: 1.1
