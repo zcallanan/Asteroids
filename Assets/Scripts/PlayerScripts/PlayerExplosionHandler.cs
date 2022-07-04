@@ -12,6 +12,7 @@ namespace PlayerScripts
         private readonly Player _player;
         private readonly Explosion.Factory _explosionFactory;
 
+        private Collider _collider;
         private Explosion _explosion;
 
         private Color _startColor;
@@ -35,6 +36,10 @@ namespace PlayerScripts
         
         private void CreateExplosion()
         {
+            if (IsExplodingFromFiredBullets())
+            {
+                return;
+            }
             _explosion = _explosionFactory.Create();
 
             _explosion.transform.position = _player.Position;
@@ -49,11 +54,31 @@ namespace PlayerScripts
             expParticleSystem.Play();
         }
 
+        private bool IsExplodingFromFiredBullets()
+        {
+            if (_collider.GetComponent<BulletProjectile>())
+            {
+                var originType = _collider.GetComponent<BulletProjectile>().OriginType;
+
+                if (originType == ObjectTypes.Player)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         private void ExplodeOnTriggerEnter()
         {
             _player.GameObj
                 .OnTriggerEnterAsObservable()
-                .Subscribe(_ => CreateExplosion())
+                .Subscribe(collider =>
+                {
+                    _collider = collider;
+                    
+                    CreateExplosion();
+                })
                 .AddTo(_player.GameObj);
         }
         

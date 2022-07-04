@@ -12,6 +12,7 @@ namespace UfoScripts
         private readonly Ufo _ufo;
         private readonly Explosion.Factory _explosionFactory;
 
+        private Collider _collider;
         private Explosion _explosion;
         private Color _startColor;
 
@@ -34,6 +35,11 @@ namespace UfoScripts
         
         private void CreateExplosion()
         {
+            if (IsExplodingFromFiredBullets())
+            {
+                return;
+            }
+            
             _explosion = _explosionFactory.Create();
 
             _explosion.transform.position = _ufo.transform.position;
@@ -55,12 +61,32 @@ namespace UfoScripts
             expParticleSystem.Clear();
             expParticleSystem.Play();
         }
-        
+
+        private bool IsExplodingFromFiredBullets()
+        {
+            if (_collider.GetComponent<BulletProjectile>())
+            {
+                var originType = _collider.GetComponent<BulletProjectile>().OriginType;
+
+                if (originType == ObjectTypes.LargeUfo || originType == ObjectTypes.SmallUfo)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         private void ExplodeOnTriggerEnter()
         {
             _ufo
                 .OnTriggerEnterAsObservable()
-                .Subscribe(_ => CreateExplosion())
+                .Subscribe(collider =>
+                {
+                    _collider = collider;
+                    
+                    CreateExplosion();
+                })
                 .AddTo(_ufo.gameObject);
         }
         

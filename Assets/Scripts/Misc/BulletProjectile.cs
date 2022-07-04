@@ -1,4 +1,6 @@
 using System;
+using PlayerScripts;
+using UfoScripts;
 using UniRx;
 using UnityEngine;
 using Zenject;
@@ -7,13 +9,14 @@ namespace Misc
 {
     public class BulletProjectile : MonoBehaviour, IPoolable<float, float, ObjectTypes, IMemoryPool>, IDisposable
     {
+        public ObjectTypes OriginType { get; private set; }
+        
         private BoundHandler _boundHandler;
-
+        
         private float _speed;
         
-        private ObjectTypes _originType;
-
         private IMemoryPool _pool;
+        private float _lifespan;
         private IDisposable _spawnTimer;
         
         [Inject]
@@ -33,24 +36,29 @@ namespace Misc
 
         public void OnTriggerEnter(Collider other)
         {
-            _spawnTimer.Dispose();
+            if (other.GetComponent<Ufo>() != null && (OriginType == ObjectTypes.LargeUfo || OriginType == ObjectTypes.SmallUfo))
+            {
+                return;
+            }
             
+            if (other.GetComponent<PlayerFacade>() != null && OriginType == ObjectTypes.Player )
+            {
+                return;
+            }
+            
+            _spawnTimer.Dispose();
+        
             Dispose();
         }
         
         public void OnSpawned(float speed, float lifespan, ObjectTypes originType, IMemoryPool pool)
         {
             _speed = speed;
+            _lifespan = lifespan;
             _pool = pool;
-            _originType = originType;
+            OriginType = originType;
 
-            _spawnTimer = Observable
-                .Timer(TimeSpan.FromSeconds(lifespan))
-                .Subscribe(_ =>
-                {
-                    Dispose();
-                })
-                .AddTo(this);
+            DespawnProjectile();
         }
 
         public void OnDespawned()
@@ -65,6 +73,17 @@ namespace Misc
 
         public class Factory : PlaceholderFactory<float, float, ObjectTypes, BulletProjectile>
         {
+        }
+        
+        private void DespawnProjectile()
+        {
+            _spawnTimer = Observable
+                .Timer(TimeSpan.FromSeconds(_lifespan))
+                .Subscribe(_ =>
+                {
+                    Dispose();
+                })
+                .AddTo(this);        
         }
     }
 }

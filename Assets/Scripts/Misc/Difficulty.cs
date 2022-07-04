@@ -26,6 +26,12 @@ namespace Misc
             public float ufoMaxSpeed;
             public float ufoMinSpawnDelay;
             public float ufoMaxSpawnDelay;
+            public float ufoMinFireDelay;
+            public float ufoMaxFireDelay;
+
+            public float ufoOffsetConstant;
+            public float ufoOffsetMin;
+            public float ufoOffsetMax;
         }
     }
 }

@@ -9,6 +9,7 @@ namespace Installers
         {
             Container.BindInterfacesAndSelfTo<UfoExplosionHandler>().AsSingle();
             Container.BindInterfacesTo<UfoCollisionHandler>().AsSingle();
+            Container.BindInterfacesTo<UfoFiringHandler>().AsSingle();
         }
     }
 }

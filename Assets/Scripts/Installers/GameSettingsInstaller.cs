@@ -2,6 +2,7 @@ using System;
 using AsteroidScripts;
 using Misc;
 using PlayerScripts;
+using UfoScripts;
 using UnityEngine;
 using Zenject;
 
@@ -16,6 +17,7 @@ namespace Installers
         public GameSettings gameSettings;
         public PlayerSettings playerSettings;
         public AsteroidSettings asteroidSettings;
+        public UfoSettings ufoSettings;
 
         [Serializable]
         public class GameSettings
@@ -33,6 +35,13 @@ namespace Installers
             public PlayerData.Settings playerData;
             public PlayerRespawnEffect.Settings playerRespawnEffect;
             public PlayerFiringHandler.Settings playerFiringHandler;
+            public PlayerThrustHandler.Settings playerThrustHandler;
+        }
+
+        [Serializable]
+        public class UfoSettings
+        {
+            public UfoFiringHandler.Settings ufoFiringHandler;
         }
 
         [Serializable]
@@ -50,16 +59,18 @@ namespace Installers
             Container.BindInstance(gameSettings.scoreHandler).IfNotBound();
             
             Container.BindInstance(asteroidSpawner).IfNotBound();
-            Container.BindInstance(ufoSpawner).IfNotBound();
-
             Container.BindInstance(asteroidSettings.asteroidData).IfNotBound();
 
             Container.BindInstance(playerSettings.playerDirectionHandler).IfNotBound();
             Container.BindInstance(playerSettings.playerMoveHandler).IfNotBound();
             Container.BindInstance(playerSettings.playerData).IfNotBound();
+            
             Container.BindInstance(playerSettings.playerRespawnEffect).IfNotBound();
             Container.BindInstance(playerSettings.playerFiringHandler).IfNotBound();
-
+            Container.BindInstance(playerSettings.playerThrustHandler).IfNotBound();
+            
+            Container.BindInstance(ufoSpawner).IfNotBound();
+            Container.BindInstance(ufoSettings.ufoFiringHandler).IfNotBound();
         }
     }
 }

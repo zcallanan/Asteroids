@@ -1,3 +1,4 @@
+using Misc;
 using UniRx;
 using UnityEngine;
 using Zenject;
@@ -8,6 +9,8 @@ namespace PlayerScripts
     {
         private Player _player;
         private PlayerInputState _playerInputState;
+
+        public Vector3 Position => _player.Position;
         
         [Inject]
         public void Construct(

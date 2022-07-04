@@ -58,6 +58,11 @@ MonoBehaviour:
         ufoMaxSpeed: 0
         ufoMinSpawnDelay: 0
         ufoMaxSpawnDelay: 0
+        ufoMinFireDelay: 0
+        ufoMaxFireDelay: 0
+        ufoOffsetConstant: 0
+        ufoOffsetMin: 0
+        ufoOffsetMax: 0
       - smallPerMedium: 2
         mediumPerLarge: 2
         initLargeAsteroids: 3
@@ -69,6 +74,11 @@ MonoBehaviour:
         ufoMaxSpeed: 3
         ufoMinSpawnDelay: 20
         ufoMaxSpawnDelay: 35
+        ufoMinFireDelay: 2.25
+        ufoMaxFireDelay: 3.25
+        ufoOffsetConstant: 0.8
+        ufoOffsetMin: 0.5
+        ufoOffsetMax: 1
       - smallPerMedium: 3
         mediumPerLarge: 3
         initLargeAsteroids: 3
@@ -80,6 +90,11 @@ MonoBehaviour:
         ufoMaxSpeed: 4
         ufoMinSpawnDelay: 16
         ufoMaxSpawnDelay: 31
+        ufoMinFireDelay: 2
+        ufoMaxFireDelay: 3
+        ufoOffsetConstant: 0.6
+        ufoOffsetMin: 0.4
+        ufoOffsetMax: 0.9
       - smallPerMedium: 4
         mediumPerLarge: 4
         initLargeAsteroids: 4
@@ -91,6 +106,11 @@ MonoBehaviour:
         ufoMaxSpeed: 5
         ufoMinSpawnDelay: 12
         ufoMaxSpawnDelay: 27
+        ufoMinFireDelay: 1.75
+        ufoMaxFireDelay: 2.75
+        ufoOffsetConstant: 0.4
+        ufoOffsetMin: 0.3
+        ufoOffsetMax: 0.8
   playerSettings:
     playerDirectionHandler:
       rotationAngle: {x: 0, y: 100, z: 0}
@@ -109,7 +129,13 @@ MonoBehaviour:
       fireCooldown: 0.08
       projectileSpeed: 8.5
       projectileLifespan: 1
+    playerThrustHandler:
+      thrustScale: {x: 0.1, y: 0.3, z: 0.1}
   asteroidSettings:
     asteroidData:
       minRotSpeed: 30
       maxRotSpeed: 60
+  ufoSettings:
+    ufoFiringHandler:
+      ufoProjSpeed: 0
+      ufoProjLifespan: 0

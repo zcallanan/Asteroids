@@ -1,5 +1,6 @@
 using System;
 using Misc;
+using UniRx;
 using UnityEngine;
 using Zenject;
 using Random = UnityEngine.Random;
@@ -21,6 +22,8 @@ namespace UfoScripts
         
         public Vector3 Facing { get; set; }
         
+        public ReactiveProperty<bool> IsDead { get; private set; }
+
         private IMemoryPool _pool;
 
         [Inject]
@@ -32,6 +35,11 @@ namespace UfoScripts
             _difficultySettings = difficultySettings;
             _gameState = gameState;
             _boundHandler = boundHandler;
+        }
+
+        private void Awake()
+        {
+            IsDead = new ReactiveProperty<bool>(false);
         }
 
         private void Start()
@@ -49,7 +57,23 @@ namespace UfoScripts
 
         private void OnTriggerEnter(Collider other)
         {
-            Dispose();
+            if (other.GetComponent<BulletProjectile>())
+            {
+                var colliderObjectType = other.GetComponent<BulletProjectile>().OriginType;
+
+                if (colliderObjectType != ObjectTypes.LargeUfo && colliderObjectType != ObjectTypes.SmallUfo)
+                {
+                    IsDead.Value = true;
+            
+                    Dispose();
+                }
+            }
+            else
+            {
+                IsDead.Value = true;
+            
+                Dispose();
+            }
         }
 
         public void OnDespawned()

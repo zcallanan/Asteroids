@@ -55,6 +55,23 @@ namespace PlayerScripts
 
         private void OnTriggerEnter(Collider other)
         {
+            if (other.GetComponent<BulletProjectile>())
+            {
+                var colliderObjectType = other.GetComponent<BulletProjectile>().OriginType;
+                
+                if (colliderObjectType != ObjectTypes.Player)
+                {
+                    PlayerDeathEvents();
+                }
+            }
+            else
+            {
+                PlayerDeathEvents();
+            }
+        }
+
+        private void PlayerDeathEvents()
+        {
             _gameState.CurrentLives.Value--;
 
             RestorePlayerFromDeathAfterDelay();

@@ -59,6 +59,8 @@ namespace Misc
 
             _ufoMinSpawnDelay = difficulties.ufoMinSpawnDelay;
             _ufoMaxSpawnDelay = difficulties.ufoMaxSpawnDelay;
+            
+            DelayForATimeThenSpawnUfo(ObjectTypes.LargeUfo);
 
             TrackLevelChangeToSwitchToSmallUfo();
                 
@@ -68,7 +70,7 @@ namespace Misc
         private void TrackLevelChangeToSwitchToSmallUfo()
         {
             _gameState.CurrentLevel
-                .Subscribe(SpawnLargeOrSmallUfo)
+                .Subscribe(SpawnSmallUfoAtLevel)
                 .AddTo(_gameState.gameObject);
         }
 
@@ -78,7 +80,7 @@ namespace Misc
                 .Subscribe(min =>
                 {
                     _minBounds = min;
-                    _modifiedMinZ = _minBounds.z - (_minBounds.z / 3);
+                    _modifiedMinZ = _minBounds.z - (_minBounds.z / 4);
                 })
                 .AddTo(_gameState.gameObject);
             
@@ -86,21 +88,18 @@ namespace Misc
                 .Subscribe(max =>
                 {
                     _maxBounds = max;
-                    _modifiedMaxZ = _maxBounds.z - (_maxBounds.z / 3);
+                    _modifiedMaxZ = _maxBounds.z - (_maxBounds.z / 4);
                 })
                 .AddTo(_gameState.gameObject);
         }
 
-        private void SpawnLargeOrSmallUfo(int level)
-        { 
-            ObjectTypes ufoSize = ObjectTypes.LargeUfo;
-            
+        private void SpawnSmallUfoAtLevel(int level)
+        {
             if (level == _smallUfoLevelToSpawn)
             {
                 _ufoSpawnTimer.Dispose();
-                ufoSize = ObjectTypes.SmallAsteroid;
+                DelayForATimeThenSpawnUfo(ObjectTypes.SmallAsteroid);
             }
-            DelayForATimeThenSpawnUfo(ufoSize);
         }
 
         private void DelayForATimeThenSpawnUfo(ObjectTypes size)
@@ -117,11 +116,14 @@ namespace Misc
 
             ufo.Size = size;
             ufo.IsRecentlySpawned = true;
-
+            ufo.IsDead.Value = false;
+            
             ScaleUfo(ufo);
             PositionUfo(ufo);
             
             ToggleUfoRecentlySpawnedOnceItsInBounds(ufo);
+            
+            DelayForATimeThenSpawnUfo(size);
         }
 
         private void ScaleUfo(Ufo ufo)
