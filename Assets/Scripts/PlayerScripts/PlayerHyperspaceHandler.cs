@@ -28,10 +28,15 @@ namespace PlayerScripts
         
         public void Initialize()
         {
-            _boundHandler.MaxBounds.Subscribe(maxGameBounds => _maxBounds = maxGameBounds);
-            _boundHandler.MinBounds.Subscribe(minGameBounds => _minBounds = minGameBounds);
+            GetGameBounds();
 
             HandleHyperspaceInput();
+        }
+
+        private void GetGameBounds()
+        {
+            _boundHandler.MaxBounds.Subscribe(maxGameBounds => _maxBounds = maxGameBounds);
+            _boundHandler.MinBounds.Subscribe(minGameBounds => _minBounds = minGameBounds);
         }
 
         private void HandleHyperspaceInput()
@@ -50,10 +55,11 @@ namespace PlayerScripts
             _player.HyperspaceWasTriggered.Value = true;
             
             _player.MeshRenderer.enabled = false;
+            _player.MeshCollider.enabled = false;
+            
             _player.Position = DetermineRandomHyperspacePosition();
             
             EndHyperspaceAfterDelay();
-
         }
 
         private void EndHyperspaceAfterDelay()
@@ -65,6 +71,8 @@ namespace PlayerScripts
                     if (_player.HyperspaceWasTriggered.Value && !_player.IsDead)
                     {
                         _player.MeshRenderer.enabled = true;
+                        _player.MeshCollider.enabled = true;
+                        
                         _player.AdjustedSpeed = 0;
             
                         _player.HyperspaceWasTriggered.Value = false;
