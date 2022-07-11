@@ -1,8 +1,11 @@
 using Zenject;
 
-public class ProjectInstaller : MonoInstaller
+namespace Installers
 {
-    public override void InstallBindings()
+    public class ProjectInstaller : MonoInstaller
     {
+        public override void InstallBindings()
+        {
+        }
     }
 }
