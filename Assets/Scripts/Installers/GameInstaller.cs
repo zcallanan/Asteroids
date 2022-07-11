@@ -21,7 +21,6 @@ namespace Installers
             Container.BindInterfacesAndSelfTo<GameLevelHandler>().AsSingle();
 
             Container.Bind<BoundHandler>().FromComponentInHierarchy().AsCached();
-            Container.Bind<GameState>().FromComponentInHierarchy().AsCached();
             
             Container.Bind<ScoreHandler>().AsSingle();
             
