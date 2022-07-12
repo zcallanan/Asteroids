@@ -46,6 +46,7 @@ namespace PlayerScripts
         
         private void DisposeOfThrust()
         {
+            Debug.Log($"{_gameState.CurrentLives}");
             _gameState.CurrentLives
                 .Subscribe(lives =>
                 {

@@ -29,6 +29,9 @@ namespace Misc
         private Quaternion _currentRotation;
 
         private IDisposable _ufoSpawnTimer;
+        
+        // TODO: Dispose of this
+        private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
         public UfoSpawner(
             Ufo.Factory ufoFactory,
@@ -73,7 +76,7 @@ namespace Misc
         {
             _gameState.CurrentLevel
                 .Subscribe(SpawnSmallUfoAtLevel)
-                .AddTo(_gameState.gameObject);
+                .AddTo(_disposables);
         }
 
         private void UpdateUfoSpawnBounds()
@@ -84,7 +87,7 @@ namespace Misc
                     _minBounds = min;
                     _modifiedMinZ = _minBounds.z - (_minBounds.z / 4);
                 })
-                .AddTo(_gameState.gameObject);
+                .AddTo(_disposables);
             
             _boundHandler.MaxBounds
                 .Subscribe(max =>
@@ -92,7 +95,7 @@ namespace Misc
                     _maxBounds = max;
                     _modifiedMaxZ = _maxBounds.z - (_maxBounds.z / 4);
                 })
-                .AddTo(_gameState.gameObject);
+                .AddTo(_disposables);
         }
 
         private void SpawnSmallUfoAtLevel(int level)
@@ -109,7 +112,7 @@ namespace Misc
             _ufoSpawnTimer = Observable
                 .Timer(TimeSpan.FromSeconds(Random.Range(_ufoMinSpawnDelay, _ufoMaxSpawnDelay)))
                 .Subscribe(_ => SpawnUfo(size))
-                .AddTo(_gameState.gameObject);
+                .AddTo(_disposables);
         }
 
         private void SpawnUfo(ObjectTypes size)
@@ -175,7 +178,7 @@ namespace Misc
         {
             Observable.Timer(TimeSpan.FromSeconds(1))
                 .Subscribe(_ => ufo.IsRecentlySpawned = false)
-                .AddTo(_gameState.gameObject);
+                .AddTo(_disposables);
         }
 
         private void StopSpawningUfoOnGameOver()
@@ -188,7 +191,7 @@ namespace Misc
                         _ufoSpawnTimer.Dispose();
                     }
                 })
-                .AddTo(_gameState.gameObject);
+                .AddTo(_disposables);
         }
 
         [Serializable]

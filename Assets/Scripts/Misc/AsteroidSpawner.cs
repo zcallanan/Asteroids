@@ -23,6 +23,9 @@ namespace Misc
         private Vector3 _innerMaxBounds;
         private Vector3 _innerMinBounds;
         
+        // TODO: Dispose of these
+        private readonly CompositeDisposable _disposables = new CompositeDisposable();
+        
         public AsteroidSpawner(
             Settings settings,
             Difficulty.Settings difficultySettings,
@@ -107,13 +110,13 @@ namespace Misc
             {
                 _maxBounds = maxGameBounds;
                 DetermineAsteroidSpawnBoundValues();
-            }).AddTo(_gameState.gameObject);
+            }).AddTo(_disposables);
             
             _boundHandler.MinBounds.Subscribe(minGameBounds =>
             {
                 _minBounds = minGameBounds;
                 DetermineAsteroidSpawnBoundValues();
-            }).AddTo(_gameState.gameObject);
+            }).AddTo(_disposables);
         }
         
         private void SpawnAsteroidsWithinBoundsAtTheStartOfALevel()
@@ -125,7 +128,7 @@ namespace Misc
                     var renderValue = Random.Range(0, 4);
                     SpawnAsteroid(renderValue, ObjectTypes.LargeAsteroid, Vector3.zero);
                 }
-            }).AddTo(_gameState.gameObject);
+            }).AddTo(_disposables);
         }
         
         [Serializable]

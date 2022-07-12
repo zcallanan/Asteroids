@@ -19,6 +19,9 @@ namespace Misc
 
         private bool _isReadyToStartNewLevel;
         
+        // TODO: Dispose of these
+        private readonly CompositeDisposable _disposables = new CompositeDisposable();
+
         public GameLevelHandler(
             Settings settings,
             Difficulty.Settings difficultySettings,
@@ -67,7 +70,7 @@ namespace Misc
                             _isReadyToStartNewLevel = false;
                         } 
                     })
-                    .AddTo(_gameState.gameObject);
+                    .AddTo(_disposables);
             }
         }
 

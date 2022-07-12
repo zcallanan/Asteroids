@@ -30,9 +30,6 @@ namespace Misc
                 .Subscribe(isGameRunning =>
                 {
                     var scene = SceneManager.GetActiveScene();
-                    
-                    Debug.Log($"{scene.name}");
-                    
                     var targetSceneToChangeTo = isGameRunning ? "AsteroidGame" : "StartScreen";
 
                     if (scene.name != targetSceneToChangeTo)

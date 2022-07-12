@@ -8,6 +8,7 @@ namespace Installers
         public override void InstallBindings()
         {
             Container.BindInterfacesTo<GameSceneHandler>().AsSingle();
+            Container.Bind<GameState>().AsSingle();
         }
     }
 }

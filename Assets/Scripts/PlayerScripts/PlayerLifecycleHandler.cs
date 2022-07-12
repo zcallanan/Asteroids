@@ -100,6 +100,7 @@ namespace PlayerScripts
                             .Subscribe(_ =>
                             {
                                 _gameState.IsGameRunning.Value = false;
+                                _gameState.IsGameReset.Value = true;
                             })
                             .AddTo(_player.GameObj);
                     }
