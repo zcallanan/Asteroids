@@ -22,8 +22,8 @@ namespace Misc
         public ReactiveProperty<int> CurrentLevel { get; private set; }
         public ReactiveProperty<int> Score { get; private set; }
         public ReactiveProperty<bool> IsStartScreenInit { get; private set; }
-        
-        
+        public ReactiveProperty<bool> IsGameRunning { get; private set; }
+
         public int GameDifficulty { get; set; }
         public int GameMode { get; set; }
         
@@ -39,19 +39,8 @@ namespace Misc
             CurrentLevel = new ReactiveProperty<int>(0);
             Score = new ReactiveProperty<int>(0);
             IsStartScreenInit = new ReactiveProperty<bool>(false);
+            IsGameRunning = new ReactiveProperty<bool>(false);
 
-            OneTimeStartScreenInitTimer();
-        }
-
-        private void OneTimeStartScreenInitTimer()
-        {
-            Observable
-                .Timer(TimeSpan.FromSeconds(2.5))
-                .Subscribe(_ =>
-                {
-                    IsStartScreenInit.Value = true;
-                })
-                .AddTo(_disposables);
         }
     }
 }

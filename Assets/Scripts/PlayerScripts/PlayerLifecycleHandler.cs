@@ -72,13 +72,19 @@ namespace PlayerScripts
 
         private void PlayerDeathEvents()
         {
-            _gameState.CurrentLives.Value--;
+            if (_gameState.CurrentLives.Value > -1)
+            {
+                _gameState.CurrentLives.Value--;
+            }
 
             RestorePlayerFromDeathAfterDelay();
 
             DisablePlayerObjectOnDeath();
 
-            SetGameOver();
+            if (!_gameIsOver)
+            {
+                SetGameOver();
+            }
         }
 
         private void SetGameOver()
@@ -89,6 +95,13 @@ namespace PlayerScripts
                     if (lives < 0)
                     {
                         _gameIsOver = true;
+                        
+                        Observable.Timer(TimeSpan.FromSeconds(7))
+                            .Subscribe(_ =>
+                            {
+                                _gameState.IsGameRunning.Value = false;
+                            })
+                            .AddTo(_player.GameObj);
                     }
                 })
                 .AddTo(_player.GameObj);

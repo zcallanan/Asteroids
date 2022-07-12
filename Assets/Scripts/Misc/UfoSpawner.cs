@@ -65,6 +65,8 @@ namespace Misc
             TrackLevelChangeToSwitchToSmallUfo();
                 
             UpdateUfoSpawnBounds();
+
+            StopSpawningUfoOnGameOver();
         }
 
         private void TrackLevelChangeToSwitchToSmallUfo()
@@ -173,6 +175,19 @@ namespace Misc
         {
             Observable.Timer(TimeSpan.FromSeconds(1))
                 .Subscribe(_ => ufo.IsRecentlySpawned = false)
+                .AddTo(_gameState.gameObject);
+        }
+
+        private void StopSpawningUfoOnGameOver()
+        {
+            _gameState.CurrentLives
+                .Subscribe(lives =>
+                {
+                    if (lives < 0)
+                    {
+                        _ufoSpawnTimer.Dispose();
+                    }
+                })
                 .AddTo(_gameState.gameObject);
         }
 

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Misc;
 using UniRx;
 using UnityEngine;
@@ -7,6 +8,8 @@ namespace UI
 {
     public class StartScreenUI : MonoBehaviour
     {
+        [SerializeField] private List<GameObject> verticalPanels = new List<GameObject>();
+        
         private GameState _gameState;
 
         private Canvas _canvas;

@@ -1,3 +1,4 @@
+using Misc;
 using Zenject;
 
 namespace Installers
@@ -6,6 +7,7 @@ namespace Installers
     {
         public override void InstallBindings()
         {
+            Container.BindInterfacesTo<GameSceneHandler>().AsSingle();
         }
     }
 }
