@@ -1,4 +1,5 @@
 using System;
+using Misc;
 using UnityEngine;
 using Zenject;
 
@@ -8,22 +9,22 @@ namespace PlayerScripts
     {
         private readonly Player _player;
         private readonly Settings _settings;
-        private readonly PlayerInputState _playerInputState;
+        private readonly InputState _inputState;
 
         public PlayerDirectionHandler(
             Player player,
             Settings settings,
-            PlayerInputState playerInputState)
+            InputState inputState)
         {
             _player = player;
             _settings = settings;
-            _playerInputState = playerInputState;
+            _inputState = inputState;
         }
 
         public void FixedTick()
         {
             var adjustedAngle = _settings.rotationAngle *
-                             (_playerInputState.HorizontalInput * Time.fixedDeltaTime *
+                             (_inputState.HorizontalInput.Value * Time.fixedDeltaTime *
                               _settings.rotationSpeed);
             
             _player.SetRotation(adjustedAngle);

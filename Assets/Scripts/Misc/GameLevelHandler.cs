@@ -36,8 +36,8 @@ namespace Misc
         {
             var gameDifficulty = _gameState.GameDifficulty;
             
-            _initLargeAsteroids = _difficultySettings.difficulties[gameDifficulty].initLargeAsteroids;
-            _smallPerMedium = _difficultySettings.difficulties[gameDifficulty].smallPerMedium;
+            _initLargeAsteroids = _difficultySettings.difficulties[gameDifficulty.Value].initLargeAsteroids;
+            _smallPerMedium = _difficultySettings.difficulties[gameDifficulty.Value].smallPerMedium;
 
             DetermineTotalSmallAsteroidsInThisLevel();
         }

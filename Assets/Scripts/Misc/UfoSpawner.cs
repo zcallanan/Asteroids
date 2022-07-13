@@ -49,27 +49,40 @@ namespace Misc
 
         public void Initialize()
         {
-            var difficulties = _difficultySettings.difficulties[_gameState.GameDifficulty];
-            
-            _isUfoSpawnableInThisDifficulty = difficulties.isUfoSpawnableInThisDifficulty;
+            OnlySpawnUfoDuringTheGame();
+        }
 
-            if (!_isUfoSpawnableInThisDifficulty)
-            {
-                return;
-            }
+        private void OnlySpawnUfoDuringTheGame()
+        {
+            _gameState.IsGameRunning
+                .Subscribe(isGameRunning =>
+                {
+                    if (isGameRunning)
+                    {
+                        var difficulties = _difficultySettings.difficulties[_gameState.GameDifficulty.Value];
             
-            _smallUfoLevelToSpawn = difficulties.smallUfoLevelToSpawn;
+                        _isUfoSpawnableInThisDifficulty = difficulties.isUfoSpawnableInThisDifficulty;
 
-            _ufoMinSpawnDelay = difficulties.ufoMinSpawnDelay;
-            _ufoMaxSpawnDelay = difficulties.ufoMaxSpawnDelay;
+                        if (!_isUfoSpawnableInThisDifficulty)
+                        {
+                            return;
+                        }
             
-            DelayForATimeThenSpawnUfo(ObjectTypes.LargeUfo);
+                        _smallUfoLevelToSpawn = difficulties.smallUfoLevelToSpawn;
 
-            TrackLevelChangeToSwitchToSmallUfo();
+                        _ufoMinSpawnDelay = difficulties.ufoMinSpawnDelay;
+                        _ufoMaxSpawnDelay = difficulties.ufoMaxSpawnDelay;
+            
+                        DelayForATimeThenSpawnUfo(ObjectTypes.LargeUfo);
+
+                        TrackLevelChangeToSwitchToSmallUfo();
                 
-            UpdateUfoSpawnBounds();
+                        UpdateUfoSpawnBounds();
 
-            StopSpawningUfoOnGameOver();
+                        StopSpawningUfoOnGameOver();
+                    }
+                })
+                .AddTo(_disposables);
         }
 
         private void TrackLevelChangeToSwitchToSmallUfo()

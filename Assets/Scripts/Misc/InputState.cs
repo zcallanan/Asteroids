@@ -1,16 +1,17 @@
 using UniRx;
 
-namespace PlayerScripts
+namespace Misc
 {
-    public class PlayerInputState
+    public class InputState
     {
         public ReactiveProperty<bool> IsHyperspaceActive { get; set; }
         public ReactiveProperty<bool> IsFiring { get; set; }
         
         public ReactiveProperty<bool> IsApplyingThrust { get; set; }
         
-        public float VerticalInput { get; set; }
+        public ReactiveProperty<float> VerticalInput { get; set; }
 
-        public float HorizontalInput { get; set; }
+        public ReactiveProperty<float> HorizontalInput { get; set; }
+        
     }
 }

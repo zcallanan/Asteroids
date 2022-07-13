@@ -10,7 +10,7 @@ namespace PlayerScripts
     {
         private readonly Player _player;
         private readonly BulletProjectile.Factory _bulletProjectileFactory;
-        private readonly PlayerInputState _playerInputState;
+        private readonly InputState _inputState;
         private readonly Settings _settings;
 
         private bool _firingDisabled;
@@ -18,12 +18,12 @@ namespace PlayerScripts
         public PlayerFiringHandler(
             Player player,
             BulletProjectile.Factory bulletProjectileFactory,
-            PlayerInputState playerInputState,
+            InputState inputState,
             Settings settings)
         {
             _player = player;
             _bulletProjectileFactory = bulletProjectileFactory;
-            _playerInputState = playerInputState;
+            _inputState = inputState;
             _settings = settings;
         }
 
@@ -34,7 +34,7 @@ namespace PlayerScripts
 
         private void FireProjectileAndEnforceCooldownDelay()
         {
-            _playerInputState.IsFiring.Subscribe(hasFired =>
+            _inputState.IsFiring.Subscribe(hasFired =>
             {
                 if (hasFired && !_player.IsDead && !_firingDisabled)
                 {

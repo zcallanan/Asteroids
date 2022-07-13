@@ -48,8 +48,8 @@ namespace AsteroidScripts
         {
             var gameDifficulty = _gameState.GameDifficulty;
             
-            var maxSpeed = _difficultySettings.difficulties[gameDifficulty].astMaxSpeed;
-            var minSpeed = _difficultySettings.difficulties[gameDifficulty].astMinSpeed;
+            var maxSpeed = _difficultySettings.difficulties[gameDifficulty.Value].astMaxSpeed;
+            var minSpeed = _difficultySettings.difficulties[gameDifficulty.Value].astMinSpeed;
 
             var maxRotSpeed = _asteroidData.maxRotSpeed;
             var minRotSpeed = _asteroidData.minRotSpeed;

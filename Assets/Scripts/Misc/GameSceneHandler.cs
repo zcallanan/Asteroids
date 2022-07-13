@@ -12,15 +12,14 @@ namespace Misc
         
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
         
-        public GameSceneHandler(GameState gameState)
+        public GameSceneHandler(
+            GameState gameState)
         {
             _gameState = gameState;
         }
 
         public void Initialize()
         {
-            OneTimeStartScreenInitTimer();
-
             CheckForGameRunningAndChangeScene();
         }
             
@@ -37,14 +36,6 @@ namespace Misc
                         SceneManager.LoadScene(targetSceneToChangeTo);
                     }
                 })
-                .AddTo(_disposables);
-        }
-
-        private void OneTimeStartScreenInitTimer()
-        {
-            Observable
-                .Timer(TimeSpan.FromSeconds(2.5))
-                .Subscribe(_ => _gameState.IsStartScreenInit.Value = true)
                 .AddTo(_disposables);
         }
     }

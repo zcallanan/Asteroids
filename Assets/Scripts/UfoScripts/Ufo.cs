@@ -44,7 +44,7 @@ namespace UfoScripts
 
         private void Start()
         {
-            var difficulties = _difficultySettings.difficulties[_gameState.GameDifficulty];
+            var difficulties = _difficultySettings.difficulties[_gameState.GameDifficulty.Value];
 
             _ufoMinSpeed = difficulties.ufoMinSpeed;
             _ufoMaxSpeed = difficulties.ufoMaxSpeed;

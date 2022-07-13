@@ -9,7 +9,7 @@ namespace PlayerScripts
     public class PlayerMoveHandler : IInitializable, IFixedTickable
     {
         private readonly Player _player;
-        private readonly PlayerInputState _playerInputState;
+        private readonly InputState _inputState;
         private readonly Settings _settings;
         
         private Vector3 _currentPosition;
@@ -22,11 +22,11 @@ namespace PlayerScripts
         
         public PlayerMoveHandler(
             Player player,
-            PlayerInputState playerInputState,
+            InputState inputState,
             Settings settings)
         {
             _player = player;
-            _playerInputState = playerInputState;
+            _inputState = inputState;
             _settings = settings;
         }
         
@@ -61,9 +61,9 @@ namespace PlayerScripts
 
         private void OnlyRegisterWhenPlayerInputsForwardMovement()
         {
-            if (_playerInputState.VerticalInput >= 0 && !_player.IsDead && !_player.HyperspaceWasTriggered.Value)
+            if (_inputState.VerticalInput.Value >= 0 && !_player.IsDead && !_player.HyperspaceWasTriggered.Value)
             {
-                _forwardInputValue = _playerInputState.VerticalInput;
+                _forwardInputValue = _inputState.VerticalInput.Value;
             }
         }
 
