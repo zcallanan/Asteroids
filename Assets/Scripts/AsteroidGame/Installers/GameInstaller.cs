@@ -20,6 +20,8 @@ namespace AsteroidGame.Installers
             Container.BindInterfacesAndSelfTo<UfoSpawner>().AsSingle();
 
             Container.BindInterfacesAndSelfTo<GameLevelHandler>().AsSingle();
+            
+            Container.BindInterfacesTo<LoadStartScene>().AsSingle();
 
             Container.Bind<BoundHandler>().FromComponentInHierarchy().AsCached();
             
@@ -28,7 +30,7 @@ namespace AsteroidGame.Installers
             Container.Bind<ScoreUI>().FromComponentInHierarchy().AsCached();
             Container.Bind<LivesUI>().FromComponentInHierarchy().AsCached();
             Container.Bind<GameOverUI>().FromComponentInHierarchy().AsCached();
-
+            
             Container
                 .BindFactory<float, float, ObjectTypes, BulletProjectile, BulletProjectile.Factory>()
                 .FromPoolableMemoryPool<float, float, ObjectTypes, BulletProjectile, BulletProjectilePool>(x => x

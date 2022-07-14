@@ -2,15 +2,15 @@ using ProjectScripts;
 using UniRx;
 using Zenject;
 
-namespace StartMenuScripts.StartMenu
+namespace StartMenuScripts.Misc
 {
-    public class StartMenuGameReset : IInitializable
+    public class SetupAsteroidData : IInitializable
     {
         private readonly GameState _gameState;
         
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
-        public StartMenuGameReset(
+        public SetupAsteroidData(
             GameState gameState)
         {
             _gameState = gameState;

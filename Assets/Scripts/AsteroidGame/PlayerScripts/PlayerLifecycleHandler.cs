@@ -18,6 +18,8 @@ namespace AsteroidGame.PlayerScripts
 
         private bool _gameIsOver;
         
+        private readonly CompositeDisposable _disposables = new CompositeDisposable();
+
         [Inject]
         public void Construct(
             Player player,
@@ -37,6 +39,8 @@ namespace AsteroidGame.PlayerScripts
         private void Start()
         {
             IncrementCurrentLivesEveryTenKScoreUnlessGameIsOver();
+
+            DisposeIfGameNotRunning();
         }
 
         private void IncrementCurrentLivesEveryTenKScoreUnlessGameIsOver()
@@ -70,6 +74,19 @@ namespace AsteroidGame.PlayerScripts
                 PlayerDeathEvents();
             }
         }
+        
+        private void DisposeIfGameNotRunning()
+        {
+            _gameState.IsGameRunning
+                .Subscribe(isGameRunning =>
+                {
+                    if (!isGameRunning)
+                    {
+                        _disposables.Clear();
+                    }
+                })
+                .AddTo(_disposables);
+        }
 
         private void PlayerDeathEvents()
         {
@@ -96,19 +113,25 @@ namespace AsteroidGame.PlayerScripts
                     if (lives < 0)
                     {
                         _gameIsOver = true;
-                        
-                        Observable.Timer(TimeSpan.FromSeconds(7))
-                            .Subscribe(_ =>
-                            {
-                                _gameState.IsGameRunning.Value = false;
-                                _gameState.IsGameReset.Value = true;
-                            })
-                            .AddTo(_player.GameObj);
+
+                        DelayBeforeGameOver();
                     }
                 })
-                .AddTo(_player.GameObj);
+                .AddTo(_disposables);
         }
-        
+
+        private void DelayBeforeGameOver()
+        {
+            Observable
+                .Timer(TimeSpan.FromSeconds(7))
+                .Subscribe(_ =>
+                {
+                    _gameState.IsGameRunning.Value = false;
+                    _gameState.IsGameReset.Value = true;
+                })
+                .AddTo(_disposables);
+        }
+
         private void DisablePlayerObjectOnDeath()
         {
             if (_gameState.CurrentLives.Value < 0)
@@ -136,7 +159,7 @@ namespace AsteroidGame.PlayerScripts
                         _player.IsDead = false;
                     }
                 })
-                .AddTo(_player.GameObj);
+                .AddTo(_disposables);
         }
     }
 }

@@ -20,6 +20,8 @@ namespace AsteroidGame.PlayerScripts
         private GameObject _thrustAttach;
         private Thrust _thrust;
         
+        private readonly CompositeDisposable _disposables = new CompositeDisposable();
+        
         public PlayerThrustHandler(
             Player player,
             InputState inputState,
@@ -41,8 +43,8 @@ namespace AsteroidGame.PlayerScripts
             _thrustScale = _settings.thrustScale;
 
             EnableThrustEffectUponForwardInput();
-            
-            DisposeOfThrust();
+
+            DisposeIfGameNotRunning();
         }
         
         public void Tick()
@@ -51,17 +53,17 @@ namespace AsteroidGame.PlayerScripts
                                                  !_player.HyperspaceWasTriggered.Value;
         }
         
-        private void DisposeOfThrust()
+        private void DisposeIfGameNotRunning()
         {
-            _gameState.CurrentLives
-                .Subscribe(lives =>
+            _gameState.IsGameRunning
+                .Subscribe(isGameRunning =>
                 {
-                    if (lives < 0)
+                    if (!isGameRunning)
                     {
-                        _thrust.Dispose();
+                        _disposables.Clear();
                     }
                 })
-                .AddTo(_player.GameObj);
+                .AddTo(_disposables);
         }
 
         private void EnableThrustEffectUponForwardInput()
@@ -81,7 +83,7 @@ namespace AsteroidGame.PlayerScripts
                         }
                     }
                 })
-                .AddTo(_player.GameObj);
+                .AddTo(_disposables);
         }
         
         private void CreateAndAttachThrust()

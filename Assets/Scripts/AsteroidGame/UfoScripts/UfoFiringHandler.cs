@@ -30,6 +30,8 @@ namespace AsteroidGame.UfoScripts
         private float _ufoOffsetMax;
         
         private IDisposable _fireDelayTimer;
+        
+        private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
         public UfoFiringHandler(
             Ufo ufo,
@@ -62,6 +64,21 @@ namespace AsteroidGame.UfoScripts
             _ufoOffsetMax = difficulties.ufoOffsetMax;
             
             CheckIfUfoIsDead();
+
+            DisposeIfGameNotRunning();
+        }
+        
+        private void DisposeIfGameNotRunning()
+        {
+            _gameState.IsGameRunning
+                .Subscribe(isGameRunning =>
+                {
+                    if (!isGameRunning)
+                    {
+                        _disposables.Clear();
+                    }
+                })
+                .AddTo(_disposables);
         }
 
         private void FireDelay(bool isInitial = false)
@@ -76,7 +93,7 @@ namespace AsteroidGame.UfoScripts
             _fireDelayTimer = Observable
                 .Timer(TimeSpan.FromSeconds(delayTime))
                 .Subscribe(_ => FireProjectileBullets())
-                .AddTo(_ufo.gameObject);
+                .AddTo(_disposables);
         }
 
         private void FireProjectileBullets()
@@ -119,7 +136,7 @@ namespace AsteroidGame.UfoScripts
                         FireDelay(true);
                     }
                 })
-                .AddTo(_ufo.gameObject);
+                .AddTo(_disposables);
         }
 
         [Serializable]

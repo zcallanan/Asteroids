@@ -10,18 +10,38 @@ namespace AsteroidGame.PlayerScripts
     public class PlayerCollisionHandler : IInitializable
     {
         private readonly Player _player;
+        private readonly GameState _gameState;
 
         private Collider _collider;
         
+        private readonly CompositeDisposable _disposables = new CompositeDisposable();
+
         public PlayerCollisionHandler(
-            Player player)
+            Player player,
+            GameState gameState)
         {
             _player = player;
+            _gameState = gameState;
         }
         
         public void Initialize()
         {
             HandleCollisionOnTriggerEnter();
+
+            DisposeIfGameNotRunning();
+        }
+        
+        private void DisposeIfGameNotRunning()
+        {
+            _gameState.IsGameRunning
+                .Subscribe(isGameRunning =>
+                {
+                    if (!isGameRunning)
+                    {
+                        _disposables.Clear();
+                    }
+                })
+                .AddTo(_disposables);
         }
 
         private void HandleCollisionOnTriggerEnter()
@@ -34,7 +54,7 @@ namespace AsteroidGame.PlayerScripts
                     
                     SetupPlayerDeathState();
                 })
-                .AddTo(_player.GameObj);
+                .AddTo(_disposables);
         }
 
         private void SetupPlayerDeathState()

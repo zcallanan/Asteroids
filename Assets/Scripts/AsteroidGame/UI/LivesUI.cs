@@ -15,17 +15,34 @@ namespace AsteroidGame.UI
 
         private Image _imageComponent;
         
+        private readonly CompositeDisposable _disposables = new CompositeDisposable();
+        
         [Inject]
         public void Construct(GameState gameState)
         {
             _gameState = gameState;
         }
 
-        void Start()
+        private void Start()
         {
             _imageComponent = gameObject.GetComponent<Image>();
             
             CheckForChangeToCurrentLivesAfterDelay();
+
+            DisposeIfGameNotRunning();
+        }
+        
+        private void DisposeIfGameNotRunning()
+        {
+            _gameState.IsGameRunning
+                .Subscribe(isGameRunning =>
+                {
+                    if (!isGameRunning)
+                    {
+                        _disposables.Clear();
+                    }
+                })
+                .AddTo(_disposables);
         }
 
         private void CheckForChangeToCurrentLivesAfterDelay()
@@ -33,7 +50,7 @@ namespace AsteroidGame.UI
             _gameState.CurrentLives
                 .Throttle(TimeSpan.FromSeconds(.5))
                 .Subscribe(ChangeNumberOfLivesSprite)
-                .AddTo(this);
+                .AddTo(_disposables);
         }
 
         private void ChangeNumberOfLivesSprite(int currentLives)

@@ -20,7 +20,6 @@ namespace AsteroidGame.Misc
 
         private bool _isReadyToStartNewLevel;
         
-        // TODO: Dispose of these
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
         public GameLevelHandler(
@@ -72,22 +71,27 @@ namespace AsteroidGame.Misc
             {
                 _isReadyToStartNewLevel = true;
 
-                Observable
-                    .Timer(TimeSpan.FromSeconds(_settings.levelStartDelay))
-                    .Subscribe(_ => 
-                    { 
-                        if (_isReadyToStartNewLevel)
-                        {
-                            _gameState.CurrentLevel.Value++;
-                            _countSmallAsteroidsDestroyedInLevel = 0;
-
-                            DetermineTotalSmallAsteroidsInThisLevel();
-
-                            _isReadyToStartNewLevel = false;
-                        } 
-                    })
-                    .AddTo(_disposables);
+                StartNewLevelAfterDelay();
             }
+        }
+
+        private void StartNewLevelAfterDelay()
+        {
+            Observable
+                .Timer(TimeSpan.FromSeconds(_settings.levelStartDelay))
+                .Subscribe(_ => 
+                { 
+                    if (_isReadyToStartNewLevel)
+                    {
+                        _gameState.CurrentLevel.Value++;
+                        _countSmallAsteroidsDestroyedInLevel = 0;
+
+                        DetermineTotalSmallAsteroidsInThisLevel();
+
+                        _isReadyToStartNewLevel = false;
+                    } 
+                })
+                .AddTo(_disposables);
         }
 
         [Serializable]

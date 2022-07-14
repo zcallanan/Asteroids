@@ -1,4 +1,5 @@
 using System;
+using ProjectScripts;
 using UniRx;
 using UnityEngine;
 using Zenject;
@@ -9,20 +10,40 @@ namespace AsteroidGame.PlayerScripts
     {
         private readonly Player _player;
         private readonly Settings _settings;
+        private readonly GameState _gameState;
         
         private bool _isTogglingTransparency;
         
+        private readonly CompositeDisposable _disposables = new CompositeDisposable();
+
         public PlayerRespawnEffect(
             Player player,
-            Settings settings)
+            Settings settings,
+            GameState gameState)
         {
             _player = player;
             _settings = settings;
+            _gameState = gameState;
         }
     
         public void Initialize()
         {
             InitializeRespawnEffect();
+
+            DisposeIfGameNotRunning();
+        }
+        
+        private void DisposeIfGameNotRunning()
+        {
+            _gameState.IsGameRunning
+                .Subscribe(isGameRunning =>
+                {
+                    if (!isGameRunning)
+                    {
+                        _disposables.Clear();
+                    }
+                })
+                .AddTo(_disposables);
         }
 
         private void InitializeRespawnEffect()
@@ -39,7 +60,8 @@ namespace AsteroidGame.PlayerScripts
                     
                     CleanupRespawnEffectAfterDelay();
                 }
-            }).AddTo(_player.GameObj);
+            })
+                .AddTo(_disposables);
         }
 
         private void TogglePlayerTransparency()
@@ -62,7 +84,7 @@ namespace AsteroidGame.PlayerScripts
                         TogglePlayerTransparency();
                     }
                 })
-                .AddTo(_player.GameObj);
+                .AddTo(_disposables);
         }
 
         private void CleanupRespawnEffectAfterDelay()
@@ -77,7 +99,7 @@ namespace AsteroidGame.PlayerScripts
             
                     _isTogglingTransparency = false;
                 })
-                .AddTo(_player.GameObj);
+                .AddTo(_disposables);
         }
 
         [Serializable]

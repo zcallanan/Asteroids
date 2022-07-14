@@ -22,6 +22,8 @@ namespace AsteroidGame.AsteroidScripts
         private int _mediumPerLarge;
         private int _smallPerMedium;
         
+        private readonly CompositeDisposable _disposables = new CompositeDisposable();
+        
         public AsteroidCollisionHandler(
             Asteroid asteroid,
             ScoreHandler scoreHandler,
@@ -49,6 +51,21 @@ namespace AsteroidGame.AsteroidScripts
             _small = ObjectTypes.SmallAsteroid;
 
             HandleCollisionOnTriggerEnter();
+
+            DisposeIfGameNotRunning();
+        }
+        
+        private void DisposeIfGameNotRunning()
+        {
+            _gameState.IsGameRunning
+                .Subscribe(isGameRunning =>
+                {
+                    if (!isGameRunning)
+                    {
+                        _disposables.Clear();
+                    }
+                })
+                .AddTo(_disposables);
         }
 
         private void HandleCollision()
@@ -80,7 +97,7 @@ namespace AsteroidGame.AsteroidScripts
             _asteroid
                 .OnTriggerEnterAsObservable()
                 .Subscribe(_ => HandleCollision())
-                .AddTo(_asteroid.gameObject);
+                .AddTo(_disposables);
         }
     }
 }

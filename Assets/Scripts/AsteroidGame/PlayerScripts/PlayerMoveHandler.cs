@@ -11,6 +11,7 @@ namespace AsteroidGame.PlayerScripts
         private readonly Player _player;
         private readonly InputState _inputState;
         private readonly Settings _settings;
+        private readonly GameState _gameState;
         
         private Vector3 _currentPosition;
         private Vector3 _facing;
@@ -20,14 +21,18 @@ namespace AsteroidGame.PlayerScripts
         
         private float _forwardInputValue;
         
+        private readonly CompositeDisposable _disposables = new CompositeDisposable();
+
         public PlayerMoveHandler(
             Player player,
             InputState inputState,
-            Settings settings)
+            Settings settings,
+            GameState gameState)
         {
             _player = player;
             _inputState = inputState;
             _settings = settings;
+            _gameState = gameState;
         }
         
         public void Initialize()
@@ -42,6 +47,8 @@ namespace AsteroidGame.PlayerScripts
             _decelerationRate = _settings.playerMoveSpeedConstant / _settings.movementModifier;
 
             WatchForPlayerDeathOrHyperspace();
+
+            DisposeIfGameNotRunning();
         }
 
         public void FixedTick()
@@ -57,6 +64,19 @@ namespace AsteroidGame.PlayerScripts
             _player.PreviousPosition = _currentPosition;
 
             MovePlayerShip();
+        }
+        
+        private void DisposeIfGameNotRunning()
+        {
+            _gameState.IsGameRunning
+                .Subscribe(isGameRunning =>
+                {
+                    if (!isGameRunning)
+                    {
+                        _disposables.Clear();
+                    }
+                })
+                .AddTo(_disposables);
         }
 
         private void OnlyRegisterWhenPlayerInputsForwardMovement()
@@ -98,11 +118,11 @@ namespace AsteroidGame.PlayerScripts
         {
             _player.JustRespawned
                 .Subscribe(ResetSpeedFollowingDeathOrHyperspace)
-                .AddTo(_player.GameObj);
+                .AddTo(_disposables);
             
             _player.HyperspaceWasTriggered
                 .Subscribe(ResetSpeedFollowingDeathOrHyperspace)
-                .AddTo(_player.GameObj);
+                .AddTo(_disposables);
         }
         
         private void ResetSpeedFollowingDeathOrHyperspace(bool shouldReset)

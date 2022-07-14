@@ -13,6 +13,7 @@ namespace AsteroidGame.Misc
         public ObjectTypes OriginType { get; private set; }
         
         private BoundHandler _boundHandler;
+        private GameState _gameState;
         
         private float _speed;
         
@@ -20,14 +21,23 @@ namespace AsteroidGame.Misc
         private float _lifespan;
         private IDisposable _spawnTimer;
         
+        private readonly CompositeDisposable _disposables = new CompositeDisposable();
+
         [Inject]
         public void Construct(
-            BoundHandler boundHandler)
+            BoundHandler boundHandler,
+            GameState gameState)
         {
             _boundHandler = boundHandler;
+            _gameState = gameState;
         }
 
-        public void Update()
+        private void Start()
+        {
+            DisposeIfGameNotRunning();
+        }
+
+        private void Update()
         {
             var projTransform = transform;
             
@@ -76,6 +86,19 @@ namespace AsteroidGame.Misc
         {
         }
         
+        private void DisposeIfGameNotRunning()
+        {
+            _gameState.IsGameRunning
+                .Subscribe(isGameRunning =>
+                {
+                    if (!isGameRunning)
+                    {
+                        _disposables.Clear();
+                    }
+                })
+                .AddTo(_disposables);
+        }
+        
         private void DespawnProjectile()
         {
             _spawnTimer = Observable
@@ -84,7 +107,7 @@ namespace AsteroidGame.Misc
                 {
                     Dispose();
                 })
-                .AddTo(this);        
+                .AddTo(_disposables);        
         }
     }
 }

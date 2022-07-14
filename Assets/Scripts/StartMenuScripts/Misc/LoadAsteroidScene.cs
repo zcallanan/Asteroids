@@ -1,16 +1,18 @@
+using ProjectScripts;
 using UniRx;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
 
-namespace ProjectScripts
+namespace StartMenuScripts.Misc
 {
-    public class GameSceneHandler : IInitializable
+    public class LoadAsteroidScene : IInitializable
     {
         private readonly GameState _gameState;
         
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
         
-        public GameSceneHandler(
+        public LoadAsteroidScene(
             GameState gameState)
         {
             _gameState = gameState;
@@ -18,20 +20,19 @@ namespace ProjectScripts
 
         public void Initialize()
         {
-            CheckForGameRunningAndChangeScene();
+            LoadAsteroidGameScene();
         }
-            
-        private void CheckForGameRunningAndChangeScene()
+
+        private void LoadAsteroidGameScene()
         {
             _gameState.IsGameRunning
                 .Subscribe(isGameRunning =>
                 {
-                    var scene = SceneManager.GetActiveScene();
-                    var targetSceneToChangeTo = isGameRunning ? "AsteroidGame" : "StartScreen";
-
-                    if (scene.name != targetSceneToChangeTo)
+                    if (isGameRunning)
                     {
-                        SceneManager.LoadScene(targetSceneToChangeTo);
+                        _disposables.Clear();
+                        
+                        SceneManager.LoadScene("AsteroidGame");
                     }
                 })
                 .AddTo(_disposables);

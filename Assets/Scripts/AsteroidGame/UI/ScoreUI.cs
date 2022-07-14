@@ -12,6 +12,8 @@ namespace AsteroidGame.UI
 
         private GameState _gameState;
         
+        private readonly CompositeDisposable _disposables = new CompositeDisposable();
+
         [Inject]
         public void Construct(GameState gameState)
         {
@@ -20,16 +22,31 @@ namespace AsteroidGame.UI
         
         private void Start()
         {
-            scoreText.text = "0";
+            scoreText.text = _gameState.Score.Value.ToString();
             
             CheckIfScoreChanges();
+
+            DisposeIfGameNotRunning();
+        }
+        
+        private void DisposeIfGameNotRunning()
+        {
+            _gameState.IsGameRunning
+                .Subscribe(isGameRunning =>
+                {
+                    if (!isGameRunning)
+                    {
+                        _disposables.Clear();
+                    }
+                })
+                .AddTo(_disposables);
         }
 
         private void CheckIfScoreChanges()
         {
             _gameState.Score
                 .Subscribe(HandleScoreUpdate)
-                .AddTo(this);
+                .AddTo(_disposables);
         }
 
         private void HandleScoreUpdate(int score)

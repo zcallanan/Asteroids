@@ -8,21 +8,14 @@ namespace AsteroidGame.PlayerScripts
     public class PlayerFacade : MonoBehaviour
     {
         private Player _player;
-        private InputState _inputState;
 
         public Vector3 Position => _player.Position;
 
-        public bool IsDead => _player.IsDead;
-
-        public bool HyperspaceWasTriggered => _player.HyperspaceWasTriggered.Value;
-        
         [Inject]
         public void Construct(
-            Player player,
-            InputState inputState)
+            Player player)
         {
             _player = player;
-            _inputState = inputState;
         }
 
         private void Awake()

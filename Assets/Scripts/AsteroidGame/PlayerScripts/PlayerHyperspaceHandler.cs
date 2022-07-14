@@ -13,18 +13,23 @@ namespace AsteroidGame.PlayerScripts
         private readonly InputState _inputState;
         private readonly Player _player;
         private readonly BoundHandler _boundHandler;
+        private readonly GameState _gameState;
 
         private Vector3 _maxBounds;
         private Vector3 _minBounds;
         
+        private readonly CompositeDisposable _disposables = new CompositeDisposable();
+
         public PlayerHyperspaceHandler(
             InputState inputState, 
             Player player,
-            BoundHandler boundHandler)
+            BoundHandler boundHandler,
+            GameState gameState)
         {
             _inputState = inputState;
             _player = player;
             _boundHandler = boundHandler;
+            _gameState = gameState;
         }
         
         public void Initialize()
@@ -32,6 +37,21 @@ namespace AsteroidGame.PlayerScripts
             GetGameBounds();
 
             HandleHyperspaceInput();
+
+            DisposeIfGameNotRunning();
+        }
+        
+        private void DisposeIfGameNotRunning()
+        {
+            _gameState.IsGameRunning
+                .Subscribe(isGameRunning =>
+                {
+                    if (!isGameRunning)
+                    {
+                        _disposables.Clear();
+                    }
+                })
+                .AddTo(_disposables);
         }
 
         private void GetGameBounds()
@@ -48,7 +68,7 @@ namespace AsteroidGame.PlayerScripts
                 {
                     HyperSpaceTriggered();
                 }
-            }).AddTo(_player.GameObj);
+            }).AddTo(_disposables);
         }
 
         private void HyperSpaceTriggered()
@@ -79,7 +99,7 @@ namespace AsteroidGame.PlayerScripts
                         _player.HyperspaceWasTriggered.Value = false;
                     }
                 })
-                .AddTo(_player.GameObj);
+                .AddTo(_disposables);
         }
 
         private Vector3 DetermineRandomHyperspacePosition()
