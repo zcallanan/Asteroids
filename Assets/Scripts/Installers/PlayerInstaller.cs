@@ -19,10 +19,7 @@ namespace Installers
                     settings.meshRenderer,
                     settings.meshCollider,
                     settings.transform).NonLazy(); 
-
-            Container.Bind<PlayerInputState>().AsSingle();
             
-            Container.BindInterfacesTo<PlayerInputHandler>().AsSingle();
             Container.BindInterfacesTo<PlayerHyperspaceHandler>().AsSingle();
             Container.BindInterfacesTo<PlayerDirectionHandler>().AsSingle();
             Container.BindInterfacesTo<PlayerMoveHandler>().AsSingle();

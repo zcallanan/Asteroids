@@ -40,8 +40,8 @@ namespace AsteroidScripts
         public void Initialize()
         {
             var gameDifficulty = _gameState.GameDifficulty;
-            _mediumPerLarge = _difficultySettings.difficulties[gameDifficulty].mediumPerLarge;
-            _smallPerMedium = _difficultySettings.difficulties[gameDifficulty].smallPerMedium;
+            _mediumPerLarge = _difficultySettings.difficulties[gameDifficulty.Value].mediumPerLarge;
+            _smallPerMedium = _difficultySettings.difficulties[gameDifficulty.Value].smallPerMedium;
 
             _large = ObjectTypes.LargeAsteroid;
             _medium = ObjectTypes.MediumAsteroid;

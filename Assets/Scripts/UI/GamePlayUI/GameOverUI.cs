@@ -1,12 +1,11 @@
 using System;
-using System.Collections;
 using Misc;
 using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 
-namespace UI
+namespace UI.GamePlayUI
 {
     public class GameOverUI : MonoBehaviour
     {

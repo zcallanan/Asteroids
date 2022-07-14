@@ -19,6 +19,9 @@ namespace Misc
 
         private bool _isReadyToStartNewLevel;
         
+        // TODO: Dispose of these
+        private readonly CompositeDisposable _disposables = new CompositeDisposable();
+
         public GameLevelHandler(
             Settings settings,
             Difficulty.Settings difficultySettings,
@@ -33,10 +36,25 @@ namespace Misc
         {
             var gameDifficulty = _gameState.GameDifficulty;
             
-            _initLargeAsteroids = _difficultySettings.difficulties[gameDifficulty].initLargeAsteroids;
-            _smallPerMedium = _difficultySettings.difficulties[gameDifficulty].smallPerMedium;
+            _initLargeAsteroids = _difficultySettings.difficulties[gameDifficulty.Value].initLargeAsteroids;
+            _smallPerMedium = _difficultySettings.difficulties[gameDifficulty.Value].smallPerMedium;
 
             DetermineTotalSmallAsteroidsInThisLevel();
+
+            DisposeIfGameNotRunning();
+        }
+        
+        private void DisposeIfGameNotRunning()
+        {
+            _gameState.IsGameRunning
+                .Subscribe(isGameRunning =>
+                {
+                    if (!isGameRunning)
+                    {
+                        _disposables.Clear();
+                    }
+                })
+                .AddTo(_disposables);
         }
 
         private void DetermineTotalSmallAsteroidsInThisLevel()
@@ -67,7 +85,7 @@ namespace Misc
                             _isReadyToStartNewLevel = false;
                         } 
                     })
-                    .AddTo(_gameState.gameObject);
+                    .AddTo(_disposables);
             }
         }
 

@@ -6,10 +6,10 @@ using Zenject;
 
 namespace PlayerScripts
 {
-    public class PlayerThrustHandler : IInitializable
+    public class PlayerThrustHandler : IInitializable, ITickable
     {
         private readonly Player _player;
-        private readonly PlayerInputState _playerInputState;
+        private readonly InputState _inputState;
         private readonly Settings _settings;
         private readonly Thrust.Factory _thrustFactory;
         private readonly GameState _gameState;
@@ -21,13 +21,13 @@ namespace PlayerScripts
         
         public PlayerThrustHandler(
             Player player,
-            PlayerInputState playerInputState,
+            InputState inputState,
             Settings settings,
             Thrust.Factory thrustFactory,
             GameState gameState)
         {
             _player = player;
-            _playerInputState = playerInputState;
+            _inputState = inputState;
             _settings = settings;
             _thrustFactory = thrustFactory;
             _gameState = gameState;
@@ -42,6 +42,12 @@ namespace PlayerScripts
             EnableThrustEffectUponForwardInput();
             
             DisposeOfThrust();
+        }
+        
+        public void Tick()
+        {
+            _inputState.IsApplyingThrust.Value = _inputState.VerticalInput.Value > 0 && !_player.IsDead &&
+                                                 !_player.HyperspaceWasTriggered.Value;
         }
         
         private void DisposeOfThrust()
@@ -59,7 +65,7 @@ namespace PlayerScripts
 
         private void EnableThrustEffectUponForwardInput()
         {
-            _playerInputState.IsApplyingThrust
+            _inputState.IsApplyingThrust
                 .Subscribe(isForwardInputPositive =>
                 {
                     if (isForwardInputPositive)

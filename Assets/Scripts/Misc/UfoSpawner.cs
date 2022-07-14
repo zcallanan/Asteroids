@@ -29,6 +29,10 @@ namespace Misc
         private Quaternion _currentRotation;
 
         private IDisposable _ufoSpawnTimer;
+        private IDisposable _ufoBoundTimer;
+        
+        // TODO: Dispose of this
+        private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
         public UfoSpawner(
             Ufo.Factory ufoFactory,
@@ -46,32 +50,47 @@ namespace Misc
 
         public void Initialize()
         {
-            var difficulties = _difficultySettings.difficulties[_gameState.GameDifficulty];
-            
-            _isUfoSpawnableInThisDifficulty = difficulties.isUfoSpawnableInThisDifficulty;
+            OnlySpawnUfoDuringTheGame();
+        }
 
-            if (!_isUfoSpawnableInThisDifficulty)
-            {
-                return;
-            }
+        private void OnlySpawnUfoDuringTheGame()
+        {
+            _gameState.IsGameRunning
+                .Subscribe(isGameRunning =>
+                {
+                    if (isGameRunning)
+                    {
+                        var difficulties = _difficultySettings.difficulties[_gameState.GameDifficulty.Value];
             
-            _smallUfoLevelToSpawn = difficulties.smallUfoLevelToSpawn;
+                        _isUfoSpawnableInThisDifficulty = difficulties.isUfoSpawnableInThisDifficulty;
 
-            _ufoMinSpawnDelay = difficulties.ufoMinSpawnDelay;
-            _ufoMaxSpawnDelay = difficulties.ufoMaxSpawnDelay;
+                        if (!_isUfoSpawnableInThisDifficulty)
+                        {
+                            return;
+                        }
             
-            DelayForATimeThenSpawnUfo(ObjectTypes.LargeUfo);
+                        _smallUfoLevelToSpawn = difficulties.smallUfoLevelToSpawn;
 
-            TrackLevelChangeToSwitchToSmallUfo();
+                        _ufoMinSpawnDelay = difficulties.ufoMinSpawnDelay;
+                        _ufoMaxSpawnDelay = difficulties.ufoMaxSpawnDelay;
+            
+                        DelayForATimeThenSpawnUfo(ObjectTypes.LargeUfo);
+
+                        TrackLevelChangeToSwitchToSmallUfo();
                 
-            UpdateUfoSpawnBounds();
+                        UpdateUfoSpawnBounds();
+
+                        DisposeIfGameNotRunning();
+                    }
+                })
+                .AddTo(_disposables);
         }
 
         private void TrackLevelChangeToSwitchToSmallUfo()
         {
             _gameState.CurrentLevel
                 .Subscribe(SpawnSmallUfoAtLevel)
-                .AddTo(_gameState.gameObject);
+                .AddTo(_disposables);
         }
 
         private void UpdateUfoSpawnBounds()
@@ -82,7 +101,7 @@ namespace Misc
                     _minBounds = min;
                     _modifiedMinZ = _minBounds.z - (_minBounds.z / 4);
                 })
-                .AddTo(_gameState.gameObject);
+                .AddTo(_disposables);
             
             _boundHandler.MaxBounds
                 .Subscribe(max =>
@@ -90,14 +109,14 @@ namespace Misc
                     _maxBounds = max;
                     _modifiedMaxZ = _maxBounds.z - (_maxBounds.z / 4);
                 })
-                .AddTo(_gameState.gameObject);
+                .AddTo(_disposables);
         }
 
         private void SpawnSmallUfoAtLevel(int level)
         {
             if (level == _smallUfoLevelToSpawn)
             {
-                _ufoSpawnTimer.Dispose();
+                _ufoSpawnTimer?.Dispose();
                 DelayForATimeThenSpawnUfo(ObjectTypes.SmallAsteroid);
             }
         }
@@ -107,7 +126,7 @@ namespace Misc
             _ufoSpawnTimer = Observable
                 .Timer(TimeSpan.FromSeconds(Random.Range(_ufoMinSpawnDelay, _ufoMaxSpawnDelay)))
                 .Subscribe(_ => SpawnUfo(size))
-                .AddTo(_gameState.gameObject);
+                .AddTo(_disposables);
         }
 
         private void SpawnUfo(ObjectTypes size)
@@ -171,9 +190,24 @@ namespace Misc
 
         private void ToggleUfoRecentlySpawnedOnceItsInBounds(Ufo ufo)
         {
-            Observable.Timer(TimeSpan.FromSeconds(1))
+            _ufoBoundTimer = Observable.Timer(TimeSpan.FromSeconds(1))
                 .Subscribe(_ => ufo.IsRecentlySpawned = false)
-                .AddTo(_gameState.gameObject);
+                .AddTo(_disposables);
+        }
+
+        private void DisposeIfGameNotRunning()
+        {
+            _gameState.IsGameRunning
+                .Subscribe(isGameRunning =>
+                {
+                    if (!isGameRunning)
+                    {
+                        _ufoSpawnTimer?.Dispose();
+                        _ufoBoundTimer?.Dispose();
+                        _disposables.Clear();
+                    }
+                })
+                .AddTo(_disposables);
         }
 
         [Serializable]

@@ -9,7 +9,7 @@ namespace PlayerScripts
 {
     public class PlayerHyperspaceHandler : IInitializable
     {
-        private readonly PlayerInputState _playerInputState;
+        private readonly InputState _inputState;
         private readonly Player _player;
         private readonly BoundHandler _boundHandler;
 
@@ -17,11 +17,11 @@ namespace PlayerScripts
         private Vector3 _minBounds;
         
         public PlayerHyperspaceHandler(
-            PlayerInputState playerInputState, 
+            InputState inputState, 
             Player player,
             BoundHandler boundHandler)
         {
-            _playerInputState = playerInputState;
+            _inputState = inputState;
             _player = player;
             _boundHandler = boundHandler;
         }
@@ -41,7 +41,7 @@ namespace PlayerScripts
 
         private void HandleHyperspaceInput()
         {
-            _playerInputState.IsHyperspaceActive.Subscribe(hyperspaceInput =>
+            _inputState.IsHyperspaceActive.Subscribe(hyperspaceInput =>
             {
                 if (hyperspaceInput && !_player.HyperspaceWasTriggered.Value && _player.MeshRenderer.enabled)
                 {

@@ -51,7 +51,7 @@ namespace UfoScripts
             _ufoBulletProjectileSpeed = _settings.ufoProjSpeed;
             _ufoBulletProjectileLifespan = _settings.ufoProjLifespan;
 
-            var difficulties = _difficultySettings.difficulties[_gameState.GameDifficulty];
+            var difficulties = _difficultySettings.difficulties[_gameState.GameDifficulty.Value];
             
             _ufoMinFireDelay = difficulties.ufoMinFireDelay;
             _ufoMaxFireDelay = difficulties.ufoMaxFireDelay;
