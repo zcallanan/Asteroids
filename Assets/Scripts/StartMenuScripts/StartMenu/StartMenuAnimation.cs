@@ -42,7 +42,7 @@ namespace StartMenuScripts.StartMenu
 
             _num = Mathf.Lerp(_num, 1f, _settings.titleAnimModifier * Time.deltaTime * 2);
 
-            if (_num > .9f)
+            if (_num > .99f)
             {
                 _num = 0;
                 _targetColor = PickAColor();
