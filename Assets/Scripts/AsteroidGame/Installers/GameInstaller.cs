@@ -67,8 +67,6 @@ namespace AsteroidGame.Installers
                     .WithInitialSize(20)
                     .FromComponentInNewPrefab(_settings.explosionPrefab)
                     .UnderTransformGroup("Explosions"));
-
-
         }
     
         [Serializable]
