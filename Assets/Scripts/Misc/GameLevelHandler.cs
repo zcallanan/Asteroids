@@ -40,6 +40,21 @@ namespace Misc
             _smallPerMedium = _difficultySettings.difficulties[gameDifficulty.Value].smallPerMedium;
 
             DetermineTotalSmallAsteroidsInThisLevel();
+
+            DisposeIfGameNotRunning();
+        }
+        
+        private void DisposeIfGameNotRunning()
+        {
+            _gameState.IsGameRunning
+                .Subscribe(isGameRunning =>
+                {
+                    if (!isGameRunning)
+                    {
+                        _disposables.Clear();
+                    }
+                })
+                .AddTo(_disposables);
         }
 
         private void DetermineTotalSmallAsteroidsInThisLevel()

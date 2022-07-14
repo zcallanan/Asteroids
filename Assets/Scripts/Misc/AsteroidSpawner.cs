@@ -23,7 +23,6 @@ namespace Misc
         private Vector3 _innerMaxBounds;
         private Vector3 _innerMinBounds;
         
-        // TODO: Dispose of these
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
         
         public AsteroidSpawner(
@@ -50,6 +49,8 @@ namespace Misc
             UpdateAsteroidSpawnBounds();
 
             SpawnAsteroidsWithinBoundsAtTheStartOfALevel();
+
+            DisposeIfGameNotRunning();
         }
 
         public void SpawnAsteroid(int renderValue, ObjectTypes asteroidSize, Vector3 largerAsteroidPosition)
@@ -74,6 +75,19 @@ namespace Misc
 
             RenderAsteroid(asteroid);
             ScaleAsteroid(asteroid);
+        }
+        
+        private void DisposeIfGameNotRunning()
+        {
+            _gameState.IsGameRunning
+                .Subscribe(isGameRunning =>
+                {
+                    if (!isGameRunning)
+                    {
+                        _disposables.Clear();
+                    }
+                })
+                .AddTo(_disposables);
         }
 
         private void RenderAsteroid(Asteroid asteroid)

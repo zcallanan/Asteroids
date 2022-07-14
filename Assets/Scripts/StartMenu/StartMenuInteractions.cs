@@ -16,7 +16,6 @@ namespace StartMenu
 
         private Canvas _canvas;
         
-        // TODO: Dispose of these
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
         
         [Inject]
@@ -47,6 +46,21 @@ namespace StartMenu
             EnableGameModeCanvas();
 
             EnableGameDifficultyCanvas();
+
+            DisposeOnGameRunning();
+        }
+        
+        private void DisposeOnGameRunning()
+        {
+            _gameState.IsGameRunning
+                .Subscribe(isGameRunning =>
+                {
+                    if (isGameRunning)
+                    {
+                        _disposables.Clear();
+                    }
+                })
+                .AddTo(_disposables);
         }
         
         private void HideMenuOptions(List<Canvas> canvasList)
@@ -91,7 +105,7 @@ namespace StartMenu
                         _canvas.enabled = true;
                     }
                 })
-                .AddTo(this);
+                .AddTo(_disposables);
         }
     }
 }

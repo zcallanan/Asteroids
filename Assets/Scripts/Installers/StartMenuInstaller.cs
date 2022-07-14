@@ -10,6 +10,7 @@ namespace Installers
         {
             Container.Bind<StartMenuState>().AsSingle();
             Container.BindInterfacesTo<StartMenuHandler>().AsSingle();
+            Container.BindInterfacesTo<StartMenuGameReset>().AsSingle();
         }
     }
 }

@@ -28,11 +28,6 @@ namespace PlayerScripts
         private void Awake()
         {
             _player.HyperspaceWasTriggered = new ReactiveProperty<bool>(false);
-            //
-            // _inputState.IsHyperspaceActive = new ReactiveProperty<bool>(false);
-            // _inputState.IsFiring = new ReactiveProperty<bool>(false);
-            //
-            // _inputState.IsApplyingThrust = new ReactiveProperty<bool>(false);
         }
     }
 }

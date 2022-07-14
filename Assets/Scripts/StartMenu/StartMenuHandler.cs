@@ -1,6 +1,7 @@
 using System;
 using Misc;
 using UniRx;
+using UnityEngine;
 using Zenject;
 
 namespace StartMenu
@@ -11,6 +12,7 @@ namespace StartMenu
         private readonly GameState _gameState;
         private readonly StartMenuState _startMenuState;
         private readonly StartMenuInteractions _startMenuInteractions;
+        private readonly Settings _settings;
 
         private bool _throttleInput;
         
@@ -21,30 +23,50 @@ namespace StartMenu
             InputState inputState,
             GameState gameState,
             StartMenuState startMenuState,
-            StartMenuInteractions startMenuInteractions)
+            StartMenuInteractions startMenuInteractions,
+            Settings settings)
         {
             _inputState = inputState;
             _gameState = gameState;
             _startMenuState = startMenuState;
             _startMenuInteractions = startMenuInteractions;
+            _settings = settings;
         }
         
         public void Initialize()
         {
             OneTimeStartScreenInitTimer();
 
-            CheckForInputOnStartScreenToStartTheGame();
-            
-            CheckForVerticalInput();
+            DisposeOnGameRunning();
+        }
 
-            CheckForHorizontalInput();
+        private void DisposeOnGameRunning()
+        {
+            _gameState.IsGameRunning
+                .Subscribe(isGameRunning =>
+                {
+                    if (isGameRunning)
+                    {
+                        _disposables.Clear();
+                    }
+                })
+                .AddTo(_disposables);
         }
         
         private void OneTimeStartScreenInitTimer()
         {
             Observable
-                .Timer(TimeSpan.FromSeconds(2.5))
-                .Subscribe(_ => _startMenuState.IsStartScreenInit.Value = true)
+                .Timer(TimeSpan.FromSeconds(_settings.startMenuInitDelay))
+                .Subscribe(_ =>
+                {
+                    _startMenuState.IsStartScreenInit.Value = true;
+                    
+                    CheckForInputOnStartScreenToStartTheGame();
+            
+                    CheckForVerticalInput();
+
+                    CheckForHorizontalInput();
+                })
                 .AddTo(_disposables);
         }
         
@@ -66,7 +88,8 @@ namespace StartMenu
             _inputState.VerticalInput
                 .Subscribe(inputVal =>
                 {
-                    if (!_gameState.IsGameRunning.Value && inputVal != 0 && !_throttleInput)
+                    if (!_gameState.IsGameRunning.Value && inputVal != 0 && !_throttleInput && _startMenuState
+                        .IsStartScreenInit.Value)
                     {
                         _startMenuState.MenuFocus.Value = !_startMenuState.MenuFocus.Value;
                         _throttleInput = true;
@@ -81,7 +104,8 @@ namespace StartMenu
             _inputState.HorizontalInput
                 .Subscribe(inputVal =>
                 {
-                    if (!_gameState.IsGameRunning.Value && inputVal != 0 && !_throttleInput)
+                    if (!_gameState.IsGameRunning.Value && inputVal != 0 && !_throttleInput &&
+                        _startMenuState.IsStartScreenInit.Value)
                     {
                         if (!_startMenuState.MenuFocus.Value)
                         {
@@ -90,7 +114,8 @@ namespace StartMenu
                         }
                         else
                         {
-                            _gameState.GameDifficulty.Value = SetValue(inputVal, _startMenuInteractions.gameDifficultyCanvases.Count,
+                            _gameState.GameDifficulty.Value = SetValue(inputVal,
+                                _startMenuInteractions.gameDifficultyCanvases.Count, 
                                 _gameState.GameDifficulty.Value);
                         }
                         
@@ -121,9 +146,16 @@ namespace StartMenu
         private void PreventSpammingInputThroughInputDelay()
         {
             Observable
-                .Timer(TimeSpan.FromSeconds(.5))
+                .Timer(TimeSpan.FromSeconds(_settings.startMenuInputDelay))
                 .Subscribe(_ => _throttleInput = false)
                 .AddTo(_disposables);
+        }
+
+        [Serializable]
+        public class Settings
+        {
+            public float startMenuInitDelay;
+            public float startMenuInputDelay;
         }
     }
 }

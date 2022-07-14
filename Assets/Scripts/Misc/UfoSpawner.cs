@@ -29,6 +29,7 @@ namespace Misc
         private Quaternion _currentRotation;
 
         private IDisposable _ufoSpawnTimer;
+        private IDisposable _ufoBoundTimer;
         
         // TODO: Dispose of this
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
@@ -79,7 +80,7 @@ namespace Misc
                 
                         UpdateUfoSpawnBounds();
 
-                        StopSpawningUfoOnGameOver();
+                        DisposeIfGameNotRunning();
                     }
                 })
                 .AddTo(_disposables);
@@ -115,7 +116,7 @@ namespace Misc
         {
             if (level == _smallUfoLevelToSpawn)
             {
-                _ufoSpawnTimer.Dispose();
+                _ufoSpawnTimer?.Dispose();
                 DelayForATimeThenSpawnUfo(ObjectTypes.SmallAsteroid);
             }
         }
@@ -189,19 +190,21 @@ namespace Misc
 
         private void ToggleUfoRecentlySpawnedOnceItsInBounds(Ufo ufo)
         {
-            Observable.Timer(TimeSpan.FromSeconds(1))
+            _ufoBoundTimer = Observable.Timer(TimeSpan.FromSeconds(1))
                 .Subscribe(_ => ufo.IsRecentlySpawned = false)
                 .AddTo(_disposables);
         }
 
-        private void StopSpawningUfoOnGameOver()
+        private void DisposeIfGameNotRunning()
         {
-            _gameState.CurrentLives
-                .Subscribe(lives =>
+            _gameState.IsGameRunning
+                .Subscribe(isGameRunning =>
                 {
-                    if (lives < 0)
+                    if (!isGameRunning)
                     {
-                        _ufoSpawnTimer.Dispose();
+                        _ufoSpawnTimer?.Dispose();
+                        _ufoBoundTimer?.Dispose();
+                        _disposables.Clear();
                     }
                 })
                 .AddTo(_disposables);
