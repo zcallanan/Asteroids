@@ -10,7 +10,6 @@ namespace ProjectScripts.Installers
             Container.Bind<InputState>().AsSingle();
             
             Container.BindInterfacesTo<InputHandler>().AsSingle();
-            Container.BindInterfacesTo<GameSceneHandler>().AsSingle();
         }
     }
 }

@@ -28,6 +28,21 @@ namespace AsteroidGame.UI
             _gameOverText.enabled = false;
 
             CheckForChangeToCurrentLives();
+
+            DisposeIfGameNotRunning();
+        }
+        
+        private void DisposeIfGameNotRunning()
+        {
+            _gameState.IsGameRunning
+                .Subscribe(isGameRunning =>
+                {
+                    if (!isGameRunning)
+                    {
+                        _disposables.Clear();
+                    }
+                })
+                .AddTo(_disposables);
         }
 
         private void CheckForChangeToCurrentLives()
@@ -45,7 +60,6 @@ namespace AsteroidGame.UI
                     .Subscribe(_ =>
                     {
                         _gameOverText.enabled = true;
-                        _disposables.Clear();
                     })
                     .AddTo(_disposables);
             }

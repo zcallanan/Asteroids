@@ -12,6 +12,7 @@ namespace AsteroidGame.AsteroidScripts
     {
         private readonly Asteroid _asteroid;
         private readonly Explosion.Factory _explosionFactory;
+        private readonly GameState _gameState;
 
         private Explosion _explosion;
         
@@ -23,12 +24,16 @@ namespace AsteroidGame.AsteroidScripts
         private ObjectTypes _medium;
         private ObjectTypes _large;
         
+        private readonly CompositeDisposable _disposables = new CompositeDisposable();
+        
         public AsteroidExplosionHandler(
             Asteroid asteroid,
-            Explosion.Factory explosionFactory)
+            Explosion.Factory explosionFactory,
+            GameState gameState)
         {
             _asteroid = asteroid;
             _explosionFactory = explosionFactory;
+            _gameState = gameState;
         }
         
         public void Initialize()
@@ -42,6 +47,21 @@ namespace AsteroidGame.AsteroidScripts
             ExplodeOnTriggerEnter();
 
             DelayThenDespawnExplosion();
+
+            DisposeIfGameNotRunning();
+        }
+        
+        private void DisposeIfGameNotRunning()
+        {
+            _gameState.IsGameRunning
+                .Subscribe(isGameRunning =>
+                {
+                    if (!isGameRunning)
+                    {
+                        _disposables.Clear();
+                    }
+                })
+                .AddTo(_disposables);
         }
 
         private void CreateExplosion()
@@ -78,7 +98,7 @@ namespace AsteroidGame.AsteroidScripts
             _asteroid
                 .OnTriggerEnterAsObservable()
                 .Subscribe(_ => CreateExplosion())
-                .AddTo(_asteroid.gameObject);
+                .AddTo(_disposables);
         }
 
         private void DelayThenDespawnExplosion()
@@ -87,12 +107,17 @@ namespace AsteroidGame.AsteroidScripts
                 .OnEnableAsObservable()
                 .Subscribe(_ =>
                 {
-                    Observable
-                        .Timer(TimeSpan.FromSeconds(1))
-                        .Subscribe(_ => _explosion.Dispose())
-                        .AddTo(_asteroid.gameObject);
+                    ExplosionDespawnDelay();
                 })
-                .AddTo(_asteroid.gameObject);
+                .AddTo(_disposables);
+        }
+
+        private void ExplosionDespawnDelay()
+        {
+            Observable
+                .Timer(TimeSpan.FromSeconds(1))
+                .Subscribe(_ => _explosion.Dispose())
+                .AddTo(_disposables);
         }
     }
 }

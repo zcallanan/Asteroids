@@ -13,24 +13,44 @@ namespace AsteroidGame.PlayerScripts
         private readonly BulletProjectile.Factory _bulletProjectileFactory;
         private readonly InputState _inputState;
         private readonly Settings _settings;
+        private readonly GameState _gameState;
 
         private bool _firingDisabled;
         
+        private readonly CompositeDisposable _disposables = new CompositeDisposable();
+
         public PlayerFiringHandler(
             Player player,
             BulletProjectile.Factory bulletProjectileFactory,
             InputState inputState,
-            Settings settings)
+            Settings settings,
+            GameState gameState)
         {
             _player = player;
             _bulletProjectileFactory = bulletProjectileFactory;
             _inputState = inputState;
             _settings = settings;
+            _gameState = gameState;
         }
 
         public void Initialize()
         {
             FireProjectileAndEnforceCooldownDelay();
+
+            DisposeIfGameNotRunning();
+        }
+        
+        private void DisposeIfGameNotRunning()
+        {
+            _gameState.IsGameRunning
+                .Subscribe(isGameRunning =>
+                {
+                    if (!isGameRunning)
+                    {
+                        _disposables.Clear();
+                    }
+                })
+                .AddTo(_disposables);
         }
 
         private void FireProjectileAndEnforceCooldownDelay()
@@ -42,12 +62,18 @@ namespace AsteroidGame.PlayerScripts
                     FireProjectileBullets();
                     _firingDisabled = true;
 
-                    Observable
-                        .Timer(TimeSpan.FromSeconds(_settings.fireCooldown))
-                        .Subscribe(_ => _firingDisabled = false)
-                        .AddTo(_player.GameObj);
+                    FiringCooldownDelay();
                 }
-            }).AddTo(_player.GameObj);
+            })
+                .AddTo(_disposables);
+        }
+
+        private void FiringCooldownDelay()
+        {
+            Observable
+                .Timer(TimeSpan.FromSeconds(_settings.fireCooldown))
+                .Subscribe(_ => _firingDisabled = false)
+                .AddTo(_disposables);
         }
 
         private void FireProjectileBullets()

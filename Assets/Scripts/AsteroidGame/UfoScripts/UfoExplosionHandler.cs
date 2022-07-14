@@ -12,17 +12,22 @@ namespace AsteroidGame.UfoScripts
     {
         private readonly Ufo _ufo;
         private readonly Explosion.Factory _explosionFactory;
+        private readonly GameState _gameState;
 
         private Collider _collider;
         private Explosion _explosion;
         private Color _startColor;
+        
+        private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
         public UfoExplosionHandler(
             Ufo ufo,
-            Explosion.Factory explosionFactory)
+            Explosion.Factory explosionFactory,
+            GameState gameState)
         {
             _ufo = ufo;
             _explosionFactory = explosionFactory;
+            _gameState = gameState;
         }
 
         public void Initialize()
@@ -32,6 +37,21 @@ namespace AsteroidGame.UfoScripts
             ExplodeOnTriggerEnter();
 
             DelayThenDespawnExplosion();
+
+            DisposeIfGameNotRunning();
+        }
+        
+        private void DisposeIfGameNotRunning()
+        {
+            _gameState.IsGameRunning
+                .Subscribe(isGameRunning =>
+                {
+                    if (!isGameRunning)
+                    {
+                        _disposables.Clear();
+                    }
+                })
+                .AddTo(_disposables);
         }
         
         private void CreateExplosion()
@@ -88,7 +108,7 @@ namespace AsteroidGame.UfoScripts
                     
                     CreateExplosion();
                 })
-                .AddTo(_ufo.gameObject);
+                .AddTo(_disposables);
         }
         
         private void DelayThenDespawnExplosion()
@@ -97,12 +117,17 @@ namespace AsteroidGame.UfoScripts
                 .OnEnableAsObservable()
                 .Subscribe(_ =>
                 {
-                    Observable
-                        .Timer(TimeSpan.FromSeconds(1))
-                        .Subscribe(_ => _explosion.Dispose())
-                        .AddTo(_ufo.gameObject);
+                    ExplosionDespawnDelay();
                 })
-                .AddTo(_ufo.gameObject);
+                .AddTo(_disposables);
+        }
+
+        private void ExplosionDespawnDelay()
+        {
+            Observable
+                .Timer(TimeSpan.FromSeconds(1))
+                .Subscribe(_ => _explosion.Dispose())
+                .AddTo(_disposables);
         }
     }
 }

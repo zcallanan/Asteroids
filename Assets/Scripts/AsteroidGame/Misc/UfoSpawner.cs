@@ -32,7 +32,6 @@ namespace AsteroidGame.Misc
         private IDisposable _ufoSpawnTimer;
         private IDisposable _ufoBoundTimer;
         
-        // TODO: Dispose of this
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
         public UfoSpawner(
@@ -126,7 +125,13 @@ namespace AsteroidGame.Misc
         {
             _ufoSpawnTimer = Observable
                 .Timer(TimeSpan.FromSeconds(Random.Range(_ufoMinSpawnDelay, _ufoMaxSpawnDelay)))
-                .Subscribe(_ => SpawnUfo(size))
+                .Subscribe(_ =>
+                {
+                    if (_gameState.IsGameRunning.Value)
+                    {
+                        SpawnUfo(size);
+                    }
+                })
                 .AddTo(_disposables);
         }
 
@@ -205,7 +210,7 @@ namespace AsteroidGame.Misc
                     {
                         _ufoSpawnTimer?.Dispose();
                         _ufoBoundTimer?.Dispose();
-                        _disposables.Clear();
+                        _disposables?.Clear();
                     }
                 })
                 .AddTo(_disposables);

@@ -12,18 +12,23 @@ namespace AsteroidGame.PlayerScripts
     {
         private readonly Player _player;
         private readonly Explosion.Factory _explosionFactory;
+        private readonly GameState _gameState;
 
         private Collider _collider;
         private Explosion _explosion;
 
         private Color _startColor;
         
+        private readonly CompositeDisposable _disposables = new CompositeDisposable();
+
         public PlayerExplosionHandler(
             Player player,
-            Explosion.Factory explosionFactory)
+            Explosion.Factory explosionFactory,
+            GameState gameState)
         {
             _player = player;
             _explosionFactory = explosionFactory;
+            _gameState = gameState;
         }
         
         public void Initialize()
@@ -33,6 +38,21 @@ namespace AsteroidGame.PlayerScripts
             ExplodeOnTriggerEnter();
 
             DelayThenDespawnExplosion();
+
+            DisposeIfGameNotRunning();
+        }
+        
+        private void DisposeIfGameNotRunning()
+        {
+            _gameState.IsGameRunning
+                .Subscribe(isGameRunning =>
+                {
+                    if (!isGameRunning)
+                    {
+                        _disposables.Clear();
+                    }
+                })
+                .AddTo(_disposables);
         }
         
         private void CreateExplosion()
@@ -80,7 +100,7 @@ namespace AsteroidGame.PlayerScripts
                     
                     CreateExplosion();
                 })
-                .AddTo(_player.GameObj);
+                .AddTo(_disposables);
         }
         
         private void DelayThenDespawnExplosion()
@@ -89,12 +109,17 @@ namespace AsteroidGame.PlayerScripts
                 .OnEnableAsObservable()
                 .Subscribe(_ =>
                 {
-                    Observable
-                        .Timer(TimeSpan.FromSeconds(1))
-                        .Subscribe(_ => _explosion.Dispose())
-                        .AddTo(_player.GameObj);
+                    DespawnDelay();
                 })
-                .AddTo(_player.GameObj);
+                .AddTo(_disposables);
+        }
+
+        private void DespawnDelay()
+        {
+            Observable
+                .Timer(TimeSpan.FromSeconds(1))
+                .Subscribe(_ => _explosion.Dispose())
+                .AddTo(_disposables);
         }
     }
 }

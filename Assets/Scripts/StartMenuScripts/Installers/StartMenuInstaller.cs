@@ -1,3 +1,4 @@
+using StartMenuScripts.Misc;
 using StartMenuScripts.StartMenu;
 using Zenject;
 
@@ -9,7 +10,9 @@ namespace StartMenuScripts.Installers
         {
             Container.Bind<StartMenuState>().AsSingle();
             Container.BindInterfacesTo<StartMenuHandler>().AsSingle();
-            Container.BindInterfacesTo<StartMenuGameReset>().AsSingle();
+            
+            Container.BindInterfacesTo<SetupAsteroidData>().AsSingle();
+            Container.BindInterfacesTo<LoadAsteroidScene>().AsSingle();
         }
     }
 }

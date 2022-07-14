@@ -15,7 +15,6 @@ namespace StartMenuScripts.StartMenu
 
         private bool _throttleInput;
         
-        // TODO: Dispose of these
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
         public StartMenuHandler(
