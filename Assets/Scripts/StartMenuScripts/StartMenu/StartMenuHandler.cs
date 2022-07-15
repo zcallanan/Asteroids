@@ -105,25 +105,31 @@ namespace StartMenuScripts.StartMenu
                     if (!_gameState.IsGameRunning.Value && inputVal != 0 && !_throttleInput &&
                         _startMenuState.IsStartScreenInit.Value)
                     {
-                        if (!_startMenuState.MenuFocus.Value)
-                        {
-                            _gameState.GameMode.Value = SetValue(inputVal, _startMenuInteractions.gameModeCanvases.Count,
-                                _gameState.GameMode.Value);
-                        }
-                        else
-                        {
-                            _gameState.GameDifficulty.Value = SetValue(inputVal,
-                                _startMenuInteractions.gameDifficultyCanvases.Count, 
-                                _gameState.GameDifficulty.Value);
-                        }
-                        
+                        WhenInFocusSetGameModeOrGameDifficulty(inputVal);
+
                         _throttleInput = true;
                         PreventSpammingInputThroughInputDelay();
                     }
                 })
                 .AddTo(_disposables);
         }
-        
+
+        private void WhenInFocusSetGameModeOrGameDifficulty(float inputVal)
+        {
+            // If MenuFocus.Value = false -> set GameMode, true -> set GameDifficulty
+            if (!_startMenuState.MenuFocus.Value)
+            {
+                _gameState.GameMode.Value = SetValue(inputVal, _startMenuInteractions.gameModeCanvases.Count,
+                    _gameState.GameMode.Value);
+            }
+            else
+            {
+                _gameState.GameDifficulty.Value = SetValue(inputVal,
+                    _startMenuInteractions.gameDifficultyCanvases.Count, 
+                    _gameState.GameDifficulty.Value);
+            }
+        }
+
 
         private int SetValue(float inputVal, int listCount, int indexVal)
         {
@@ -131,10 +137,12 @@ namespace StartMenuScripts.StartMenu
             
             if (inputVal > 0)
             {
+                // Right input, if at end of list, move to start index, or +1 to next index
                 result = indexVal == listCount - 1 ? 0 : indexVal + 1;
             }
             else if (inputVal < 0)
             {
+                // Left input, if at start of list, move to end index, or -1 to previous index
                 result = indexVal == 0 ? listCount - 1 : indexVal - 1;
             }
 
