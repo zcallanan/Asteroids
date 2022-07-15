@@ -35,11 +35,13 @@ namespace AsteroidGame.PlayerScripts
 
         public void Initialize()
         {
+            RemoveThrottleOnFiringFromSceneTransition();
+            
             FireProjectileAndEnforceCooldownDelay();
 
             DisposeIfGameNotRunning();
         }
-        
+
         private void DisposeIfGameNotRunning()
         {
             _gameState.IsGameRunning
@@ -52,12 +54,26 @@ namespace AsteroidGame.PlayerScripts
                 })
                 .AddTo(_disposables);
         }
+        
+        private void RemoveThrottleOnFiringFromSceneTransition()
+        {
+            _gameState.IsGameStarting
+                .Throttle(TimeSpan.FromSeconds(_settings.sceneTransitionDelay))
+                .Subscribe(isGameStarting =>
+                {
+                    if (isGameStarting)
+                    {
+                        _gameState.IsGameStarting.Value = false;
+                    }
+                })
+                .AddTo(_disposables);
+        }
 
         private void FireProjectileAndEnforceCooldownDelay()
         {
             _inputState.IsFiring.Subscribe(hasFired =>
             {
-                if (hasFired && !_player.IsDead && !_firingDisabled)
+                if (hasFired && !_player.IsDead && !_firingDisabled && !_gameState.IsGameStarting.Value)
                 {
                     FireProjectileBullets();
                     _firingDisabled = true;
@@ -95,6 +111,7 @@ namespace AsteroidGame.PlayerScripts
             public float fireCooldown;
             public float projectileSpeed;
             public float projectileLifespan;
+            public float sceneTransitionDelay;
         }
 
         

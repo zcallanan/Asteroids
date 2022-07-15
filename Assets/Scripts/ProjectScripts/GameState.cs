@@ -19,6 +19,7 @@ namespace ProjectScripts
         public ReactiveProperty<int> CurrentLevel { get; set; }
         public ReactiveProperty<int> Score { get; set; }
         
+        public ReactiveProperty<bool> IsGameStarting { get; set; }
         public ReactiveProperty<bool> IsGameRunning { get; set; }
         public ReactiveProperty<bool> IsGameReset { get; set; }
         
