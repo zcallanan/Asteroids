@@ -31,6 +31,8 @@ namespace AsteroidGame.Misc
 
         private IDisposable _ufoSpawnTimer;
         private IDisposable _ufoBoundTimer;
+
+        private bool _isInitialized;
         
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
@@ -50,15 +52,19 @@ namespace AsteroidGame.Misc
 
         public void Initialize()
         {
+            UpdateUfoSpawnBounds();
+            
             OnlySpawnUfoDuringTheGame();
+
+            DisposeIfGameNotRunning();
         }
 
         private void OnlySpawnUfoDuringTheGame()
         {
-            _gameState.IsGameRunning
-                .Subscribe(isGameRunning =>
+            _gameState.IsUfoSpawning
+                .Subscribe(isUfoSpawning =>
                 {
-                    if (isGameRunning)
+                    if (isUfoSpawning)
                     {
                         var difficulties = _difficultySettings.difficulties[_gameState.GameDifficulty.Value];
             
@@ -73,14 +79,10 @@ namespace AsteroidGame.Misc
 
                         _ufoMinSpawnDelay = difficulties.ufoMinSpawnDelay;
                         _ufoMaxSpawnDelay = difficulties.ufoMaxSpawnDelay;
-            
+                        
                         DelayForATimeThenSpawnUfo(ObjectTypes.LargeUfo);
 
                         TrackLevelChangeToSwitchToSmallUfo();
-                
-                        UpdateUfoSpawnBounds();
-
-                        DisposeIfGameNotRunning();
                     }
                 })
                 .AddTo(_disposables);
@@ -117,7 +119,7 @@ namespace AsteroidGame.Misc
             if (level == _smallUfoLevelToSpawn)
             {
                 _ufoSpawnTimer?.Dispose();
-                DelayForATimeThenSpawnUfo(ObjectTypes.SmallAsteroid);
+                DelayForATimeThenSpawnUfo(ObjectTypes.SmallUfo);
             }
         }
 
@@ -208,8 +210,6 @@ namespace AsteroidGame.Misc
                 {
                     if (!isGameRunning)
                     {
-                        _ufoSpawnTimer?.Dispose();
-                        _ufoBoundTimer?.Dispose();
                         _disposables?.Clear();
                     }
                 })

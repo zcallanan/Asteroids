@@ -18,6 +18,7 @@ namespace AsteroidGame.Installers
         {
             Container.BindInterfacesAndSelfTo<AsteroidSpawner>().AsSingle();
             Container.BindInterfacesAndSelfTo<UfoSpawner>().AsSingle();
+            Container.BindInterfacesTo<UfoSpawnInit>().AsSingle();
 
             Container.BindInterfacesAndSelfTo<GameLevelHandler>().AsSingle();
             
