@@ -31,6 +31,8 @@ namespace ProjectScripts
             _gameState.IsGameRunning = new ReactiveProperty<bool>(false);
             _gameState.IsGameReset = new ReactiveProperty<bool>(false);
 
+            _gameState.IsUfoSpawning = new ReactiveProperty<bool>(false);
+
             _inputState.IsHyperspaceActive = new ReactiveProperty<bool>(false);
             _inputState.IsFiring = new ReactiveProperty<bool>(false);
 

@@ -49,6 +49,7 @@ namespace StartMenuScripts.Misc
                         
                         _gameState.IsFiringEnabled.Value = false;
                         _gameState.IsGameReset.Value = false;
+                        _gameState.IsUfoSpawning.Value = false;
                     }
                 })
                 .AddTo(_disposables);
