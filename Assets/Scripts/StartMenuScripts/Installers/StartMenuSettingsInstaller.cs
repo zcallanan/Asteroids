@@ -8,10 +8,12 @@ namespace StartMenuScripts.Installers
     public class StartMenuSettingsInstaller : ScriptableObjectInstaller<StartMenuSettingsInstaller>
     {
         public StartMenuHandler.Settings startMenuHandler;
+        public StartMenuData.Settings startMenuData;
     
         public override void InstallBindings()
         {
             Container.BindInstance(startMenuHandler).IfNotBound();
+            Container.BindInstance(startMenuData).IfNotBound();
         }
     }
 }

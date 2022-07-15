@@ -25,7 +25,7 @@ namespace AsteroidGame.UI
 
         private void Start()
         {
-            _imageComponent = gameObject.GetComponent<Image>();
+            _imageComponent = GetComponent<Image>();
             
             CheckForChangeToCurrentLivesAfterDelay();
 
