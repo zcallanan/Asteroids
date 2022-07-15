@@ -31,8 +31,6 @@ namespace StartMenuScripts.Misc
                     if (isGameRunning)
                     {
                         _disposables.Clear();
-
-                        _gameState.IsGameStarting.Value = true;
                         
                         SceneManager.LoadScene("AsteroidGame");
                     }

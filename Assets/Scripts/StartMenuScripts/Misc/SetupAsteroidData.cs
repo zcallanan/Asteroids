@@ -47,6 +47,7 @@ namespace StartMenuScripts.Misc
                         _gameState.CurrentLevel.Value = 0;
                         _gameState.Score.Value = 0;
                         
+                        _gameState.IsFiringEnabled.Value = false;
                         _gameState.IsGameReset.Value = false;
                     }
                 })

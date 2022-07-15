@@ -27,7 +27,7 @@ namespace ProjectScripts
             _gameState.CurrentLevel = new ReactiveProperty<int>(0);
             _gameState.Score = new ReactiveProperty<int>(0);
 
-            _gameState.IsGameStarting = new ReactiveProperty<bool>(false);
+            _gameState.IsFiringEnabled = new ReactiveProperty<bool>(false);
             _gameState.IsGameRunning = new ReactiveProperty<bool>(false);
             _gameState.IsGameReset = new ReactiveProperty<bool>(false);
 
