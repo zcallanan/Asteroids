@@ -84,10 +84,6 @@ namespace AsteroidGame.Misc
 
                         TrackLevelChangeToSwitchToSmallUfo();
                     }
-                    else
-                    {
-                        _disposables.Clear();
-                    }
                 })
                 .AddTo(_disposables);
         }
