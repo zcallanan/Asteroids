@@ -117,7 +117,7 @@ namespace AsteroidGame.Misc
             if (level == _smallUfoLevelToSpawn)
             {
                 _ufoSpawnTimer?.Dispose();
-                DelayForATimeThenSpawnUfo(ObjectTypes.SmallAsteroid);
+                DelayForATimeThenSpawnUfo(ObjectTypes.SmallUfo);
             }
         }
 
