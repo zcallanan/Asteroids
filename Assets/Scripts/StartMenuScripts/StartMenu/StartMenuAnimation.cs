@@ -1,4 +1,3 @@
-using ProjectScripts;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
@@ -12,7 +11,7 @@ namespace StartMenuScripts.StartMenu
         
         private Image _backgroundSprite;
         private Color _targetColor;
-        private float _num;
+        private float _selfIncrementingNumber;
 
         [Inject]
         public void Construct(
@@ -23,11 +22,9 @@ namespace StartMenuScripts.StartMenu
 
         private void Start()
         {
-            _backgroundSprite = GetComponent<Image>();
-            _backgroundSprite.color = PickAColor();
-            _num = 0;
+            SetInitialColors();
             
-            _targetColor = PickAColor();
+            _selfIncrementingNumber = 0;
         }
 
         private void Update()
@@ -35,21 +32,34 @@ namespace StartMenuScripts.StartMenu
             ChangeTitleBackgroundColor();
         }
 
+        private void SetInitialColors()
+        {
+            _backgroundSprite = GetComponent<Image>();
+            _backgroundSprite.color = PickAColor();
+            _targetColor = PickAColor();
+        }
+
         private void ChangeTitleBackgroundColor()
         {
             _backgroundSprite.color = Color.Lerp(_backgroundSprite.color, _targetColor,
-                _settings.titleAnimModifier * Time.deltaTime * 2);
+                _settings.titleAnimModifier * Time.deltaTime);
 
-            _num = Mathf.Lerp(_num, 1f, _settings.titleAnimModifier * Time.deltaTime * 2);
+            _selfIncrementingNumber =
+                Mathf.Lerp(_selfIncrementingNumber, 1f, _settings.titleAnimModifier * Time.deltaTime);
 
-            if (_num > .99f)
+            ResetIncrementingAndChooseNewColorTarget();
+        }
+
+        private void ResetIncrementingAndChooseNewColorTarget()
+        {
+            if (_selfIncrementingNumber > .95f)
             {
-                _num = 0;
+                _selfIncrementingNumber = 0;
                 _targetColor = PickAColor();
             }
         }
 
-        private Color PickAColor()
+        private static Color PickAColor()
         {
             return Random.ColorHSV(.1f, .9f, .1f, .9f, .1f, .9f);
         }

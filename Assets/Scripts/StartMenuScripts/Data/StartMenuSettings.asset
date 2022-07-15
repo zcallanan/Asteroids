@@ -16,4 +16,4 @@ MonoBehaviour:
     startMenuInitDelay: 4
     startMenuInputDelay: 0.3
   startMenuData:
-    titleAnimModifier: 0.5
+    titleAnimModifier: 1

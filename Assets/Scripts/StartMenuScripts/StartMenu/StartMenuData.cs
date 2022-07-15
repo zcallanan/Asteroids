@@ -8,7 +8,7 @@ namespace StartMenuScripts.StartMenu
         [Serializable]
         public class Settings
         {
-            [Range(0f, 1f)] public float titleAnimModifier;
+            [Range(0f, 5f)] public float titleAnimModifier;
         }
     }
 }
