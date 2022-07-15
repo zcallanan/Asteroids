@@ -30,9 +30,6 @@ namespace AsteroidGame.Misc
         private Quaternion _currentRotation;
 
         private IDisposable _ufoSpawnTimer;
-        private IDisposable _ufoBoundTimer;
-
-        private bool _isInitialized;
         
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
@@ -198,7 +195,7 @@ namespace AsteroidGame.Misc
 
         private void ToggleUfoRecentlySpawnedOnceItsInBounds(Ufo ufo)
         {
-            _ufoBoundTimer = Observable.Timer(TimeSpan.FromSeconds(1))
+            Observable.Timer(TimeSpan.FromSeconds(1))
                 .Subscribe(_ => ufo.IsRecentlySpawned = false)
                 .AddTo(_disposables);
         }
