@@ -13,20 +13,14 @@ namespace AsteroidGame.UI
         private Text _gameOverText;
 
         private GameState _gameState;
-        private PlayerFacade _playerFacade;
-        private OtherPlayerFacade _otherPlayerFacade;
 
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
         [Inject]
         public void Construct(
-            GameState gameState,
-            PlayerFacade playerFacade,
-            OtherPlayerFacade otherPlayerFacade)
+            GameState gameState)
         {
             _gameState = gameState;
-            _playerFacade = playerFacade;
-            _otherPlayerFacade = otherPlayerFacade;
         }
 
         private void Start()
