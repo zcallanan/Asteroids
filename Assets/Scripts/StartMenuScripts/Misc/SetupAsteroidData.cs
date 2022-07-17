@@ -43,13 +43,13 @@ namespace StartMenuScripts.Misc
                 {
                     if (isGameReset)
                     {
-                        _gameState.CurrentLives.Value = 2;
                         _gameState.CurrentLevel.Value = 0;
                         _gameState.Score.Value = 0;
                         
                         _gameState.IsFiringEnabled.Value = false;
                         _gameState.IsGameReset.Value = false;
                         _gameState.IsUfoSpawning.Value = false;
+                        _gameState.IsGameOver.Value = false;
                     }
                 })
                 .AddTo(_disposables);

@@ -23,13 +23,14 @@ namespace AsteroidGame.Installers
 
             Container.BindInterfacesTo<PlayerHyperspaceHandler>().AsSingle();
             Container.BindInterfacesTo<PlayerDirectionHandler>().AsSingle();
-            Container.BindInterfacesTo<PlayerMoveHandler>().AsSingle();
             Container.BindInterfacesTo<PlayerRespawnEffect>().AsSingle();
             Container.BindInterfacesTo<PlayerFiringHandler>().AsSingle();
+            
             Container.BindInterfacesTo<PlayerExplosionHandler>().AsSingle();
             Container.BindInterfacesTo<PlayerThrustHandler>().AsSingle();
             Container.BindInterfacesTo<OtherPlayerHandler>().AsSingle();
             
+            Container.BindInterfacesAndSelfTo<PlayerMoveHandler>().AsSingle();
             Container.BindInterfacesAndSelfTo<PlayerLifecycleHandler>().AsSingle();
             Container.BindInterfacesAndSelfTo<PlayerCollisionHandler>().AsSingle();
         }

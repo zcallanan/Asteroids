@@ -11,11 +11,9 @@ namespace AsteroidGame.PlayerScripts
         private Player _player;
         private PlayerLifecycleHandler _playerLifecycleHandler;
         private GameState _gameState;
-
-        public Vector3 Position => _player.Position;
-
-        public bool CanCollide => _player.CanCollide;
-
+        
+        private readonly CompositeDisposable _disposables = new CompositeDisposable();
+        
         [Inject]
         public void Construct(
             Player player,
@@ -27,10 +25,27 @@ namespace AsteroidGame.PlayerScripts
             _gameState = gameState;
         }
 
+        public Vector3 Position => _player.Position;
+
+        public bool CanCollide => _player.CanCollide;
+        
+        public ReactiveProperty<int> CurrentLives { get; set; }
+
         private void Awake()
         {
             _player.HyperspaceWasTriggered = new ReactiveProperty<bool>(false);
             _player.JustRespawned = new ReactiveProperty<bool>(false);
+            _player.CurrentLives = new ReactiveProperty<int>(2);
+            CurrentLives = new ReactiveProperty<int>(2);
+        }
+
+        private void Start()
+        {
+            _player.CurrentLives
+                .Subscribe(lives => CurrentLives.Value = lives)
+                .AddTo(_disposables);
+
+            DisposeIfGameNotRunning();
         }
         
         private void OnTriggerEnter(Collider other)
@@ -60,6 +75,19 @@ namespace AsteroidGame.PlayerScripts
                     _playerLifecycleHandler.PlayerDeathEvents();
                 }
             }
+        }
+        
+        private void DisposeIfGameNotRunning()
+        {
+            _gameState.IsGameRunning
+                .Subscribe(isGameRunning =>
+                {
+                    if (!isGameRunning)
+                    {
+                        _disposables.Clear();
+                    }
+                })
+                .AddTo(_disposables);
         }
     }
 }

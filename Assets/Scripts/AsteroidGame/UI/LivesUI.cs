@@ -9,11 +9,12 @@ namespace AsteroidGame.UI
 {
     public class LivesUI : MonoBehaviour
     {
-        [SerializeField] private Sprite[] lifeCountSprite;
+        [SerializeField] private ObjectTypes playerType;
 
         private GameState _gameState;
 
-        private Image _imageComponent;
+        private Image _image;
+        private ReactiveProperty<Sprite> _imageSource;
         
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
         
@@ -25,11 +26,14 @@ namespace AsteroidGame.UI
 
         private void Start()
         {
-            _imageComponent = GetComponent<Image>();
+            if (_gameState.IsGameRunning.Value)
+            {
+                _image = GetComponent<Image>();
             
-            CheckForChangeToCurrentLivesAfterDelay();
+                CheckForChangeToLivesSprite();
 
-            DisposeIfGameNotRunning();
+                DisposeIfGameNotRunning();
+            }
         }
         
         private void DisposeIfGameNotRunning()
@@ -45,80 +49,30 @@ namespace AsteroidGame.UI
                 .AddTo(_disposables);
         }
 
-        private void CheckForChangeToCurrentLivesAfterDelay()
+        private void CheckForChangeToLivesSprite()
         {
-            _gameState.CurrentLives
-                .Throttle(TimeSpan.FromSeconds(.5))
-                .Subscribe(ChangeNumberOfLivesSprite)
-                .AddTo(_disposables);
-        }
+            _imageSource = playerType == ObjectTypes.Player
+                ? _gameState.PlayerLivesSprite
+                : _gameState.OtherPlayerLivesSprite;
 
-        private void ChangeNumberOfLivesSprite(int currentLives)
-        {
-            switch (currentLives)
-            {
-                case 0:
+            _imageSource
+                .Subscribe(sprite =>
                 {
-                    _imageComponent.sprite = null;
-                    _imageComponent.rectTransform.sizeDelta = Vector2.zero;
-                    break;
-                }
-                case 1:
-                {
-                    _imageComponent.sprite = lifeCountSprite[0];
-                    break;
-                }
-                case 2:
-                {
-                    _imageComponent.sprite = lifeCountSprite[1];
-                    break;
-                }
-                case 3:
-                {
-                    _imageComponent.sprite = lifeCountSprite[2];
-                    break;
-                }
-                case 4:
-                {
-                    _imageComponent.sprite = lifeCountSprite[3];
-                    break;
-                }
-                case 5:
-                {
-                    _imageComponent.sprite = lifeCountSprite[4];
-                    break;
-                }
-                case 6:
-                {
-                    _imageComponent.sprite = lifeCountSprite[5];
-                    break;
-                }
-                case 7:
-                {
-                    _imageComponent.sprite = lifeCountSprite[6];
-                    break;
-                }
-                case 8:
-                {
-                    _imageComponent.sprite = lifeCountSprite[7];
-                    break;
-                }
-                case 9:
-                {
-                    _imageComponent.sprite = lifeCountSprite[8];
-                    break;
-                }
-                case 10:
-                {
-                    _imageComponent.sprite = lifeCountSprite[9];
-                    break;
-                }
-                default:
-                {
-                    _imageComponent.sprite = lifeCountSprite[10];
-                    break;
-                }
-            }
+                    if (sprite == null)
+                    {
+                        gameObject.SetActive(false);
+                    }
+                    else
+                    {
+                        if (gameObject.activeSelf == false)
+                        {
+                            gameObject.SetActive(true);
+                        }
+
+                        _image.sprite = sprite;
+                    }
+                })
+                .AddTo(_disposables);
         }
     }
 }

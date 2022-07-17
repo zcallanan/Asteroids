@@ -29,6 +29,8 @@ namespace AsteroidGame.PlayerScripts
             PlayerType = playerType;
         }
         
+        public ReactiveProperty<int> CurrentLives { get; set; }
+        
         public ObjectTypes PlayerType { get; }
         
         public MeshCollider MeshCollider { get; }

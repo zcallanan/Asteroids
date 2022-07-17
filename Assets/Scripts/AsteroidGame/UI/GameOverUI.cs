@@ -1,4 +1,5 @@
 using System;
+using AsteroidGame.PlayerScripts;
 using ProjectScripts;
 using UniRx;
 using UnityEngine;
@@ -12,14 +13,20 @@ namespace AsteroidGame.UI
         private Text _gameOverText;
 
         private GameState _gameState;
+        private PlayerFacade _playerFacade;
+        private OtherPlayerFacade _otherPlayerFacade;
 
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
         [Inject]
         public void Construct(
-            GameState gameState)
+            GameState gameState,
+            PlayerFacade playerFacade,
+            OtherPlayerFacade otherPlayerFacade)
         {
             _gameState = gameState;
+            _playerFacade = playerFacade;
+            _otherPlayerFacade = otherPlayerFacade;
         }
 
         private void Start()
@@ -27,7 +34,7 @@ namespace AsteroidGame.UI
             _gameOverText = GetComponent<Text>();
             _gameOverText.enabled = false;
 
-            CheckForChangeToCurrentLives();
+            CheckForGameOver();
 
             DisposeIfGameNotRunning();
         }
@@ -45,24 +52,27 @@ namespace AsteroidGame.UI
                 .AddTo(_disposables);
         }
 
-        private void CheckForChangeToCurrentLives()
+        private void CheckForGameOver()
         {
-            _gameState.CurrentLives
-                .Subscribe(WhenLivesAreBelowZeroDelayThenShowGameOver)
+            _gameState.IsGameOver
+                .Subscribe(isGameOver =>
+                {
+                    if (isGameOver)
+                    {
+                        WhenGameIsOverDelayThenShowGameOver();
+                    }
+                })
                 .AddTo(_disposables);
         }
 
-        private void WhenLivesAreBelowZeroDelayThenShowGameOver(int lives)
+        private void WhenGameIsOverDelayThenShowGameOver()
         {
-            if (lives < 0)
-            {
-                Observable.Timer(TimeSpan.FromSeconds(2))
-                    .Subscribe(_ =>
-                    {
-                        _gameOverText.enabled = true;
-                    })
-                    .AddTo(_disposables);
-            }
+            Observable.Timer(TimeSpan.FromSeconds(2))
+                .Subscribe(_ =>
+                {
+                    _gameOverText.enabled = true;
+                })
+                .AddTo(_disposables);
         }
     }
 }

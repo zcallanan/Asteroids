@@ -85,17 +85,17 @@ namespace AsteroidGame.PlayerScripts
                 {
                     if (gameMode == 0 && _player.PlayerType == ObjectTypes.Player)
                     {
-                        _currentPosition = new Vector3(0, 1f, 0);
+                        _currentPosition = _settings.singlePlayerSpawnPos;
                     }
                     else if (gameMode != 0)
                     {
                         if (_player.PlayerType == ObjectTypes.Player)
                         {
-                            _currentPosition = new Vector3(-2.25f, 1f, 0);
+                            _currentPosition = _settings.playerOneSpawnPos;
                         }
                         else if (_player.PlayerType == ObjectTypes.OtherPlayer)
                         {
-                            _currentPosition = new Vector3(2.25f, 1f, 0);
+                            _currentPosition = _settings.playerTwoSpawnPos;
                         }
                     }
                     
@@ -177,6 +177,9 @@ namespace AsteroidGame.PlayerScripts
         {
             public float playerMoveSpeedConstant;
             public int movementModifier;
+            public Vector3 singlePlayerSpawnPos;
+            public Vector3 playerOneSpawnPos;
+            public Vector3 playerTwoSpawnPos;
         }
     }
 }
