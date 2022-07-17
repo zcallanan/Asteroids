@@ -7,9 +7,9 @@ using Zenject;
 namespace AsteroidGame.Installers
 {
     public class PlayerInstaller : MonoInstaller
-    { 
-        [SerializeField]
-        private Settings settings;
+    {
+        [SerializeField] private ObjectTypes playerType;
+        [SerializeField] private Settings settings;
 
         public override void InstallBindings()
         {
@@ -19,7 +19,7 @@ namespace AsteroidGame.Installers
                 settings.meshCollider,
                 settings.transform).NonLazy(); 
             
-            Container.BindInstance(settings.playerType).WhenInjectedInto<Player>();
+            Container.BindInstance(playerType).WhenInjectedInto<Player>();
 
             Container.BindInterfacesTo<PlayerHyperspaceHandler>().AsSingle();
             Container.BindInterfacesTo<PlayerDirectionHandler>().AsSingle();
@@ -41,7 +41,6 @@ namespace AsteroidGame.Installers
             public MeshRenderer meshRenderer;
             public MeshCollider meshCollider;
             public Transform transform;
-            public ObjectTypes playerType;
         }
     }
 }
