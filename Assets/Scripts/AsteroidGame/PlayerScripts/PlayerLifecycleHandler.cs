@@ -7,11 +7,11 @@ using Zenject;
 
 namespace AsteroidGame.PlayerScripts
 {
-    public class PlayerLifecycleHandler : MonoBehaviour
+    public class PlayerLifecycleHandler : IInitializable
     {
-        private Player _player;
-        private PlayerData.Settings _playerData;
-        private GameState _gameState;
+        private readonly Player _player;
+        private readonly PlayerData.Settings _playerData;
+        private readonly GameState _gameState;
         
         private int _previousScore;
         private int _getALifeEveryTenK = 10000;
@@ -20,8 +20,7 @@ namespace AsteroidGame.PlayerScripts
         
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
-        [Inject]
-        public void Construct(
+        public PlayerLifecycleHandler(
             Player player,
             PlayerData.Settings playerData,
             GameState gameState)
@@ -31,16 +30,28 @@ namespace AsteroidGame.PlayerScripts
             _gameState = gameState;
         }
 
-        private void Awake()
-        {
-            _player.JustRespawned = new ReactiveProperty<bool>(false);
-        }
-
-        private void Start()
+        public void Initialize()
         {
             IncrementCurrentLivesEveryTenKScoreUnlessGameIsOver();
 
             DisposeIfGameNotRunning();
+        }
+        
+        public void PlayerDeathEvents()
+        {
+            if (_gameState.CurrentLives.Value > -1)
+            {
+                _gameState.CurrentLives.Value--;
+            }
+
+            RestorePlayerFromDeathAfterDelay();
+
+            DisablePlayerObjectOnDeath();
+
+            if (!_gameIsOver)
+            {
+                SetGameOver();
+            }
         }
 
         private void IncrementCurrentLivesEveryTenKScoreUnlessGameIsOver()
@@ -58,23 +69,6 @@ namespace AsteroidGame.PlayerScripts
             });
         }
 
-        private void OnTriggerEnter(Collider other)
-        {
-            if (other.GetComponent<BulletProjectile>())
-            {
-                var colliderObjectType = other.GetComponent<BulletProjectile>().OriginType;
-                
-                if (colliderObjectType != ObjectTypes.Player)
-                {
-                    PlayerDeathEvents();
-                }
-            }
-            else
-            {
-                PlayerDeathEvents();
-            }
-        }
-        
         private void DisposeIfGameNotRunning()
         {
             _gameState.IsGameRunning
@@ -86,23 +80,6 @@ namespace AsteroidGame.PlayerScripts
                     }
                 })
                 .AddTo(_disposables);
-        }
-
-        private void PlayerDeathEvents()
-        {
-            if (_gameState.CurrentLives.Value > -1)
-            {
-                _gameState.CurrentLives.Value--;
-            }
-
-            RestorePlayerFromDeathAfterDelay();
-
-            DisablePlayerObjectOnDeath();
-
-            if (!_gameIsOver)
-            {
-                SetGameOver();
-            }
         }
 
         private void SetGameOver()

@@ -39,6 +39,13 @@ namespace ProjectScripts
             _inputState.IsApplyingThrust = new ReactiveProperty<bool>(false);
             _inputState.VerticalInput = new ReactiveProperty<float>(0);
             _inputState.HorizontalInput = new ReactiveProperty<float>(0);
+            
+            _inputState.IsHyperspaceActive2 = new ReactiveProperty<bool>(false);
+            _inputState.IsFiring2 = new ReactiveProperty<bool>(false);
+
+            _inputState.IsApplyingThrust2 = new ReactiveProperty<bool>(false);
+            _inputState.VerticalInput2 = new ReactiveProperty<float>(0);
+            _inputState.HorizontalInput2 = new ReactiveProperty<float>(0);
         }
     }
 }

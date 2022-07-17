@@ -57,6 +57,11 @@ namespace AsteroidGame.Misc
                 return;
             }
             
+            if (other.GetComponent<OtherPlayerFacade>() != null && OriginType == ObjectTypes.OtherPlayer )
+            {
+                return;
+            }
+            
             _spawnTimer.Dispose();
         
             Dispose();

@@ -23,9 +23,12 @@ namespace AsteroidGame.PlayerScripts
 
         public void FixedTick()
         {
+            var horizontalInput = _player.PlayerType == ObjectTypes.Player
+                ? _inputState.HorizontalInput.Value
+                : _inputState.HorizontalInput2.Value;
+            
             var adjustedAngle = _settings.rotationAngle *
-                             (_inputState.HorizontalInput.Value * Time.fixedDeltaTime *
-                              _settings.rotationSpeed);
+                                (horizontalInput * Time.fixedDeltaTime * _settings.rotationSpeed);
             
             _player.SetRotation(adjustedAngle);
         }

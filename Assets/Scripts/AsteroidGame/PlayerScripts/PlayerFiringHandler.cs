@@ -35,11 +35,14 @@ namespace AsteroidGame.PlayerScripts
 
         public void Initialize()
         {
-            RemoveThrottleOnFiringFromSceneTransition();
+            if (_gameState.IsGameRunning.Value)
+            {
+                RemoveThrottleOnFiringFromSceneTransition();
             
-            FireProjectileAndEnforceCooldownDelay();
+                FireProjectileAndEnforceCooldownDelay();
 
-            DisposeIfGameNotRunning();
+                DisposeIfGameNotRunning();
+            }
         }
 
         private void DisposeIfGameNotRunning()
@@ -71,15 +74,19 @@ namespace AsteroidGame.PlayerScripts
 
         private void FireProjectileAndEnforceCooldownDelay()
         {
-            _inputState.IsFiring.Subscribe(hasFired =>
+            var inputSource = _player.PlayerType == ObjectTypes.Player
+                ? _inputState.IsFiring 
+                : _inputState.IsFiring2;
+            
+            inputSource.Subscribe(hasFired =>
             {
-                if (hasFired && !_player.IsDead && !_firingDisabled && _gameState.IsFiringEnabled.Value)
-                {
-                    FireProjectileBullets();
-                    _firingDisabled = true;
+                 if (hasFired && !_player.IsDead && !_firingDisabled && _gameState.IsFiringEnabled.Value)
+                 {
+                     FireProjectileBullets();
+                     _firingDisabled = true;
 
-                    FiringCooldownDelay();
-                }
+                     FiringCooldownDelay();
+                 }
             })
                 .AddTo(_disposables);
         }
@@ -95,14 +102,15 @@ namespace AsteroidGame.PlayerScripts
         private void FireProjectileBullets()
         {
             var bulletProjectile = _bulletProjectileFactory.Create(
-                _settings.projectileSpeed, _settings.projectileLifespan, ObjectTypes.Player);
+                _settings.projectileSpeed, _settings.projectileLifespan,
+                _player.PlayerType == ObjectTypes.Player ? ObjectTypes.Player : ObjectTypes.OtherPlayer);
 
             var transform = bulletProjectile.transform;
             transform.position = _player.Position;
             transform.rotation = _player.Transform.rotation;
             transform.localScale = .1f * Vector3.one;
-            
-            bulletProjectile.name = "Player Projectile";
+
+            bulletProjectile.name = _player.PlayerType == ObjectTypes.Player ? "Player1 Projectile" : "Player2 Projectile";
         }
 
         [Serializable]

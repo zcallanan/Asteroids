@@ -81,7 +81,7 @@ namespace AsteroidGame.PlayerScripts
             {
                 var originType = _collider.GetComponent<BulletProjectile>().OriginType;
 
-                if (originType == ObjectTypes.Player)
+                if (originType == (_player.PlayerType == ObjectTypes.Player ? ObjectTypes.Player : ObjectTypes.OtherPlayer))
                 {
                     return true;
                 }
@@ -96,9 +96,12 @@ namespace AsteroidGame.PlayerScripts
                 .OnTriggerEnterAsObservable()
                 .Subscribe(collider =>
                 {
-                    _collider = collider;
+                    if (_player.CanCollide)
+                    {
+                        _collider = collider;
                     
-                    CreateExplosion();
+                        CreateExplosion();
+                    }
                 })
                 .AddTo(_disposables);
         }

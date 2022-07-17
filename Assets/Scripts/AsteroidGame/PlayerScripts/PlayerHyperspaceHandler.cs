@@ -62,7 +62,11 @@ namespace AsteroidGame.PlayerScripts
 
         private void HandleHyperspaceInput()
         {
-            _inputState.IsHyperspaceActive.Subscribe(hyperspaceInput =>
+            var inputSource = _player.PlayerType == ObjectTypes.Player
+                ? _inputState.IsHyperspaceActive
+                : _inputState.IsHyperspaceActive2;
+            
+            inputSource.Subscribe(hyperspaceInput =>
             {
                 if (hyperspaceInput && !_player.HyperspaceWasTriggered.Value && _player.MeshRenderer.enabled)
                 {

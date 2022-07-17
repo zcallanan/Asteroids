@@ -1,4 +1,5 @@
 using AsteroidGame.Misc;
+using ProjectScripts;
 using UniRx;
 using UnityEngine;
 
@@ -7,21 +8,29 @@ namespace AsteroidGame.PlayerScripts
     public class Player
     {
         private readonly PlayerFacade _playerFacade;
+        private readonly OtherPlayerFacade _otherPlayerFacade;
         private readonly BoundHandler _boundHandler;
-        
+
         public Player(
             MeshRenderer meshRenderer,
             MeshCollider meshCollider,
             Transform transform,
             PlayerFacade playerFacade,
-            BoundHandler boundHandler)
+            OtherPlayerFacade otherPlayerFacade,
+            BoundHandler boundHandler,
+            ObjectTypes playerType)
         {
             MeshRenderer = meshRenderer;
             MeshCollider = meshCollider;
             Transform = transform;
             _playerFacade = playerFacade;
+            _otherPlayerFacade = otherPlayerFacade;
             _boundHandler = boundHandler;
+            PlayerType = playerType;
         }
+        
+        public ObjectTypes PlayerType { get; }
+        
         public MeshCollider MeshCollider { get; }
 
         public MeshRenderer MeshRenderer { get; }
@@ -46,12 +55,22 @@ namespace AsteroidGame.PlayerScripts
 
         public bool IsDead { get; set; }
         
+        public bool CanCollide { get; set; }
+
         public ReactiveProperty<bool> JustRespawned { get; set; }
         
         public ReactiveProperty<bool> HyperspaceWasTriggered { get; set; }
 
-        public GameObject GameObj => _playerFacade.gameObject;
-        
+        public GameObject GameObj
+        {
+            get
+            {
+                var result = PlayerType == ObjectTypes.Player ? _playerFacade.gameObject : _otherPlayerFacade.gameObject;
+
+                return result;
+            }
+        }
+
         public void SetRotation(Vector3 rot)
         {
             Transform.Rotate(rot, Space.Self);

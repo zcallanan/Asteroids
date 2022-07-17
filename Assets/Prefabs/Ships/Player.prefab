@@ -45,9 +45,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   settings:
     meshRenderer: {fileID: 7387099618304983695}
-    meshFilter: {fileID: 4710985933823866437}
     meshCollider: {fileID: 2351170684658985026}
-    rigidbody: {fileID: -3335243572963418824}
     transform: {fileID: 8561082489666402784}
 --- !u!1 &5356390998434002064
 GameObject:

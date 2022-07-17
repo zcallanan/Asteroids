@@ -6,14 +6,14 @@ using Zenject;
 
 namespace AsteroidGame.PlayerScripts
 {
-    public class PlayerFacade : MonoBehaviour
+    public class OtherPlayerFacade : MonoBehaviour
     {
         private Player _player;
         private PlayerLifecycleHandler _playerLifecycleHandler;
         private GameState _gameState;
 
         public Vector3 Position => _player.Position;
-        
+
         public bool CanCollide => _player.CanCollide;
 
         [Inject]
@@ -37,11 +37,11 @@ namespace AsteroidGame.PlayerScripts
         {
             if (_player.CanCollide)
             {
-                if (other.GetComponent<OtherPlayerFacade>())
+                if (other.GetComponent<PlayerFacade>())
                 {
-                    var otherPlayerFacade = other.GetComponent<OtherPlayerFacade>();
+                    var playerFacade = other.GetComponent<PlayerFacade>();
                     
-                    if (otherPlayerFacade.CanCollide)
+                    if (playerFacade.CanCollide)
                     {
                         _playerLifecycleHandler.PlayerDeathEvents();
                     }
@@ -50,7 +50,7 @@ namespace AsteroidGame.PlayerScripts
                 {
                     var colliderObjectType = other.GetComponent<BulletProjectile>().OriginType;
                 
-                    if (colliderObjectType != ObjectTypes.Player)
+                    if (colliderObjectType != ObjectTypes.OtherPlayer)
                     {
                         _playerLifecycleHandler.PlayerDeathEvents();
                     }

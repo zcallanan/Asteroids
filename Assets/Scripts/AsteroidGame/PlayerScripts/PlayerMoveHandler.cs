@@ -20,7 +20,7 @@ namespace AsteroidGame.PlayerScripts
         private float _decelerationRate;
         
         private float _forwardInputValue;
-        
+
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
         public PlayerMoveHandler(
@@ -37,11 +37,7 @@ namespace AsteroidGame.PlayerScripts
         
         public void Initialize()
         {
-            _currentPosition = new Vector3(0, 1f, 0);
-            _player.PreviousPosition = _player.Transform.position;
-            _facing = _player.Facing;
-            
-            _player.Position = _currentPosition;
+            SetInitialSpawnPosition();
             
             _accelerationRate = _settings.playerMoveSpeedConstant / 2 / _settings.movementModifier;
             _decelerationRate = _settings.playerMoveSpeedConstant / _settings.movementModifier;
@@ -78,12 +74,46 @@ namespace AsteroidGame.PlayerScripts
                 })
                 .AddTo(_disposables);
         }
+        
+        private void SetInitialSpawnPosition()
+        {
+            _gameState.GameMode
+                .Subscribe(gameMode =>
+                {
+                    if (gameMode == 0 && _player.PlayerType == ObjectTypes.Player)
+                    {
+                        _currentPosition = new Vector3(0, 1f, 0);
+                    }
+                    else if (gameMode != 0)
+                    {
+                        if (_player.PlayerType == ObjectTypes.Player)
+                        {
+                            _currentPosition = new Vector3(-2.25f, 1f, 0);
+                        }
+                        else if (_player.PlayerType == ObjectTypes.OtherPlayer)
+                        {
+                            _currentPosition = new Vector3(2.25f, 1f, 0);
+                        }
+                    }
+                    
+                    _player.PreviousPosition = _player.Transform.position;
+                    _facing = _player.Facing;
+            
+                    _player.Position = _currentPosition;
+                })
+                .AddTo(_disposables);
+        }
 
         private void OnlyRegisterWhenPlayerInputsForwardMovement()
         {
-            if (_inputState.VerticalInput.Value >= 0 && !_player.IsDead && !_player.HyperspaceWasTriggered.Value)
+            var verticalInput = _player.PlayerType == ObjectTypes.Player
+                ? _inputState.VerticalInput.Value
+                : _inputState.VerticalInput2.Value;
+            
+            if ( verticalInput >= 0 && !_player.IsDead &&
+                 !_player.HyperspaceWasTriggered.Value)
             {
-                _forwardInputValue = _inputState.VerticalInput.Value;
+                _forwardInputValue = verticalInput;
             }
         }
 

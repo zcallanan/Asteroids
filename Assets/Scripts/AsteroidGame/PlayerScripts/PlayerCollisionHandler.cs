@@ -50,9 +50,12 @@ namespace AsteroidGame.PlayerScripts
                 .OnTriggerEnterAsObservable()
                 .Subscribe(collider =>
                 {
-                    _collider = collider;
-                    
-                    SetupPlayerDeathState();
+                    if (_player.CanCollide)
+                    {
+                        _collider = collider;
+                        
+                        SetupPlayerDeathState();
+                    }
                 })
                 .AddTo(_disposables);
         }
@@ -76,7 +79,7 @@ namespace AsteroidGame.PlayerScripts
             {
                 var originType = _collider.GetComponent<BulletProjectile>().OriginType;
 
-                if (originType == ObjectTypes.Player)
+                if (originType == (_player.PlayerType == ObjectTypes.Player ? ObjectTypes.Player : ObjectTypes.OtherPlayer))
                 {
                     return true;
                 }
