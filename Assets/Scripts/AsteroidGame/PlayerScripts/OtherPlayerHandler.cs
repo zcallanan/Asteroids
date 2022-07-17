@@ -59,7 +59,7 @@ namespace AsteroidGame.PlayerScripts
 
         private void HidePlayerTwoInSinglePlayerMode()
         {
-            if (_player.PlayerType == ObjectTypes.Player)
+            if (_player.PlayerType == ObjectTypes.OtherPlayer)
             {
                 // Dead players don't fire bullets
                 _player.IsDead = true; 

@@ -34,11 +34,14 @@ namespace AsteroidGame.PlayerScripts
         
         public void Initialize()
         {
-            GetGameBounds();
+            if (_gameState.IsGameRunning.Value)
+            {
+                GetGameBounds();
 
-            HandleHyperspaceInput();
+                HandleHyperspaceInput();
 
-            DisposeIfGameNotRunning();
+                DisposeIfGameNotRunning();
+            }
         }
         
         private void DisposeIfGameNotRunning()

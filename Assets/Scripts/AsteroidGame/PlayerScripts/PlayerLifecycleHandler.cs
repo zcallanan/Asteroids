@@ -32,9 +32,12 @@ namespace AsteroidGame.PlayerScripts
 
         public void Initialize()
         {
-            IncrementCurrentLivesEveryTenKScoreUnlessGameIsOver();
+            if (_gameState.IsGameRunning.Value)
+            {
+                IncrementCurrentLivesEveryTenKScoreUnlessGameIsOver();
 
-            DisposeIfGameNotRunning();
+                DisposeIfGameNotRunning();
+            }
         }
         
         public void PlayerDeathEvents()

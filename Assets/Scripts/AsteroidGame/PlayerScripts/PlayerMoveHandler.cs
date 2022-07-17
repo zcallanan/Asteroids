@@ -37,14 +37,17 @@ namespace AsteroidGame.PlayerScripts
         
         public void Initialize()
         {
-            SetInitialSpawnPosition();
+            if (_gameState.IsGameRunning.Value)
+            {
+                SetInitialSpawnPosition();
             
-            _accelerationRate = _settings.playerMoveSpeedConstant / 2 / _settings.movementModifier;
-            _decelerationRate = _settings.playerMoveSpeedConstant / _settings.movementModifier;
+                _accelerationRate = _settings.playerMoveSpeedConstant / 2 / _settings.movementModifier;
+                _decelerationRate = _settings.playerMoveSpeedConstant / _settings.movementModifier;
 
-            WatchForPlayerDeathOrHyperspace();
+                WatchForPlayerDeathOrHyperspace();
 
-            DisposeIfGameNotRunning();
+                DisposeIfGameNotRunning();
+            }
         }
 
         public void FixedTick()

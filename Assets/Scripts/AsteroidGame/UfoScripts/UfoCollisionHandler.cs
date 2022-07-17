@@ -29,9 +29,12 @@ namespace AsteroidGame.UfoScripts
 
         public void Initialize()
         {
-            OnCollisionUpdateScore();
+            if (_gameState.IsGameRunning.Value)
+            {
+                OnCollisionUpdateScore();
 
-            DisposeIfGameNotRunning();
+                DisposeIfGameNotRunning();
+            }
         }
         
         private void DisposeIfGameNotRunning()

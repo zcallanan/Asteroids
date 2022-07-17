@@ -51,21 +51,24 @@ namespace AsteroidGame.UfoScripts
         
         public void Initialize()
         {
-            _ufoBulletProjectileSpeed = _settings.ufoProjSpeed;
-            _ufoBulletProjectileLifespan = _settings.ufoProjLifespan;
+            if (_gameState.IsGameRunning.Value)
+            {
+                _ufoBulletProjectileSpeed = _settings.ufoProjSpeed;
+                _ufoBulletProjectileLifespan = _settings.ufoProjLifespan;
 
-            var difficulties = _difficultySettings.difficulties[_gameState.GameDifficulty.Value];
+                var difficulties = _difficultySettings.difficulties[_gameState.GameDifficulty.Value];
             
-            _ufoMinFireDelay = difficulties.ufoMinFireDelay;
-            _ufoMaxFireDelay = difficulties.ufoMaxFireDelay;
+                _ufoMinFireDelay = difficulties.ufoMinFireDelay;
+                _ufoMaxFireDelay = difficulties.ufoMaxFireDelay;
             
-            _ufoOffsetConstant = difficulties.ufoOffsetConstant;
-            _ufoOffsetMin = difficulties.ufoOffsetMin;
-            _ufoOffsetMax = difficulties.ufoOffsetMax;
+                _ufoOffsetConstant = difficulties.ufoOffsetConstant;
+                _ufoOffsetMin = difficulties.ufoOffsetMin;
+                _ufoOffsetMax = difficulties.ufoOffsetMax;
             
-            CheckIfUfoIsDead();
+                CheckIfUfoIsDead();
 
-            DisposeIfGameNotRunning();
+                DisposeIfGameNotRunning();
+            }
         }
         
         private void DisposeIfGameNotRunning()

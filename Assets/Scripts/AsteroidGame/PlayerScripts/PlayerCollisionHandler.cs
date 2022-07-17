@@ -26,9 +26,12 @@ namespace AsteroidGame.PlayerScripts
         
         public void Initialize()
         {
-            HandleCollisionOnTriggerEnter();
+            if (_gameState.IsGameRunning.Value)
+            {
+                HandleCollisionOnTriggerEnter();
 
-            DisposeIfGameNotRunning();
+                DisposeIfGameNotRunning();
+            }
         }
         
         private void DisposeIfGameNotRunning()

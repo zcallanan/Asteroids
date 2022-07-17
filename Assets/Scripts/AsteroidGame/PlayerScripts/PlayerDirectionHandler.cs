@@ -10,18 +10,29 @@ namespace AsteroidGame.PlayerScripts
         private readonly Player _player;
         private readonly Settings _settings;
         private readonly InputState _inputState;
+        private readonly GameState _gameState;
 
         public PlayerDirectionHandler(
             Player player,
             Settings settings,
-            InputState inputState)
+            InputState inputState,
+            GameState gameState)
         {
             _player = player;
             _settings = settings;
             _inputState = inputState;
+            _gameState = gameState;
         }
 
         public void FixedTick()
+        {
+            if (_gameState.IsGameRunning.Value)
+            {
+                RotatePlayer();
+            }
+        }
+
+        private void RotatePlayer()
         {
             var horizontalInput = _player.PlayerType == ObjectTypes.Player
                 ? _inputState.HorizontalInput.Value

@@ -33,13 +33,16 @@ namespace AsteroidGame.PlayerScripts
         
         public void Initialize()
         {
-            _startColor = new Color(0, 1, 1, 1f);
+            if (_gameState.IsGameRunning.Value)
+            {
+                _startColor = new Color(0, 1, 1, 1f);
             
-            ExplodeOnTriggerEnter();
+                ExplodeOnTriggerEnter();
 
-            DelayThenDespawnExplosion();
+                DelayThenDespawnExplosion();
 
-            DisposeIfGameNotRunning();
+                DisposeIfGameNotRunning();
+            }
         }
         
         private void DisposeIfGameNotRunning()

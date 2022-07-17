@@ -28,9 +28,12 @@ namespace AsteroidGame.PlayerScripts
     
         public void Initialize()
         {
-            InitializeRespawnEffect();
+            if (_gameState.IsGameRunning.Value)
+            {
+                InitializeRespawnEffect();
 
-            DisposeIfGameNotRunning();
+                DisposeIfGameNotRunning();
+            }
         }
         
         private void DisposeIfGameNotRunning()

@@ -42,17 +42,20 @@ namespace AsteroidGame.AsteroidScripts
         
         public void Initialize()
         {
-            var gameDifficulty = _gameState.GameDifficulty;
-            _mediumPerLarge = _difficultySettings.difficulties[gameDifficulty.Value].mediumPerLarge;
-            _smallPerMedium = _difficultySettings.difficulties[gameDifficulty.Value].smallPerMedium;
+            if (_gameState.IsGameRunning.Value)
+            {
+                var gameDifficulty = _gameState.GameDifficulty;
+                _mediumPerLarge = _difficultySettings.difficulties[gameDifficulty.Value].mediumPerLarge;
+                _smallPerMedium = _difficultySettings.difficulties[gameDifficulty.Value].smallPerMedium;
 
-            _large = ObjectTypes.LargeAsteroid;
-            _medium = ObjectTypes.MediumAsteroid;
-            _small = ObjectTypes.SmallAsteroid;
+                _large = ObjectTypes.LargeAsteroid;
+                _medium = ObjectTypes.MediumAsteroid;
+                _small = ObjectTypes.SmallAsteroid;
 
-            HandleCollisionOnTriggerEnter();
+                HandleCollisionOnTriggerEnter();
 
-            DisposeIfGameNotRunning();
+                DisposeIfGameNotRunning();
+            }
         }
         
         private void DisposeIfGameNotRunning()
