@@ -39,12 +39,7 @@ namespace AsteroidGame.PlayerScripts
         {
             if (_gameState.IsGameRunning.Value)
             {
-                SetInitialSpawnPosition();
-            
-                _accelerationRate = _settings.playerMoveSpeedConstant / 2 / _settings.movementModifier;
-                _decelerationRate = _settings.playerMoveSpeedConstant / _settings.movementModifier;
-
-                WatchForPlayerDeathOrHyperspace();
+                CheckIfPlayersSpawned();
 
                 DisposeIfGameNotRunning();
             }
@@ -78,33 +73,29 @@ namespace AsteroidGame.PlayerScripts
                 .AddTo(_disposables);
         }
         
-        private void SetInitialSpawnPosition()
+        private void CheckIfPlayersSpawned()
         {
-            _gameState.GameMode
-                .Subscribe(gameMode =>
+            _gameState.ArePlayersSpawned
+                .Subscribe(playersSpawned =>
                 {
-                    if (gameMode == 0 && _player.PlayerType == ObjectTypes.Player)
+                    if (playersSpawned)
                     {
-                        _currentPosition = _settings.singlePlayerSpawnPos;
+                        InitializeMoveHandler();
                     }
-                    else if (gameMode != 0)
-                    {
-                        if (_player.PlayerType == ObjectTypes.Player)
-                        {
-                            _currentPosition = _settings.playerOneSpawnPos;
-                        }
-                        else if (_player.PlayerType == ObjectTypes.OtherPlayer)
-                        {
-                            _currentPosition = _settings.playerTwoSpawnPos;
-                        }
-                    }
-                    
-                    _player.PreviousPosition = _player.Transform.position;
-                    _facing = _player.Facing;
-            
-                    _player.Position = _currentPosition;
                 })
                 .AddTo(_disposables);
+        }
+
+        private void InitializeMoveHandler()
+        {
+            _currentPosition = _player.Position;
+            _player.PreviousPosition = _player.Transform.position;
+            _facing = _player.Facing;
+            
+            _accelerationRate = _settings.playerMoveSpeedConstant / 2 / _settings.movementModifier;
+            _decelerationRate = _settings.playerMoveSpeedConstant / _settings.movementModifier;
+
+            WatchForPlayerDeathOrHyperspace();
         }
 
         private void OnlyRegisterWhenPlayerInputsForwardMovement()
@@ -177,9 +168,6 @@ namespace AsteroidGame.PlayerScripts
         {
             public float playerMoveSpeedConstant;
             public int movementModifier;
-            public Vector3 singlePlayerSpawnPos;
-            public Vector3 playerOneSpawnPos;
-            public Vector3 playerTwoSpawnPos;
         }
     }
 }

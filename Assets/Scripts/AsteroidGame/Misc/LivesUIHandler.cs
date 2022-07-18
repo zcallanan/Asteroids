@@ -10,21 +10,18 @@ namespace AsteroidGame.Misc
 {
     public class LivesUIHandler : IInitializable
     {
-        private readonly PlayerFacade _playerFacade;
-        private readonly OtherPlayerFacade _otherPlayerFacade;
+        private readonly PlayerRegistry _playerRegistry;
         private readonly GameState _gameState;
         private readonly Settings _settings;
         
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
         public LivesUIHandler(
-            PlayerFacade playerFacade,
-            OtherPlayerFacade otherPlayerFacade,
+            PlayerRegistry playerRegistry,
             GameState gameState,
             Settings settings)
         {
-            _playerFacade = playerFacade;
-            _otherPlayerFacade = otherPlayerFacade;
+            _playerRegistry = playerRegistry;
             _gameState = gameState;
             _settings = settings;
         }
@@ -66,31 +63,26 @@ namespace AsteroidGame.Misc
 
         private void UpdateSprites()
         {
-            UpdateSpriteOnPlayerLivesChange();
-
-            if (_gameState.GameMode.Value != 0)
+            foreach (var playerFacade in _playerRegistry.playerFacades)
             {
-                UpdateSpriteOnOtherPlayerLivesChange();
+                UpdateSpriteOnLivesChange(playerFacade);
             }
         }
 
-        private void UpdateSpriteOnPlayerLivesChange()
+        private void UpdateSpriteOnLivesChange(PlayerFacade playerFacade)
         {
-            _playerFacade.CurrentLives
+            playerFacade.CurrentLives
                 .Subscribe(lives =>
                 {
-                    _gameState.PlayerLivesSprite.Value = SetSpriteValue(lives, _settings.playerLivesSprites);
-                })
-                .AddTo(_disposables);
-        }
-
-        private void UpdateSpriteOnOtherPlayerLivesChange()
-        {
-            _otherPlayerFacade.CurrentLives
-                .Subscribe(lives =>
-                {
-                    _gameState.OtherPlayerLivesSprite.Value =
-                        SetSpriteValue(lives, _settings.otherPlayerLivesSprites);
+                    if (playerFacade.PlayerType == ObjectTypes.Player)
+                    {
+                        _gameState.PlayerLivesSprite.Value = SetSpriteValue(lives, _settings.playerLivesSprites);
+                    } 
+                    else if (playerFacade.PlayerType == ObjectTypes.OtherPlayer)
+                    {
+                        _gameState.OtherPlayerLivesSprite.Value =
+                            SetSpriteValue(lives, _settings.otherPlayerLivesSprites);
+                    }
                 })
                 .AddTo(_disposables);
         }

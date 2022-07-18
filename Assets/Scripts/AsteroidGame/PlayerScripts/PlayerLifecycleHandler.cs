@@ -12,7 +12,7 @@ namespace AsteroidGame.PlayerScripts
         private readonly Player _player;
         private readonly PlayerData.Settings _playerData;
         private readonly GameState _gameState;
-        private readonly PlayerMoveHandler.Settings _playerMoveHandlerSettings;
+        private readonly PlayerSpawner.Settings _playerSpawnerSettings;
         
         private int _previousScore;
         private int _getALifeEveryTenK = 10000;
@@ -23,12 +23,12 @@ namespace AsteroidGame.PlayerScripts
             Player player,
             PlayerData.Settings playerData,
             GameState gameState,
-            PlayerMoveHandler.Settings playerMoveHandlerSettings)
+            PlayerSpawner.Settings playerSpawnerSettings)
         {
             _player = player;
             _playerData = playerData;
             _gameState = gameState;
-            _playerMoveHandlerSettings = playerMoveHandlerSettings;
+            _playerSpawnerSettings = playerSpawnerSettings;
         }
 
         public void Initialize()
@@ -52,6 +52,19 @@ namespace AsteroidGame.PlayerScripts
 
             DisablePlayerObjectOnDeath();
         }
+        
+        private void DisposeIfGameNotRunning()
+        {
+            _gameState.IsGameRunning
+                .Subscribe(isGameRunning =>
+                {
+                    if (!isGameRunning)
+                    {
+                        _disposables.Clear();
+                    }
+                })
+                .AddTo(_disposables);
+        }
 
         private void IncrementCurrentLivesEveryTenKScoreUnlessGameIsOver()
         {
@@ -66,19 +79,6 @@ namespace AsteroidGame.PlayerScripts
                 
                 _previousScore = currentScore;
             });
-        }
-
-        private void DisposeIfGameNotRunning()
-        {
-            _gameState.IsGameRunning
-                .Subscribe(isGameRunning =>
-                {
-                    if (!isGameRunning)
-                    {
-                        _disposables.Clear();
-                    }
-                })
-                .AddTo(_disposables);
         }
 
         private void DisablePlayerObjectOnDeath()
@@ -117,13 +117,13 @@ namespace AsteroidGame.PlayerScripts
         {
             if (_gameState.GameMode.Value == 0)
             {
-                _player.Position = _playerMoveHandlerSettings.singlePlayerSpawnPos;
+                _player.Position = _playerSpawnerSettings.singlePlayerSpawnPos;
             }
             else
             {
                 _player.Position = _player.PlayerType == ObjectTypes.Player
-                    ? _playerMoveHandlerSettings.playerOneSpawnPos
-                    : _playerMoveHandlerSettings.playerTwoSpawnPos;
+                    ? _playerSpawnerSettings.playerSpawnPos
+                    : _playerSpawnerSettings.otherPlayerSpawnPos;
             }
         }
     }

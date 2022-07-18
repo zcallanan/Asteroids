@@ -27,6 +27,8 @@ namespace ProjectScripts
 
         public ReactiveProperty<bool> IsUfoSpawning { get; set; }
         
+        public ReactiveProperty<bool> ArePlayersSpawned { get; set; }
+
         public ReactiveProperty<int> GameDifficulty { get; set; }
         public ReactiveProperty<int> GameMode { get; set; }
         

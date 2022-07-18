@@ -1,6 +1,7 @@
 using System;
 using AsteroidGame.AsteroidScripts;
 using AsteroidGame.Misc;
+using AsteroidGame.PlayerScripts;
 using AsteroidGame.UfoScripts;
 using AsteroidGame.UI;
 using ProjectScripts;
@@ -18,7 +19,10 @@ namespace AsteroidGame.Installers
         {
             Container.BindInterfacesAndSelfTo<AsteroidSpawner>().AsSingle();
             Container.BindInterfacesAndSelfTo<UfoSpawner>().AsSingle();
+            Container.BindInterfacesAndSelfTo<PlayerSpawner>().AsSingle();
             
+            Container.Bind<PlayerRegistry>().AsSingle();
+
             Container.BindInterfacesTo<UfoSpawnInit>().AsSingle();
 
             Container.BindInterfacesAndSelfTo<GameLevelHandler>().AsSingle();
@@ -71,6 +75,9 @@ namespace AsteroidGame.Installers
                     .WithInitialSize(20)
                     .FromComponentInNewPrefab(_settings.explosionPrefab)
                     .UnderTransformGroup("Explosions"));
+            
+            Container.BindFactory<ObjectTypes, PlayerFacade, PlayerFacade.Factory>().FromSubContainerResolve()
+                .ByNewPrefabInstaller<PlayerInstaller>(_settings.playerPrefab);
         }
     
         [Serializable]
@@ -81,6 +88,7 @@ namespace AsteroidGame.Installers
             public GameObject ufoPrefab;
             public GameObject explosionPrefab;
             public GameObject thrustPrefab;
+            public GameObject playerPrefab;
         }
     
         class BulletProjectilePool : MonoPoolableMemoryPool<float, float, ObjectTypes, IMemoryPool, BulletProjectile>

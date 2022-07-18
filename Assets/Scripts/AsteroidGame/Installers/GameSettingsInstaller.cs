@@ -13,6 +13,7 @@ namespace AsteroidGame.Installers
     {
         public AsteroidSpawner.Settings asteroidSpawner;
         public UfoSpawner.Settings ufoSpawner;
+        public PlayerSpawner.Settings playerSpawner;
         public GameInstaller.Settings gameInstaller;
         public GameSettings gameSettings;
         public PlayerSettings playerSettings;
@@ -64,6 +65,8 @@ namespace AsteroidGame.Installers
 
             Container.BindInstance(asteroidSpawner).IfNotBound();
             Container.BindInstance(asteroidSettings.asteroidData).IfNotBound();
+            
+            Container.BindInstance(playerSpawner).IfNotBound();
 
             Container.BindInstance(playerSettings.playerDirectionHandler).IfNotBound();
             Container.BindInstance(playerSettings.playerMoveHandler).IfNotBound();

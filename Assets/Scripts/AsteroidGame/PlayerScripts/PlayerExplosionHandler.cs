@@ -35,11 +35,7 @@ namespace AsteroidGame.PlayerScripts
         {
             if (_gameState.IsGameRunning.Value)
             {
-                _startColor = new Color(0, 1, 1, 1f);
-            
-                ExplodeOnTriggerEnter();
-
-                DelayThenDespawnExplosion();
+                CheckIfPlayersSpawned();
 
                 DisposeIfGameNotRunning();
             }
@@ -58,6 +54,28 @@ namespace AsteroidGame.PlayerScripts
                 .AddTo(_disposables);
         }
         
+        private void CheckIfPlayersSpawned()
+        {
+            _gameState.ArePlayersSpawned
+                .Subscribe(playersSpawned =>
+                {
+                    if (playersSpawned)
+                    {
+                        InitializePlayerExplosionHandler();
+                    }
+                })
+                .AddTo(_disposables);
+        }
+
+        private void InitializePlayerExplosionHandler()
+        {
+            _startColor = new Color(0, 1, 1, 1f);
+            
+            ExplodeOnTriggerEnter();
+
+            DelayThenDespawnExplosion();
+        }
+
         private void CreateExplosion()
         {
             if (IsExplodingFromFiredBullets())

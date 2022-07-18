@@ -8,23 +8,14 @@ namespace AsteroidGame.PlayerScripts
     public class Player
     {
         private readonly PlayerFacade _playerFacade;
-        private readonly OtherPlayerFacade _otherPlayerFacade;
         private readonly BoundHandler _boundHandler;
 
         public Player(
-            MeshRenderer meshRenderer,
-            MeshCollider meshCollider,
-            Transform transform,
             PlayerFacade playerFacade,
-            OtherPlayerFacade otherPlayerFacade,
             BoundHandler boundHandler,
             ObjectTypes playerType)
         {
-            MeshRenderer = meshRenderer;
-            MeshCollider = meshCollider;
-            Transform = transform;
             _playerFacade = playerFacade;
-            _otherPlayerFacade = otherPlayerFacade;
             _boundHandler = boundHandler;
             PlayerType = playerType;
         }
@@ -32,10 +23,12 @@ namespace AsteroidGame.PlayerScripts
         public ReactiveProperty<int> CurrentLives { get; set; }
         
         public ObjectTypes PlayerType { get; }
-        
-        public MeshCollider MeshCollider { get; }
 
-        public MeshRenderer MeshRenderer { get; }
+        public MeshCollider MeshCollider => _playerFacade.MeshCollider;
+
+        public MeshRenderer MeshRenderer => _playerFacade.MeshRenderer;
+
+        public Transform Transform => _playerFacade.Transform;
 
         public Vector3 Facing
         {
@@ -50,8 +43,6 @@ namespace AsteroidGame.PlayerScripts
         }
         
         public Vector3 PreviousPosition { get; set; }
-        
-        public Transform Transform { get; }
 
         public float AdjustedSpeed { get; set; }
 
@@ -63,15 +54,7 @@ namespace AsteroidGame.PlayerScripts
         
         public ReactiveProperty<bool> HyperspaceWasTriggered { get; set; }
 
-        public GameObject GameObj
-        {
-            get
-            {
-                var result = PlayerType == ObjectTypes.Player ? _playerFacade.gameObject : _otherPlayerFacade.gameObject;
-
-                return result;
-            }
-        }
+        public GameObject GameObj => _playerFacade.gameObject;
 
         public void SetRotation(Vector3 rot)
         {

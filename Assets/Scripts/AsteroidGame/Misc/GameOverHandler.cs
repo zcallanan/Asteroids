@@ -9,8 +9,7 @@ namespace AsteroidGame.Misc
     public class GameOverHandler : IInitializable
     {
         private readonly GameState _gameState;
-        private readonly PlayerFacade _playerFacade;
-        private readonly OtherPlayerFacade _otherPlayerFacade;
+        private readonly PlayerRegistry _playerRegistry;
         private readonly Settings _settings;
 
         private bool _isPlayerOutOfLives;
@@ -20,13 +19,11 @@ namespace AsteroidGame.Misc
 
         public GameOverHandler(
             GameState gameState,
-            PlayerFacade playerFacade,
-            OtherPlayerFacade otherPlayerFacade,
+            PlayerRegistry playerRegistry,
             Settings settings)
         {
             _gameState = gameState;
-            _playerFacade = playerFacade;
-            _otherPlayerFacade = otherPlayerFacade;
+            _playerRegistry = playerRegistry;
             _settings = settings;
         }
         
@@ -57,22 +54,15 @@ namespace AsteroidGame.Misc
         
         private void CheckIfPlayersAreOutOfLives()
         {
-            _gameState.GameMode
-                .Subscribe(gameMode =>
-                {
-                    CheckPlayerLives();
-
-                    if (gameMode != 0 )
-                    {
-                        CheckOtherPlayerLives();
-                    }
-                })
-                .AddTo(_disposables);
+            foreach (var playerFacade in _playerRegistry.playerFacades)
+            {
+                CheckPlayerLives(playerFacade);
+            }
         }
 
-        private void CheckPlayerLives()
+        private void CheckPlayerLives(PlayerFacade playerFacade)
         {
-            _playerFacade.CurrentLives
+            playerFacade.CurrentLives
                 .Subscribe(lives =>
                 {
                     if (lives < 0)
@@ -83,23 +73,17 @@ namespace AsteroidGame.Misc
                         }
                         else
                         {
-                            _isPlayerOutOfLives = true;
+                            if (playerFacade.PlayerType == ObjectTypes.Player)
+                            {
+                                _isPlayerOutOfLives = true;
+                            }
+                            else if (playerFacade.PlayerType == ObjectTypes.OtherPlayer)
+                            {
+                                _isOtherPlayerOutOfLives = true;
+                            }
+                            
                             SetGameOverIfBothPlayersAreOutOfLives();
                         }
-                    }
-                })
-                .AddTo(_disposables);
-        }
-        
-        private void CheckOtherPlayerLives()
-        {
-            _otherPlayerFacade.CurrentLives
-                .Subscribe(lives =>
-                {
-                    if (lives < 0)
-                    {
-                        _isOtherPlayerOutOfLives = true;
-                        SetGameOverIfBothPlayersAreOutOfLives();
                     }
                 })
                 .AddTo(_disposables);

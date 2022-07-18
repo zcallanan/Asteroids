@@ -29,12 +29,17 @@ MonoBehaviour:
   ufoSpawner:
     largeScale: 0.045
     smallScale: 0.036
+  playerSpawner:
+    singlePlayerSpawnPos: {x: 0, y: 1, z: 0}
+    playerSpawnPos: {x: -2.25, y: 1, z: 0}
+    otherPlayerSpawnPos: {x: 2.25, y: 1, z: 0}
   gameInstaller:
     asteroidPrefab: {fileID: 2942051580892192243, guid: d57d6419728ca4fa486055a9b54eb326, type: 3}
     bulletProjectilePrefab: {fileID: 9033534424328100445, guid: 5d46797b9a6dc420fbf9761f62531082, type: 3}
     ufoPrefab: {fileID: 1449967967273523445, guid: 311599e2534effb4fbb4eead92e22bcd, type: 3}
     explosionPrefab: {fileID: 8917179331539235180, guid: 827056dd9127245689b1f891afcd3e85, type: 3}
     thrustPrefab: {fileID: 1002203793942768099, guid: 420a1a66197ab4ab7bd3ebaaae424e8a, type: 3}
+    playerPrefab: {fileID: 9044568935916217178, guid: 06b1719f3e8a809468cb747aac74807f, type: 3}
   gameSettings:
     gameLevelHandler:
       levelStartDelay: 1
@@ -145,9 +150,6 @@ MonoBehaviour:
     playerMoveHandler:
       playerMoveSpeedConstant: 10
       movementModifier: 120
-      singlePlayerSpawnPos: {x: 0, y: 1, z: 0}
-      playerOneSpawnPos: {x: -2.25, y: 1, z: 0}
-      playerTwoSpawnPos: {x: 2.25, y: 1, z: 0}
     playerData:
       respawnDelay: 2
     playerRespawnEffect:

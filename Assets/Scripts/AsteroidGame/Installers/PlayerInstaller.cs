@@ -1,25 +1,18 @@
-using System;
 using AsteroidGame.PlayerScripts;
 using ProjectScripts;
-using UnityEngine;
 using Zenject;
 
 namespace AsteroidGame.Installers
 {
-    public class PlayerInstaller : MonoInstaller
+    public class PlayerInstaller : Installer<PlayerInstaller>
     {
-        [SerializeField] private ObjectTypes playerType;
-        [SerializeField] private Settings settings;
+        [Inject] 
+        private ObjectTypes _playerType;
 
         public override void InstallBindings()
         {
-            Container.BindInterfacesAndSelfTo<Player>().AsSingle()
-            .WithArguments(
-                settings.meshRenderer,
-                settings.meshCollider,
-                settings.transform).NonLazy(); 
-            
-            Container.BindInstance(playerType).WhenInjectedInto<Player>();
+            Container.BindInterfacesAndSelfTo<Player>().AsSingle();
+            Container.BindInstance(_playerType).WhenInjectedInto<Player>();
 
             Container.BindInterfacesTo<PlayerHyperspaceHandler>().AsSingle();
             Container.BindInterfacesTo<PlayerDirectionHandler>().AsSingle();
@@ -28,19 +21,10 @@ namespace AsteroidGame.Installers
             
             Container.BindInterfacesTo<PlayerExplosionHandler>().AsSingle();
             Container.BindInterfacesTo<PlayerThrustHandler>().AsSingle();
-            Container.BindInterfacesTo<OtherPlayerHandler>().AsSingle();
             
             Container.BindInterfacesAndSelfTo<PlayerMoveHandler>().AsSingle();
             Container.BindInterfacesAndSelfTo<PlayerLifecycleHandler>().AsSingle();
             Container.BindInterfacesAndSelfTo<PlayerCollisionHandler>().AsSingle();
-        }
-
-        [Serializable]
-        public class Settings
-        {
-            public MeshRenderer meshRenderer;
-            public MeshCollider meshCollider;
-            public Transform transform;
         }
     }
 }

@@ -11,7 +11,7 @@ namespace AsteroidGame.PlayerScripts
         private Player _player;
         private PlayerLifecycleHandler _playerLifecycleHandler;
         private GameState _gameState;
-        
+
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
         [Inject]
@@ -24,13 +24,29 @@ namespace AsteroidGame.PlayerScripts
             _playerLifecycleHandler = playerLifecycleHandler;
             _gameState = gameState;
         }
-        
-        public Vector3 Position => _player.Position;
-        
-        public bool CanCollide => _player.CanCollide;
-        
-        public ReactiveProperty<int> CurrentLives { get; set; }
 
+        public Vector3 Position
+        {
+            get => _player.Position;
+            set => _player.Position = value;
+        }
+
+        public MeshCollider MeshCollider { get; set; }
+
+        public MeshRenderer MeshRenderer { get; set; }
+
+        public Transform Transform { get; set; }
+        
+        public ReactiveProperty<int> CurrentLives { get; private set; }
+
+        public ObjectTypes PlayerType => _player.PlayerType;
+        
+        public bool IsDead => _player.IsDead;
+
+        public bool HyperspaceWasTriggered => _player.HyperspaceWasTriggered.Value;
+        
+        private bool CanCollide => _player.CanCollide;
+        
         private void Awake()
         {
             _player.HyperspaceWasTriggered = new ReactiveProperty<bool>(false);
@@ -52,9 +68,9 @@ namespace AsteroidGame.PlayerScripts
         {
             if (_player.CanCollide)
             {
-                if (other.GetComponent<OtherPlayerFacade>())
+                if (other.GetComponent<PlayerFacade>())
                 {
-                    var otherPlayerFacade = other.GetComponent<OtherPlayerFacade>();
+                    var otherPlayerFacade = other.GetComponent<PlayerFacade>();
                     
                     if (otherPlayerFacade.CanCollide)
                     {
@@ -65,7 +81,9 @@ namespace AsteroidGame.PlayerScripts
                 {
                     var colliderObjectType = other.GetComponent<BulletProjectile>().OriginType;
                 
-                    if (colliderObjectType != ObjectTypes.Player)
+                    if (colliderObjectType != (_player.PlayerType == ObjectTypes.Player
+                            ? ObjectTypes.Player
+                            : ObjectTypes.OtherPlayer))
                     {
                         _playerLifecycleHandler.PlayerDeathEvents();
                     }
@@ -88,6 +106,10 @@ namespace AsteroidGame.PlayerScripts
                     }
                 })
                 .AddTo(_disposables);
+        }
+        
+        public class Factory : PlaceholderFactory<ObjectTypes, PlayerFacade>
+        {
         }
     }
 }

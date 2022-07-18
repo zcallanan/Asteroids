@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using AsteroidGame.Misc;
 using AsteroidGame.PlayerScripts;
 using ProjectScripts;
@@ -16,7 +17,7 @@ namespace AsteroidGame.UfoScripts
         private readonly Settings _settings;
         private readonly Difficulty.Settings _difficultySettings;
         private readonly GameState _gameState;
-        private readonly PlayerFacade _playerFacade;
+        private readonly PlayerRegistry _playerRegistry;
         
         private BulletProjectile _bulletProjectile;
         
@@ -39,14 +40,14 @@ namespace AsteroidGame.UfoScripts
             Settings settings,
             Difficulty.Settings difficultySettings,
             GameState gameState,
-            PlayerFacade playerFacade)
+            PlayerRegistry playerRegistry)
         {
             _ufo = ufo;
             _bulletProjectileFactory = bulletProjectileFactory;
             _settings = settings;
             _difficultySettings = difficultySettings;
             _gameState = gameState;
-            _playerFacade = playerFacade;
+            _playerRegistry = playerRegistry;
         }
         
         public void Initialize()
@@ -116,13 +117,32 @@ namespace AsteroidGame.UfoScripts
 
         private Vector3 DetermineUfoProjectileFacing()
         {
-            var xTarget = _playerFacade.Position.x + _ufoOffsetConstant + Random.Range(_ufoOffsetMin, _ufoOffsetMax);
-            var zTarget =_playerFacade.Position.z + _ufoOffsetConstant + Random.Range(_ufoOffsetMin, _ufoOffsetMax);
+            Vector3 result = new Vector3(Random.Range(-2.5f, 2.5f),1, Random.Range(-2.5f, 2.5f));
             
-            xTarget = Random.Range(0, 1f) > .51 ? xTarget : -xTarget;
-            zTarget = Random.Range(0, 1f) > .51 ? zTarget : -zTarget;
+            var targetList = new List<PlayerFacade>();
+            
+            foreach (var playerFacade in _playerRegistry.playerFacades)
+            {
+                if (!playerFacade.IsDead && !playerFacade.HyperspaceWasTriggered)
+                {
+                    targetList.Add(playerFacade);
+                }
+            }
 
-            return new Vector3(xTarget, 1, zTarget);
+            if (targetList.Count > 0)
+            {
+                var target = targetList[Random.Range(0, targetList.Count)];
+                
+                var xTarget = target.Position.x + _ufoOffsetConstant + Random.Range(_ufoOffsetMin, _ufoOffsetMax);
+                var zTarget = target.Position.z + _ufoOffsetConstant + Random.Range(_ufoOffsetMin, _ufoOffsetMax);
+            
+                xTarget = Random.Range(0, 1f) > .51 ? xTarget : -xTarget;
+                zTarget = Random.Range(0, 1f) > .51 ? zTarget : -zTarget;
+
+                result = new Vector3(xTarget, 1, zTarget);
+            }
+
+            return result;
         }
         
         private void CheckIfUfoIsDead()
