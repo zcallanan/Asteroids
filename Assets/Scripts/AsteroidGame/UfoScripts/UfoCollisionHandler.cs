@@ -1,4 +1,5 @@
 using AsteroidGame.Misc;
+using AsteroidGame.PlayerScripts;
 using ProjectScripts;
 using UniRx;
 using UniRx.Triggers;
@@ -61,12 +62,12 @@ namespace AsteroidGame.UfoScripts
                     {
                         return;
                     }
-                    
-                    _scoreHandler.UpdateScore(_ufo.Size);
+
+                    _scoreHandler.UpdateScore(_ufo.Size, _collider);
                 })
                 .AddTo(_disposables);
         }
-        
+
         private bool IsCollidingWithFiredBullets()
         {
             if (_collider.GetComponent<BulletProjectile>())

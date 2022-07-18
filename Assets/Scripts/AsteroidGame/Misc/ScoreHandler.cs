@@ -1,6 +1,10 @@
 using System;
+using System.Collections.Generic;
+using AsteroidGame.AsteroidScripts;
 using AsteroidGame.PlayerScripts;
+using AsteroidGame.UfoScripts;
 using ProjectScripts;
+using UnityEngine;
 
 namespace AsteroidGame.Misc
 {
@@ -20,11 +24,39 @@ namespace AsteroidGame.Misc
             _playerRegistry = playerRegistry;
         }
 
-        public void UpdateScore(ObjectTypes scoreTypes)
+        public void UpdateScore(ObjectTypes whatDied, Collider collider)
         {
+            var scoreRecipients = new List<ObjectTypes>();
+            
+            if (collider.GetComponent<BulletProjectile>())
+            {
+                var component = collider.GetComponent<BulletProjectile>();
+                
+                if (component.OriginType != ObjectTypes.SmallUfo || component.OriginType != ObjectTypes.LargeUfo)
+                {
+                    scoreRecipients.Add(component.OriginType);
+                }
+            }
+            else if (collider.GetComponent<PlayerFacade>())
+            {
+                scoreRecipients.Add(collider.GetComponent<PlayerFacade>().PlayerType);
+            }
+            else if (collider.GetComponent<Ufo>() || collider.GetComponent<Asteroid>())
+            {
+                scoreRecipients.Add(ObjectTypes.Player);
+                
+                if (_gameState.GameMode.Value != 0)
+                {
+                    scoreRecipients.Add(ObjectTypes.OtherPlayer);
+                }
+            }
+            
             foreach (var playerFacade in _playerRegistry.playerFacades)
             {
-                AddObjectValueToScore(scoreTypes, playerFacade);
+                if (scoreRecipients.Contains(playerFacade.PlayerType))
+                {
+                    AddObjectValueToScore(whatDied, playerFacade);
+                }
             }
         }
 
@@ -49,6 +81,9 @@ namespace AsteroidGame.Misc
                     break;
                 case ObjectTypes.OtherPlayer:
                     playerFacade.Score.Value += _settings.otherPlayerVal;
+                    break;
+                case ObjectTypes.Player:
+                    playerFacade.Score.Value += _settings.playerVal;
                     break;
                 default:
                     playerFacade.Score.Value += 0;
@@ -79,6 +114,7 @@ namespace AsteroidGame.Misc
             public int smallUfoVal;
             public int largeUfoVal;
             public int otherPlayerVal;
+            public int playerVal;
         }
     }
 }

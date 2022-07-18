@@ -1,7 +1,10 @@
 using AsteroidGame.Misc;
+using AsteroidGame.PlayerScripts;
+using AsteroidGame.UfoScripts;
 using ProjectScripts;
 using UniRx;
 using UniRx.Triggers;
+using UnityEngine;
 using Zenject;
 
 namespace AsteroidGame.AsteroidScripts
@@ -71,7 +74,7 @@ namespace AsteroidGame.AsteroidScripts
                 .AddTo(_disposables);
         }
 
-        private void HandleCollision()
+        private void HandleCollision(Collider collider)
         {
             if (_asteroid.Size == _small)
             {
@@ -92,14 +95,14 @@ namespace AsteroidGame.AsteroidScripts
                 }
             }
             
-            _scoreHandler.UpdateScore(_asteroid.Size);
+            _scoreHandler.UpdateScore(_asteroid.Size, collider);
         }
-        
+
         private void HandleCollisionOnTriggerEnter()
         {
             _asteroid
                 .OnTriggerEnterAsObservable()
-                .Subscribe(_ => HandleCollision())
+                .Subscribe(HandleCollision)
                 .AddTo(_disposables);
         }
     }

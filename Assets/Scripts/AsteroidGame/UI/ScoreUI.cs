@@ -26,11 +26,16 @@ namespace AsteroidGame.UI
         
         private void Start()
         {
-            CheckIfScoreTextChanges();
+            if (_gameState.IsGameRunning.Value)
+            {
+                HideOtherPlayerScoreIfSinglePlayerMode();
+                
+                CheckIfScoreTextChanges();
 
-            DisposeIfGameNotRunning();
+                DisposeIfGameNotRunning();
+            }
         }
-        
+
         private void DisposeIfGameNotRunning()
         {
             _gameState.IsGameRunning
@@ -42,6 +47,14 @@ namespace AsteroidGame.UI
                     }
                 })
                 .AddTo(_disposables);
+        }
+        
+        private void HideOtherPlayerScoreIfSinglePlayerMode()
+        {
+            if (_gameState.GameMode.Value == 0 && playerType == ObjectTypes.OtherPlayer)
+            {
+                scoreText.enabled = false;
+            }
         }
 
         private void CheckIfScoreTextChanges()

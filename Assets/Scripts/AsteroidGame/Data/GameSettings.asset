@@ -50,6 +50,7 @@ MonoBehaviour:
       smallUfoVal: 1000
       largeUfoVal: 200
       otherPlayerVal: 500
+      playerVal: 500
     difficulty:
       difficulties:
       - smallPerMedium: 2

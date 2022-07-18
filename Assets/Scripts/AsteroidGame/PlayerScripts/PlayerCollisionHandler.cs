@@ -11,6 +11,7 @@ namespace AsteroidGame.PlayerScripts
     {
         private readonly Player _player;
         private readonly GameState _gameState;
+        private readonly ScoreHandler _scoreHandler;
 
         private Collider _collider;
         
@@ -18,10 +19,12 @@ namespace AsteroidGame.PlayerScripts
 
         public PlayerCollisionHandler(
             Player player,
-            GameState gameState)
+            GameState gameState,
+            ScoreHandler scoreHandler)
         {
             _player = player;
             _gameState = gameState;
+            _scoreHandler = scoreHandler;
         }
         
         public void Initialize()
@@ -56,6 +59,11 @@ namespace AsteroidGame.PlayerScripts
                     _collider = collider;
                         
                     SetupPlayerDeathState();
+
+                    if (collider.GetComponent<PlayerFacade>())
+                    {
+                        _scoreHandler.UpdateScore(_player.PlayerType, collider);
+                    }
                 })
                 .AddTo(_disposables);
         }
