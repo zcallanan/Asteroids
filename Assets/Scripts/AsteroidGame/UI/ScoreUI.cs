@@ -8,10 +8,14 @@ namespace AsteroidGame.UI
 {
     public class ScoreUI : MonoBehaviour
     {
+        [SerializeField] private ObjectTypes playerType;
+
         [SerializeField] private Text scoreText;
 
         private GameState _gameState;
-        
+
+        private ReactiveProperty<string> _scoreSource;
+
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
         [Inject]
@@ -22,9 +26,7 @@ namespace AsteroidGame.UI
         
         private void Start()
         {
-            scoreText.text = _gameState.Score.Value.ToString();
-            
-            CheckIfScoreChanges();
+            CheckIfScoreTextChanges();
 
             DisposeIfGameNotRunning();
         }
@@ -42,16 +44,15 @@ namespace AsteroidGame.UI
                 .AddTo(_disposables);
         }
 
-        private void CheckIfScoreChanges()
+        private void CheckIfScoreTextChanges()
         {
-            _gameState.Score
-                .Subscribe(HandleScoreUpdate)
+            _scoreSource = playerType == ObjectTypes.Player
+                ? _gameState.PlayerScoreText
+                : _gameState.OtherPlayerScoreText;
+            
+            _scoreSource
+                .Subscribe(scoreValueText => scoreText.text = scoreValueText)
                 .AddTo(_disposables);
-        }
-
-        private void HandleScoreUpdate(int score)
-        {
-            scoreText.text = score.ToString();
         }
     }
 }

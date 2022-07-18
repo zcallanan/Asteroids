@@ -1,6 +1,7 @@
 using System.Collections.Generic;
+using AsteroidGame.PlayerScripts;
 
-namespace AsteroidGame.PlayerScripts
+namespace AsteroidGame.Misc
 {
     public class PlayerRegistry
     {

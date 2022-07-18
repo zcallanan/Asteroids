@@ -117,12 +117,9 @@ namespace AsteroidGame.PlayerScripts
                 .OnTriggerEnterAsObservable()
                 .Subscribe(collider =>
                 {
-                    if (_player.CanCollide)
-                    {
-                        _collider = collider;
+                    _collider = collider;
                     
-                        CreateExplosion();
-                    }
+                    CreateExplosion();
                 })
                 .AddTo(_disposables);
         }

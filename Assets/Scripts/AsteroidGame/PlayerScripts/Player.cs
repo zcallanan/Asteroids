@@ -22,6 +22,12 @@ namespace AsteroidGame.PlayerScripts
         
         public ReactiveProperty<int> CurrentLives { get; set; }
         
+        public ReactiveProperty<int> Score { get; set; }
+        
+        public ReactiveProperty<bool> JustRespawned { get; set; }
+        
+        public ReactiveProperty<bool> HyperspaceWasTriggered { get; set; }
+        
         public ObjectTypes PlayerType { get; }
 
         public MeshCollider MeshCollider => _playerFacade.MeshCollider;
@@ -48,12 +54,6 @@ namespace AsteroidGame.PlayerScripts
 
         public bool IsDead { get; set; }
         
-        public bool CanCollide { get; set; }
-
-        public ReactiveProperty<bool> JustRespawned { get; set; }
-        
-        public ReactiveProperty<bool> HyperspaceWasTriggered { get; set; }
-
         public GameObject GameObj => _playerFacade.gameObject;
 
         public void SetRotation(Vector3 rot)

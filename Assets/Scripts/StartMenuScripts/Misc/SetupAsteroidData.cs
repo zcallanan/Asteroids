@@ -44,7 +44,8 @@ namespace StartMenuScripts.Misc
                     if (isGameReset)
                     {
                         _gameState.CurrentLevel.Value = 0;
-                        _gameState.Score.Value = 0;
+                        _gameState.PlayerScoreText.Value = "0";
+                        _gameState.OtherPlayerScoreText.Value = "0";
                         
                         _gameState.IsFiringEnabled.Value = false;
                         _gameState.IsGameReset.Value = false;

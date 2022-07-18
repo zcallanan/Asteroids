@@ -17,8 +17,7 @@ namespace ProjectScripts
     public class GameState
     {
         public ReactiveProperty<int> CurrentLevel { get; set; }
-        public ReactiveProperty<int> Score { get; set; }
-        
+
         public ReactiveProperty<bool> IsFiringEnabled { get; set; }
         public ReactiveProperty<bool> IsGameRunning { get; set; }
         public ReactiveProperty<bool> IsGameReset { get; set; }
@@ -35,5 +34,9 @@ namespace ProjectScripts
         public ReactiveProperty<Sprite> PlayerLivesSprite { get; set; }
         
         public ReactiveProperty<Sprite> OtherPlayerLivesSprite { get; set; }
+        
+        public ReactiveProperty<string> PlayerScoreText { get; set; }
+        
+        public ReactiveProperty<string> OtherPlayerScoreText { get; set; }
     }
 }

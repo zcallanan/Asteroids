@@ -35,7 +35,7 @@ namespace AsteroidGame.PlayerScripts
         {
             if (_gameState.IsGameRunning.Value)
             {
-                IncrementCurrentLivesEveryTenKScoreUnlessGameIsOver();
+                CheckIfPlayersSpawned();
 
                 DisposeIfGameNotRunning();
             }
@@ -65,10 +65,28 @@ namespace AsteroidGame.PlayerScripts
                 })
                 .AddTo(_disposables);
         }
+        
+        private void CheckIfPlayersSpawned()
+        {
+            _gameState.ArePlayersSpawned
+                .Subscribe(playersSpawned =>
+                {
+                    if (playersSpawned)
+                    {
+                        InitializePlayerLifecycleHandler();
+                    }
+                })
+                .AddTo(_disposables);
+        }
+
+        private void InitializePlayerLifecycleHandler()
+        {
+            IncrementCurrentLivesEveryTenKScoreUnlessGameIsOver();
+        }
 
         private void IncrementCurrentLivesEveryTenKScoreUnlessGameIsOver()
         {
-            _gameState.Score.Subscribe(currentScore =>
+            _player.Score.Subscribe(currentScore =>
             {
                 if (_previousScore < _getALifeEveryTenK && currentScore >= _getALifeEveryTenK && !_gameState.IsGameOver.Value)
                 {  

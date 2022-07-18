@@ -1,4 +1,5 @@
 using System;
+using AsteroidGame.PlayerScripts;
 using ProjectScripts;
 
 namespace AsteroidGame.Misc
@@ -7,43 +8,68 @@ namespace AsteroidGame.Misc
     {
         private readonly Settings _settings;
         private readonly GameState _gameState;
+        private readonly PlayerRegistry _playerRegistry;
 
         public ScoreHandler(
             Settings settings,
-            GameState gameState)
+            GameState gameState,
+            PlayerRegistry playerRegistry)
         {
             _settings = settings;
             _gameState = gameState;
+            _playerRegistry = playerRegistry;
         }
 
         public void UpdateScore(ObjectTypes scoreTypes)
         {
+            foreach (var playerFacade in _playerRegistry.playerFacades)
+            {
+                AddObjectValueToScore(scoreTypes, playerFacade);
+            }
+        }
+
+        private void AddObjectValueToScore(ObjectTypes scoreTypes, PlayerFacade playerFacade)
+        {
             switch (scoreTypes)
             {
                 case ObjectTypes.SmallAsteroid:
-                    _gameState.Score.Value += _settings.smallAstVal;
+                    playerFacade.Score.Value += _settings.smallAstVal;
                     break;
                 case ObjectTypes.MediumAsteroid:
-                    _gameState.Score.Value += _settings.mediumAstVal;
+                    playerFacade.Score.Value += _settings.mediumAstVal;
                     break;
                 case ObjectTypes.LargeAsteroid:
-                    _gameState.Score.Value += _settings.largeAstVal;
+                    playerFacade.Score.Value += _settings.largeAstVal;
                     break;
                 case ObjectTypes.SmallUfo:
-                    _gameState.Score.Value += _settings.smallUfoVal;
+                    playerFacade.Score.Value += _settings.smallUfoVal;
                     break;
                 case ObjectTypes.LargeUfo:
-                    _gameState.Score.Value += _settings.largeUfoVal;
+                    playerFacade.Score.Value += _settings.largeUfoVal;
                     break;
                 case ObjectTypes.OtherPlayer:
-                    _gameState.Score.Value += _settings.otherPlayerVal;
+                    playerFacade.Score.Value += _settings.otherPlayerVal;
                     break;
                 default:
-                    _gameState.Score.Value += 0;
+                    playerFacade.Score.Value += 0;
                     break;
             }
+
+            SetScoreStringValues(playerFacade);
         }
-        
+
+        private void SetScoreStringValues(PlayerFacade playerFacade)
+        {
+            if (playerFacade.PlayerType == ObjectTypes.Player)
+            {
+                _gameState.PlayerScoreText.Value = playerFacade.Score.Value.ToString();
+            }
+            else if (playerFacade.PlayerType == ObjectTypes.OtherPlayer)
+            {
+                _gameState.OtherPlayerScoreText.Value = playerFacade.Score.Value.ToString();
+            }
+        }
+
         [Serializable]
         public class Settings
         {
