@@ -32,13 +32,16 @@ namespace AsteroidGame.UfoScripts
 
         public void Initialize()
         {
-            _startColor = new Color(0, 0.674f, 1f, 1f);
+            if (_gameState.IsGameRunning.Value)
+            {
+                _startColor = new Color(0, 0.674f, 1f, 1f);
             
-            ExplodeOnTriggerEnter();
+                ExplodeOnTriggerEnter();
 
-            DelayThenDespawnExplosion();
+                DelayThenDespawnExplosion();
 
-            DisposeIfGameNotRunning();
+                DisposeIfGameNotRunning();
+            }
         }
         
         private void DisposeIfGameNotRunning()

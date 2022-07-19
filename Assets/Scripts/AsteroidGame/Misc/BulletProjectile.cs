@@ -52,11 +52,17 @@ namespace AsteroidGame.Misc
                 return;
             }
             
-            if (other.GetComponent<PlayerFacade>() != null && OriginType == ObjectTypes.Player )
+            if (other.GetComponent<PlayerFacade>() != null)
             {
-                return;
+                if ((other.GetComponent<PlayerFacade>().PlayerType == ObjectTypes.Player &&
+                    OriginType == ObjectTypes.Player) ||
+                    (other.GetComponent<PlayerFacade>().PlayerType == ObjectTypes.OtherPlayer &&
+                     OriginType == ObjectTypes.OtherPlayer))
+                {
+                    return;
+                }
             }
-            
+
             _spawnTimer.Dispose();
         
             Dispose();

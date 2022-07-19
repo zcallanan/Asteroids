@@ -29,22 +29,28 @@ MonoBehaviour:
   ufoSpawner:
     largeScale: 0.045
     smallScale: 0.036
+  playerSpawner:
+    singlePlayerSpawnPos: {x: 0, y: 1, z: 0}
+    playerSpawnPos: {x: -2.25, y: 1, z: 0}
+    otherPlayerSpawnPos: {x: 2.25, y: 1, z: 0}
   gameInstaller:
     asteroidPrefab: {fileID: 2942051580892192243, guid: d57d6419728ca4fa486055a9b54eb326, type: 3}
     bulletProjectilePrefab: {fileID: 9033534424328100445, guid: 5d46797b9a6dc420fbf9761f62531082, type: 3}
     ufoPrefab: {fileID: 1449967967273523445, guid: 311599e2534effb4fbb4eead92e22bcd, type: 3}
     explosionPrefab: {fileID: 8917179331539235180, guid: 827056dd9127245689b1f891afcd3e85, type: 3}
     thrustPrefab: {fileID: 1002203793942768099, guid: 420a1a66197ab4ab7bd3ebaaae424e8a, type: 3}
+    playerPrefab: {fileID: 9044568935916217178, guid: 06b1719f3e8a809468cb747aac74807f, type: 3}
   gameSettings:
     gameLevelHandler:
       levelStartDelay: 1
     scoreHandler:
       smallAstVal: 100
-      mediumAstVal: 50
+      mediumAstVal: 5000
       largeAstVal: 10
       smallUfoVal: 1000
       largeUfoVal: 200
       otherPlayerVal: 500
+      playerVal: 500
     difficulty:
       difficulties:
       - smallPerMedium: 2
@@ -111,6 +117,33 @@ MonoBehaviour:
         ufoOffsetConstant: 0.4
         ufoOffsetMin: 0.3
         ufoOffsetMax: 0.8
+    gameOverHandler:
+      delayBeforeGameReset: 7
+    livesUIHandler:
+      playerLivesSprites:
+      - {fileID: 21300000, guid: 23ca220c983944b7a8a9cf40b3a9860d, type: 3}
+      - {fileID: 21300000, guid: 8d54bcdaad85740a0a90d2f18525c170, type: 3}
+      - {fileID: 21300000, guid: 796475e0d99794e32b5c9f5f83c7235c, type: 3}
+      - {fileID: 21300000, guid: 178b4fa992721413b9be44b95514ef96, type: 3}
+      - {fileID: 21300000, guid: ce3b039174fc6436996612972012e648, type: 3}
+      - {fileID: 21300000, guid: d0aacde70d7d944b8ae22f92639be15a, type: 3}
+      - {fileID: 21300000, guid: 6d35d6ecaaec54ceab1d407c618daa00, type: 3}
+      - {fileID: 21300000, guid: d7f9c5223a164401b9123bdbd3771509, type: 3}
+      - {fileID: 21300000, guid: fe2b631f862f24ae0b11651218095308, type: 3}
+      - {fileID: 21300000, guid: 24493e65bcc1d430b9dd1106b6883758, type: 3}
+      - {fileID: 21300000, guid: 449d883d843154c0bb7750e601c5b5f2, type: 3}
+      otherPlayerLivesSprites:
+      - {fileID: 21300000, guid: 145e910dfeda34c58854c3520a55f285, type: 3}
+      - {fileID: 21300000, guid: b5ac841ca40444843bf7a61a4eaaade2, type: 3}
+      - {fileID: 21300000, guid: de0cd1aa225eb4310922b1125ae4e21d, type: 3}
+      - {fileID: 21300000, guid: 385c50f1fcd1043f9a46eab445900b22, type: 3}
+      - {fileID: 21300000, guid: 650874cded06e44f8b84c07ba8f91904, type: 3}
+      - {fileID: 21300000, guid: d91b6b290c47e4f0f9c849aabd44a110, type: 3}
+      - {fileID: 21300000, guid: ae3d16b4084a14fbfa954041be5fbe97, type: 3}
+      - {fileID: 21300000, guid: f693137308fb7404b9a099ed73efced6, type: 3}
+      - {fileID: 21300000, guid: 19349f1e6fda1497884d3ce3fdd4b42c, type: 3}
+      - {fileID: 21300000, guid: 2970127cb6afb4b5a9ac838ea5921aa0, type: 3}
+      - {fileID: 21300000, guid: fdaf6461a10664bbdacd6fd285f8a997, type: 3}
   playerSettings:
     playerDirectionHandler:
       rotationAngle: {x: 0, y: 100, z: 0}

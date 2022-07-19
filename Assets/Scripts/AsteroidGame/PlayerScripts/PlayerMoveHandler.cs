@@ -20,7 +20,7 @@ namespace AsteroidGame.PlayerScripts
         private float _decelerationRate;
         
         private float _forwardInputValue;
-        
+
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
         public PlayerMoveHandler(
@@ -37,18 +37,12 @@ namespace AsteroidGame.PlayerScripts
         
         public void Initialize()
         {
-            _currentPosition = new Vector3(0, 1f, 0);
-            _player.PreviousPosition = _player.Transform.position;
-            _facing = _player.Facing;
-            
-            _player.Position = _currentPosition;
-            
-            _accelerationRate = _settings.playerMoveSpeedConstant / 2 / _settings.movementModifier;
-            _decelerationRate = _settings.playerMoveSpeedConstant / _settings.movementModifier;
+            if (_gameState.IsGameRunning.Value)
+            {
+                CheckIfPlayersSpawned();
 
-            WatchForPlayerDeathOrHyperspace();
-
-            DisposeIfGameNotRunning();
+                DisposeIfGameNotRunning();
+            }
         }
 
         public void FixedTick()
@@ -78,12 +72,42 @@ namespace AsteroidGame.PlayerScripts
                 })
                 .AddTo(_disposables);
         }
+        
+        private void CheckIfPlayersSpawned()
+        {
+            _gameState.ArePlayersSpawned
+                .Subscribe(playersSpawned =>
+                {
+                    if (playersSpawned)
+                    {
+                        InitializeMoveHandler();
+                    }
+                })
+                .AddTo(_disposables);
+        }
+
+        private void InitializeMoveHandler()
+        {
+            _currentPosition = _player.Position;
+            _player.PreviousPosition = _player.Transform.position;
+            _facing = _player.Facing;
+            
+            _accelerationRate = _settings.playerMoveSpeedConstant / 2 / _settings.movementModifier;
+            _decelerationRate = _settings.playerMoveSpeedConstant / _settings.movementModifier;
+
+            WatchForPlayerDeathOrHyperspace();
+        }
 
         private void OnlyRegisterWhenPlayerInputsForwardMovement()
         {
-            if (_inputState.VerticalInput.Value >= 0 && !_player.IsDead && !_player.HyperspaceWasTriggered.Value)
+            var verticalInput = _player.PlayerType == ObjectTypes.Player
+                ? _inputState.VerticalInput.Value
+                : _inputState.VerticalInput2.Value;
+            
+            if ( verticalInput >= 0 && !_player.IsDead &&
+                 !_player.HyperspaceWasTriggered.Value)
             {
-                _forwardInputValue = _inputState.VerticalInput.Value;
+                _forwardInputValue = verticalInput;
             }
         }
 

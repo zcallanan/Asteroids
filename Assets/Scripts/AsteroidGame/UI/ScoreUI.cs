@@ -8,10 +8,14 @@ namespace AsteroidGame.UI
 {
     public class ScoreUI : MonoBehaviour
     {
+        [SerializeField] private ObjectTypes playerType;
+
         [SerializeField] private Text scoreText;
 
         private GameState _gameState;
-        
+
+        private ReactiveProperty<string> _scoreSource;
+
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
         [Inject]
@@ -22,13 +26,16 @@ namespace AsteroidGame.UI
         
         private void Start()
         {
-            scoreText.text = _gameState.Score.Value.ToString();
-            
-            CheckIfScoreChanges();
+            if (_gameState.IsGameRunning.Value)
+            {
+                HideOtherPlayerScoreIfSinglePlayerMode();
+                
+                CheckIfScoreTextChanges();
 
-            DisposeIfGameNotRunning();
+                DisposeIfGameNotRunning();
+            }
         }
-        
+
         private void DisposeIfGameNotRunning()
         {
             _gameState.IsGameRunning
@@ -41,17 +48,24 @@ namespace AsteroidGame.UI
                 })
                 .AddTo(_disposables);
         }
-
-        private void CheckIfScoreChanges()
+        
+        private void HideOtherPlayerScoreIfSinglePlayerMode()
         {
-            _gameState.Score
-                .Subscribe(HandleScoreUpdate)
-                .AddTo(_disposables);
+            if (_gameState.GameMode.Value == 0 && playerType == ObjectTypes.OtherPlayer)
+            {
+                scoreText.enabled = false;
+            }
         }
 
-        private void HandleScoreUpdate(int score)
+        private void CheckIfScoreTextChanges()
         {
-            scoreText.text = score.ToString();
+            _scoreSource = playerType == ObjectTypes.Player
+                ? _gameState.PlayerScoreText
+                : _gameState.OtherPlayerScoreText;
+            
+            _scoreSource
+                .Subscribe(scoreValueText => scoreText.text = scoreValueText)
+                .AddTo(_disposables);
         }
     }
 }

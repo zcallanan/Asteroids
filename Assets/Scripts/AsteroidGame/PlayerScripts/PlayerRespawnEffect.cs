@@ -28,11 +28,14 @@ namespace AsteroidGame.PlayerScripts
     
         public void Initialize()
         {
-            InitializeRespawnEffect();
+            if (_gameState.IsGameRunning.Value)
+            {
+                CheckIfPlayersSpawned();
 
-            DisposeIfGameNotRunning();
+                DisposeIfGameNotRunning();
+            }
         }
-        
+
         private void DisposeIfGameNotRunning()
         {
             _gameState.IsGameRunning
@@ -45,10 +48,24 @@ namespace AsteroidGame.PlayerScripts
                 })
                 .AddTo(_disposables);
         }
+        
+        private void CheckIfPlayersSpawned()
+        {
+            _gameState.ArePlayersSpawned
+                .Subscribe(playersSpawned =>
+                {
+                    if (playersSpawned)
+                    {
+                        InitializeRespawnEffect();
+                    }
+                })
+                .AddTo(_disposables);
+        }
 
         private void InitializeRespawnEffect()
         {
-            _player.JustRespawned.Subscribe(shouldTriggerEffect =>
+            _player.JustRespawned
+                .Subscribe(shouldTriggerEffect =>
             {
                 if (shouldTriggerEffect)
                 {

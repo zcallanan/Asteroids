@@ -1,5 +1,10 @@
 using System;
+using System.Collections.Generic;
+using AsteroidGame.AsteroidScripts;
+using AsteroidGame.PlayerScripts;
+using AsteroidGame.UfoScripts;
 using ProjectScripts;
+using UnityEngine;
 
 namespace AsteroidGame.Misc
 {
@@ -7,43 +12,99 @@ namespace AsteroidGame.Misc
     {
         private readonly Settings _settings;
         private readonly GameState _gameState;
+        private readonly PlayerRegistry _playerRegistry;
 
         public ScoreHandler(
             Settings settings,
-            GameState gameState)
+            GameState gameState,
+            PlayerRegistry playerRegistry)
         {
             _settings = settings;
             _gameState = gameState;
+            _playerRegistry = playerRegistry;
         }
 
-        public void UpdateScore(ObjectTypes scoreTypes)
+        public void UpdateScore(ObjectTypes whatDied, Collider collider)
+        {
+            var scoreRecipients = new List<ObjectTypes>();
+            
+            if (collider.GetComponent<BulletProjectile>())
+            {
+                var component = collider.GetComponent<BulletProjectile>();
+                
+                if (component.OriginType != ObjectTypes.SmallUfo || component.OriginType != ObjectTypes.LargeUfo)
+                {
+                    scoreRecipients.Add(component.OriginType);
+                }
+            }
+            else if (collider.GetComponent<PlayerFacade>())
+            {
+                scoreRecipients.Add(collider.GetComponent<PlayerFacade>().PlayerType);
+            }
+            else if (collider.GetComponent<Ufo>() || collider.GetComponent<Asteroid>())
+            {
+                scoreRecipients.Add(ObjectTypes.Player);
+                
+                if (_gameState.GameMode.Value != 0)
+                {
+                    scoreRecipients.Add(ObjectTypes.OtherPlayer);
+                }
+            }
+            
+            foreach (var playerFacade in _playerRegistry.playerFacades)
+            {
+                if (scoreRecipients.Contains(playerFacade.PlayerType))
+                {
+                    AddObjectValueToScore(whatDied, playerFacade);
+                }
+            }
+        }
+
+        private void AddObjectValueToScore(ObjectTypes scoreTypes, PlayerFacade playerFacade)
         {
             switch (scoreTypes)
             {
                 case ObjectTypes.SmallAsteroid:
-                    _gameState.Score.Value += _settings.smallAstVal;
+                    playerFacade.Score.Value += _settings.smallAstVal;
                     break;
                 case ObjectTypes.MediumAsteroid:
-                    _gameState.Score.Value += _settings.mediumAstVal;
+                    playerFacade.Score.Value += _settings.mediumAstVal;
                     break;
                 case ObjectTypes.LargeAsteroid:
-                    _gameState.Score.Value += _settings.largeAstVal;
+                    playerFacade.Score.Value += _settings.largeAstVal;
                     break;
                 case ObjectTypes.SmallUfo:
-                    _gameState.Score.Value += _settings.smallUfoVal;
+                    playerFacade.Score.Value += _settings.smallUfoVal;
                     break;
                 case ObjectTypes.LargeUfo:
-                    _gameState.Score.Value += _settings.largeUfoVal;
+                    playerFacade.Score.Value += _settings.largeUfoVal;
                     break;
                 case ObjectTypes.OtherPlayer:
-                    _gameState.Score.Value += _settings.otherPlayerVal;
+                    playerFacade.Score.Value += _settings.otherPlayerVal;
+                    break;
+                case ObjectTypes.Player:
+                    playerFacade.Score.Value += _settings.playerVal;
                     break;
                 default:
-                    _gameState.Score.Value += 0;
+                    playerFacade.Score.Value += 0;
                     break;
             }
+
+            SetScoreStringValues(playerFacade);
         }
-        
+
+        private void SetScoreStringValues(PlayerFacade playerFacade)
+        {
+            if (playerFacade.PlayerType == ObjectTypes.Player)
+            {
+                _gameState.PlayerScoreText.Value = playerFacade.Score.Value.ToString();
+            }
+            else if (playerFacade.PlayerType == ObjectTypes.OtherPlayer)
+            {
+                _gameState.OtherPlayerScoreText.Value = playerFacade.Score.Value.ToString();
+            }
+        }
+
         [Serializable]
         public class Settings
         {
@@ -53,6 +114,7 @@ namespace AsteroidGame.Misc
             public int smallUfoVal;
             public int largeUfoVal;
             public int otherPlayerVal;
+            public int playerVal;
         }
     }
 }

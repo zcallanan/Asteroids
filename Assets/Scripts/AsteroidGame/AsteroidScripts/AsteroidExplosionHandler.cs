@@ -38,17 +38,20 @@ namespace AsteroidGame.AsteroidScripts
         
         public void Initialize()
         {
-            _small = ObjectTypes.SmallAsteroid;
-            _medium = ObjectTypes.MediumAsteroid;
-            _large = ObjectTypes.LargeAsteroid;
+            if (_gameState.IsGameRunning.Value)
+            {
+                _small = ObjectTypes.SmallAsteroid;
+                _medium = ObjectTypes.MediumAsteroid;
+                _large = ObjectTypes.LargeAsteroid;
 
-            _startColor = new Color(0.5176471f, 0.5019608f, 0.4313726f, 1f);
+                _startColor = new Color(0.5176471f, 0.5019608f, 0.4313726f, 1f);
             
-            ExplodeOnTriggerEnter();
+                ExplodeOnTriggerEnter();
 
-            DelayThenDespawnExplosion();
+                DelayThenDespawnExplosion();
 
-            DisposeIfGameNotRunning();
+                DisposeIfGameNotRunning();
+            }
         }
         
         private void DisposeIfGameNotRunning()

@@ -38,19 +38,36 @@ namespace AsteroidGame.PlayerScripts
 
         public void Initialize()
         {
-            _thrustAttach = _player.GameObj.transform.GetChild(0).gameObject;
+            if (_gameState.IsGameRunning.Value)
+            {
+                _thrustAttach = _player.GameObj.transform.GetChild(0).gameObject;
+                
+                _thrustScale = _settings.thrustScale;
 
-            _thrustScale = _settings.thrustScale;
+                EnableThrustEffectUponForwardInput();
 
-            EnableThrustEffectUponForwardInput();
-
-            DisposeIfGameNotRunning();
+                DisposeIfGameNotRunning();
+            }
         }
         
         public void Tick()
         {
-            _inputState.IsApplyingThrust.Value = _inputState.VerticalInput.Value > 0 && !_player.IsDead &&
-                                                 !_player.HyperspaceWasTriggered.Value;
+            var verticalInput = _player.PlayerType == ObjectTypes.Player
+                ? _inputState.VerticalInput.Value
+                : _inputState.VerticalInput2.Value;
+            
+            var result = verticalInput > 0 && !_player.IsDead &&
+                         !_player.HyperspaceWasTriggered.Value;
+            
+            switch (_player.PlayerType)
+            {
+                case ObjectTypes.Player:
+                    _inputState.IsApplyingThrust.Value = result;
+                    break;
+                case ObjectTypes.OtherPlayer:
+                    _inputState.IsApplyingThrust2.Value = result;
+                    break;
+            }
         }
         
         private void DisposeIfGameNotRunning()
@@ -68,7 +85,11 @@ namespace AsteroidGame.PlayerScripts
 
         private void EnableThrustEffectUponForwardInput()
         {
-            _inputState.IsApplyingThrust
+            var inputSource = _player.PlayerType == ObjectTypes.Player
+                ? _inputState.IsApplyingThrust
+                : _inputState.IsApplyingThrust2;
+            
+            inputSource
                 .Subscribe(isForwardInputPositive =>
                 {
                     if (isForwardInputPositive)
@@ -91,7 +112,15 @@ namespace AsteroidGame.PlayerScripts
             _thrust = _thrustFactory.Create();
             
             _thrust.transform.localScale = _thrustScale;
-            _thrust.name = "Player Thrust";
+
+            if (_player.PlayerType == ObjectTypes.Player)
+            {
+                _thrust.name = "Player1 Thrust";
+            }
+            else if (_player.PlayerType == ObjectTypes.OtherPlayer)
+            {
+                _thrust.name = "Player2 Thrust";
+            }
 
             _thrust.Parent = _thrustAttach.transform;
             _thrust.SetPosition(_thrust.Parent.position);

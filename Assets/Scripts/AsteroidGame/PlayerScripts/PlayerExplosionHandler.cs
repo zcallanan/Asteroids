@@ -33,13 +33,12 @@ namespace AsteroidGame.PlayerScripts
         
         public void Initialize()
         {
-            _startColor = new Color(0, 1, 1, 1f);
-            
-            ExplodeOnTriggerEnter();
+            if (_gameState.IsGameRunning.Value)
+            {
+                CheckIfPlayersSpawned();
 
-            DelayThenDespawnExplosion();
-
-            DisposeIfGameNotRunning();
+                DisposeIfGameNotRunning();
+            }
         }
         
         private void DisposeIfGameNotRunning()
@@ -55,6 +54,28 @@ namespace AsteroidGame.PlayerScripts
                 .AddTo(_disposables);
         }
         
+        private void CheckIfPlayersSpawned()
+        {
+            _gameState.ArePlayersSpawned
+                .Subscribe(playersSpawned =>
+                {
+                    if (playersSpawned)
+                    {
+                        InitializePlayerExplosionHandler();
+                    }
+                })
+                .AddTo(_disposables);
+        }
+
+        private void InitializePlayerExplosionHandler()
+        {
+            _startColor = new Color(0, 1, 1, 1f);
+            
+            ExplodeOnTriggerEnter();
+
+            DelayThenDespawnExplosion();
+        }
+
         private void CreateExplosion()
         {
             if (IsExplodingFromFiredBullets())
@@ -81,7 +102,7 @@ namespace AsteroidGame.PlayerScripts
             {
                 var originType = _collider.GetComponent<BulletProjectile>().OriginType;
 
-                if (originType == ObjectTypes.Player)
+                if (originType == (_player.PlayerType == ObjectTypes.Player ? ObjectTypes.Player : ObjectTypes.OtherPlayer))
                 {
                     return true;
                 }

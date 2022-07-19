@@ -1,4 +1,5 @@
 using AsteroidGame.Misc;
+using ProjectScripts;
 using UniRx;
 using UnityEngine;
 
@@ -8,23 +9,32 @@ namespace AsteroidGame.PlayerScripts
     {
         private readonly PlayerFacade _playerFacade;
         private readonly BoundHandler _boundHandler;
-        
+
         public Player(
-            MeshRenderer meshRenderer,
-            MeshCollider meshCollider,
-            Transform transform,
             PlayerFacade playerFacade,
-            BoundHandler boundHandler)
+            BoundHandler boundHandler,
+            ObjectTypes playerType)
         {
-            MeshRenderer = meshRenderer;
-            MeshCollider = meshCollider;
-            Transform = transform;
             _playerFacade = playerFacade;
             _boundHandler = boundHandler;
+            PlayerType = playerType;
         }
-        public MeshCollider MeshCollider { get; }
+        
+        public ReactiveProperty<int> CurrentLives { get; set; }
+        
+        public ReactiveProperty<int> Score { get; set; }
+        
+        public ReactiveProperty<bool> JustRespawned { get; set; }
+        
+        public ReactiveProperty<bool> HyperspaceWasTriggered { get; set; }
+        
+        public ObjectTypes PlayerType { get; }
 
-        public MeshRenderer MeshRenderer { get; }
+        public MeshCollider MeshCollider => _playerFacade.MeshCollider;
+
+        public MeshRenderer MeshRenderer => _playerFacade.MeshRenderer;
+
+        public Transform Transform => _playerFacade.Transform;
 
         public Vector3 Facing
         {
@@ -39,19 +49,13 @@ namespace AsteroidGame.PlayerScripts
         }
         
         public Vector3 PreviousPosition { get; set; }
-        
-        public Transform Transform { get; }
 
         public float AdjustedSpeed { get; set; }
 
         public bool IsDead { get; set; }
         
-        public ReactiveProperty<bool> JustRespawned { get; set; }
-        
-        public ReactiveProperty<bool> HyperspaceWasTriggered { get; set; }
-
         public GameObject GameObj => _playerFacade.gameObject;
-        
+
         public void SetRotation(Vector3 rot)
         {
             Transform.Rotate(rot, Space.Self);
