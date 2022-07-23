@@ -19,10 +19,10 @@ namespace AsteroidGame.Misc
 
         public void Initialize()
         {
-            LoadAsteroidGameScene();
+            LoadStartMenuScene();
         }
 
-        private void LoadAsteroidGameScene()
+        private void LoadStartMenuScene()
         {
             _gameState.IsGameRunning
                 .Subscribe(isGameRunning =>
@@ -31,7 +31,7 @@ namespace AsteroidGame.Misc
                     {
                         _disposables.Clear();
                         
-                        SceneManager.LoadScene("StartScreen");
+                        SceneManager.LoadSceneAsync("StartScreen");
                     }
                 })
                 .AddTo(_disposables);
