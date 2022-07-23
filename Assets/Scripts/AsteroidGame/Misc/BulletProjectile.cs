@@ -47,27 +47,16 @@ namespace AsteroidGame.Misc
 
         public void OnTriggerEnter(Collider other)
         {
-            if (other.GetComponent<Ufo>() != null && (OriginType == ObjectTypes.LargeUfo || OriginType == ObjectTypes.SmallUfo))
+            if (IsUfoFiringBullet(other) || IsPlayerFiringBullet(other) || IsTeammateColliding(other))
             {
                 return;
-            }
-            
-            if (other.GetComponent<PlayerFacade>() != null)
-            {
-                if ((other.GetComponent<PlayerFacade>().PlayerType == ObjectTypes.Player &&
-                    OriginType == ObjectTypes.Player) ||
-                    (other.GetComponent<PlayerFacade>().PlayerType == ObjectTypes.OtherPlayer &&
-                     OriginType == ObjectTypes.OtherPlayer))
-                {
-                    return;
-                }
             }
 
             _spawnTimer.Dispose();
         
             Dispose();
         }
-        
+
         public void OnSpawned(float speed, float lifespan, ObjectTypes originType, IMemoryPool pool)
         {
             _speed = speed;
@@ -103,6 +92,28 @@ namespace AsteroidGame.Misc
                     }
                 })
                 .AddTo(_disposables);
+        }
+        
+        private bool IsTeammateColliding(Collider other)
+        {
+            return _gameState.GameMode.Value == 2 && other.GetComponent<PlayerFacade>() != null &&
+                   OriginType == ObjectTypes.Player ||
+                   OriginType == ObjectTypes.OtherPlayer;
+        }
+
+        private bool IsUfoFiringBullet(Collider other)
+        {
+            return other.GetComponent<Ufo>() != null &&
+                   (OriginType == ObjectTypes.LargeUfo || OriginType == ObjectTypes.SmallUfo);
+        }
+        
+        private bool IsPlayerFiringBullet(Collider other)
+        {
+            return other.GetComponent<PlayerFacade>() != null &&
+                   (other.GetComponent<PlayerFacade>().PlayerType == ObjectTypes.Player &&
+                    OriginType == ObjectTypes.Player ||
+                    other.GetComponent<PlayerFacade>().PlayerType == ObjectTypes.OtherPlayer &&
+                    OriginType == ObjectTypes.OtherPlayer);
         }
         
         private void DespawnProjectile()

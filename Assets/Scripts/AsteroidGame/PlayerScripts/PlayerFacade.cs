@@ -73,17 +73,15 @@ namespace AsteroidGame.PlayerScripts
         
         private void OnTriggerEnter(Collider other)
         {
-            if (other.GetComponent<PlayerFacade>())
+            if (other.GetComponent<PlayerFacade>() && _gameState.GameMode.Value != 2)
             {
                 _playerLifecycleHandler.PlayerDeathEvents();
             } 
             else if (other.GetComponent<BulletProjectile>())
             {
-                var colliderObjectType = other.GetComponent<BulletProjectile>().OriginType;
-            
-                if (colliderObjectType != (_player.PlayerType == ObjectTypes.Player
-                        ? ObjectTypes.Player
-                        : ObjectTypes.OtherPlayer))
+                var originType = other.GetComponent<BulletProjectile>().OriginType;
+
+                if (originType != BulletFromPlayer() && !IsBulletFromTeammate(originType))
                 {
                     _playerLifecycleHandler.PlayerDeathEvents();
                 }
@@ -93,7 +91,20 @@ namespace AsteroidGame.PlayerScripts
                 _playerLifecycleHandler.PlayerDeathEvents();
             }
         }
-        
+
+        private bool IsBulletFromTeammate(ObjectTypes originType)
+        {
+            return _gameState.GameMode.Value == 2 && originType == ObjectTypes.Player ||
+                   originType == ObjectTypes.OtherPlayer;
+        }
+
+        private ObjectTypes BulletFromPlayer()
+        {
+            return _player.PlayerType == ObjectTypes.Player
+                ? ObjectTypes.Player
+                : ObjectTypes.OtherPlayer;
+        }
+
         private void DisposeIfGameNotRunning()
         {
             _gameState.IsGameRunning
