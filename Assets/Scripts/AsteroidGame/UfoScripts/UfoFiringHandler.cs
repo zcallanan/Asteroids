@@ -19,8 +19,6 @@ namespace AsteroidGame.UfoScripts
         private readonly GameState _gameState;
         private readonly PlayerRegistry _playerRegistry;
         
-        private BulletProjectile _bulletProjectile;
-        
         private float _ufoBulletProjectileSpeed;
         private float _ufoBulletProjectileLifespan;
 
@@ -102,15 +100,15 @@ namespace AsteroidGame.UfoScripts
 
         private void FireProjectileBullets()
         {
-            _bulletProjectile =
+            var bulletProjectile =
                 _bulletProjectileFactory.Create(_ufoBulletProjectileSpeed, _ufoBulletProjectileLifespan, _ufo.Size);
 
-            var transform = _bulletProjectile.transform;
+            var transform = bulletProjectile.transform;
             transform.position = _ufo.transform.position;
             transform.forward = DetermineUfoProjectileFacing();
             transform.localScale = .15f * Vector3.one;
 
-            _bulletProjectile.name = "Ufo Projectile";
+            bulletProjectile.name = "Ufo Projectile";
             
             FireDelay();
         }
