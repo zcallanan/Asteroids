@@ -1,4 +1,5 @@
 using System;
+using AsteroidGame.Misc;
 using ProjectScripts;
 using UniRx;
 using UnityEngine;
@@ -11,19 +12,24 @@ namespace AsteroidGame.PlayerScripts
         private readonly Player _player;
         private readonly Settings _settings;
         private readonly GameState _gameState;
-        
+        private readonly PlayerData.Settings _playerDataSettings;
+
         private bool _isTogglingTransparency;
+
+        private Material _defaultPlayerMaterial;
         
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
         public PlayerRespawnEffect(
             Player player,
             Settings settings,
-            GameState gameState)
+            GameState gameState,
+            PlayerData.Settings playerDataSettings)
         {
             _player = player;
             _settings = settings;
             _gameState = gameState;
+            _playerDataSettings = playerDataSettings;
         }
     
         public void Initialize()
@@ -31,6 +37,8 @@ namespace AsteroidGame.PlayerScripts
             if (_gameState.IsGameRunning.Value)
             {
                 CheckIfPlayersSpawned();
+
+                SetDefaultMaterial();
 
                 DisposeIfGameNotRunning();
             }
@@ -61,6 +69,18 @@ namespace AsteroidGame.PlayerScripts
                 })
                 .AddTo(_disposables);
         }
+        
+        private void SetDefaultMaterial()
+        {
+            if (_player.PlayerType == ObjectTypes.Player)
+            {
+                _defaultPlayerMaterial = _playerDataSettings.playerMat;
+            }
+            else if (_player.PlayerType == ObjectTypes.OtherPlayer)
+            {
+                _defaultPlayerMaterial = _playerDataSettings.otherPlayerMat;
+            }
+        }
 
         private void InitializeRespawnEffect()
         {
@@ -83,9 +103,11 @@ namespace AsteroidGame.PlayerScripts
 
         private void TogglePlayerTransparency()
         {
-            _player.MeshRenderer.material = _player.MeshRenderer.material.name == $"{_settings.defaultMat.name} (Instance)"
+            var materialName = $"{_defaultPlayerMaterial.name} (Instance)";
+
+            _player.MeshRenderer.material = _player.MeshRenderer.material.name == materialName
                 ? _settings.transparentMat
-                : _settings.defaultMat;
+                : _defaultPlayerMaterial;
 
             ToggleRespawnEffectAfterDelay();
         }
@@ -112,7 +134,7 @@ namespace AsteroidGame.PlayerScripts
                 {
                     _player.MeshCollider.enabled = true;
             
-                    _player.MeshRenderer.material = _settings.defaultMat;
+                    _player.MeshRenderer.material = _defaultPlayerMaterial;
             
                     _isTogglingTransparency = false;
                 })
@@ -124,7 +146,6 @@ namespace AsteroidGame.PlayerScripts
         {
             public float totalRespawnEffectDuration;
             public float toggleEffectDuration;
-            public Material defaultMat;
             public Material transparentMat;
         }
     }

@@ -12,6 +12,7 @@ namespace AsteroidGame.Misc
         private readonly PlayerFacade.Factory _playerFactory;
         private readonly PlayerRegistry _playerRegistry;
         private readonly Settings _settings;
+        private readonly PlayerData.Settings _playerDataSettings;
 
         private PlayerFacade _playerFacade;
         private PlayerFacade _otherPlayerFacade;
@@ -20,12 +21,14 @@ namespace AsteroidGame.Misc
             GameState gameState,
             PlayerFacade.Factory playerFactory,
             PlayerRegistry playerRegistry,
-            Settings settings)
+            Settings settings,
+            PlayerData.Settings playerDataSettings)
         {
             _gameState = gameState;
             _playerFactory = playerFactory;
             _playerRegistry = playerRegistry;
             _settings = settings;
+            _playerDataSettings = playerDataSettings;
         }
 
         public void Initialize()
@@ -58,9 +61,9 @@ namespace AsteroidGame.Misc
 
         private void SetupPlayer(PlayerFacade playerFacade)
         {
-            SetSprite(playerFacade);
             SetProperties(playerFacade);
             SetPlayerPosition(playerFacade);
+            SetOtherPlayerMat(playerFacade);
         }
 
         private void SetProperties(PlayerFacade playerFacade)
@@ -68,11 +71,6 @@ namespace AsteroidGame.Misc
             playerFacade.MeshCollider = playerFacade.gameObject.GetComponent<MeshCollider>();
             playerFacade.MeshRenderer = playerFacade.gameObject.GetComponent<MeshRenderer>();
             playerFacade.Transform = playerFacade.gameObject.GetComponent<Transform>();
-        }
-        
-        private void SetSprite(PlayerFacade playerFacade)
-        {
-            
         }
 
         private void SetPlayerPosition(PlayerFacade playerFacade)
@@ -91,6 +89,15 @@ namespace AsteroidGame.Misc
                 {
                     playerFacade.Position = _settings.otherPlayerSpawnPos;
                 }
+            }
+        }
+
+        private void SetOtherPlayerMat(PlayerFacade playerFacade)
+        {
+            if (playerFacade.PlayerType == ObjectTypes.OtherPlayer)
+            {
+                var meshRenderer = playerFacade.MeshRenderer;
+                meshRenderer.material = _playerDataSettings.otherPlayerMat;
             }
         }
 
