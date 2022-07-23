@@ -17,7 +17,6 @@ namespace AsteroidGame.Misc
         private readonly BoundHandler _boundHandler;
         
         private int _smallUfoLevelToSpawn;
-        private bool _isUfoSpawnableInThisDifficulty;
         private float _ufoMinSpawnDelay;
         private float _ufoMaxSpawnDelay;
 
@@ -65,9 +64,9 @@ namespace AsteroidGame.Misc
                     {
                         var difficulties = _difficultySettings.difficulties[_gameState.GameDifficulty.Value];
             
-                        _isUfoSpawnableInThisDifficulty = difficulties.isUfoSpawnableInThisDifficulty;
+                        var isUfoSpawnableInThisDifficulty = difficulties.isUfoSpawnableInThisDifficulty;
 
-                        if (!_isUfoSpawnableInThisDifficulty)
+                        if (!isUfoSpawnableInThisDifficulty)
                         {
                             return;
                         }

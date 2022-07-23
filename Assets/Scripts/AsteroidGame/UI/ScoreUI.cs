@@ -13,9 +13,7 @@ namespace AsteroidGame.UI
         [SerializeField] private Text scoreText;
 
         private GameState _gameState;
-
-        private ReactiveProperty<string> _scoreSource;
-
+        
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
         [Inject]
@@ -59,11 +57,11 @@ namespace AsteroidGame.UI
 
         private void CheckIfScoreTextChanges()
         {
-            _scoreSource = playerType == ObjectTypes.Player
+            var scoreSource = playerType == ObjectTypes.Player
                 ? _gameState.PlayerScoreText
                 : _gameState.OtherPlayerScoreText;
             
-            _scoreSource
+            scoreSource
                 .Subscribe(scoreValueText => scoreText.text = scoreValueText)
                 .AddTo(_disposables);
         }

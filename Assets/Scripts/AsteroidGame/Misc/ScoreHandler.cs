@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using AsteroidGame.AsteroidScripts;
 using AsteroidGame.PlayerScripts;
 using AsteroidGame.UfoScripts;
@@ -51,12 +52,9 @@ namespace AsteroidGame.Misc
                 }
             }
             
-            foreach (var playerFacade in _playerRegistry.playerFacades)
+            foreach (var playerFacade in _playerRegistry.playerFacades.Where(pFacade => scoreRecipients.Contains(pFacade.PlayerType)))
             {
-                if (scoreRecipients.Contains(playerFacade.PlayerType))
-                {
-                    AddObjectValueToScore(whatDied, playerFacade);
-                }
+                AddObjectValueToScore(whatDied, playerFacade);
             }
         }
 

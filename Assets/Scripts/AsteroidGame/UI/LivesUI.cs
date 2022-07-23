@@ -1,4 +1,3 @@
-using System;
 using ProjectScripts;
 using UniRx;
 using UnityEngine;
@@ -14,7 +13,6 @@ namespace AsteroidGame.UI
         private GameState _gameState;
 
         private Image _image;
-        private ReactiveProperty<Sprite> _imageSource;
         
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
         
@@ -51,11 +49,11 @@ namespace AsteroidGame.UI
 
         private void CheckForChangeToLivesSprite()
         {
-            _imageSource = playerType == ObjectTypes.Player
+            var imageSource = playerType == ObjectTypes.Player
                 ? _gameState.PlayerLivesSprite
                 : _gameState.OtherPlayerLivesSprite;
 
-            _imageSource
+            imageSource
                 .Subscribe(sprite =>
                 {
                     if (sprite == null)
