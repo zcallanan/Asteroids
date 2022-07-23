@@ -57,20 +57,31 @@ namespace AsteroidGame.PlayerScripts
                 .Subscribe(collider =>
                 {
                     _collider = collider;
-                        
-                    SetupPlayerDeathState();
 
-                    if (collider.GetComponent<PlayerFacade>())
+                    if (_collider.GetComponent<PlayerFacade>())
                     {
-                        _scoreHandler.UpdateScore(_player.PlayerType, collider);
+                        PreventTeamWorkCollision(_collider);
+                    }
+                    else
+                    {
+                        SetupPlayerDeathState();
                     }
                 })
                 .AddTo(_disposables);
         }
 
+        private void PreventTeamWorkCollision(Collider collider)
+        {
+            if (_gameState.GameMode.Value != 2)
+            {
+                SetupPlayerDeathState();
+                _scoreHandler.UpdateScore(_player.PlayerType, collider);
+            }
+        }
+
         private void SetupPlayerDeathState()
         {
-            if (IsCollidingWithFiredBullets())
+            if (IsCollidingWithPlayerBullets())
             {
                 return;
             }
@@ -81,19 +92,30 @@ namespace AsteroidGame.PlayerScripts
             _player.IsDead = true;
         }
 
-        private bool IsCollidingWithFiredBullets()
+        private bool IsCollidingWithPlayerBullets()
         {
             if (_collider.GetComponent<BulletProjectile>())
             {
                 var originType = _collider.GetComponent<BulletProjectile>().OriginType;
 
-                if (originType == (_player.PlayerType == ObjectTypes.Player ? ObjectTypes.Player : ObjectTypes.OtherPlayer))
+                if (originType == PlayerFiredTheBullet() || TeammateFiredTheBullet(originType))
                 {
                     return true;
                 }
             }
 
             return false;
+        }
+
+        private ObjectTypes PlayerFiredTheBullet()
+        {
+            return _player.PlayerType == ObjectTypes.Player ? ObjectTypes.Player : ObjectTypes.OtherPlayer;
+        }
+        
+        private bool TeammateFiredTheBullet(ObjectTypes originType)
+        {
+            return _gameState.GameMode.Value == 2 && originType == ObjectTypes.Player ||
+                   originType == ObjectTypes.OtherPlayer;
         }
     }
 }

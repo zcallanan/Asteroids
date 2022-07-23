@@ -101,14 +101,25 @@ namespace AsteroidGame.PlayerScripts
             if (_collider.GetComponent<BulletProjectile>())
             {
                 var originType = _collider.GetComponent<BulletProjectile>().OriginType;
-
-                if (originType == (_player.PlayerType == ObjectTypes.Player ? ObjectTypes.Player : ObjectTypes.OtherPlayer))
+                
+                if (originType == PlayerFiredTheBullet() || TeammateFiredTheBullet(originType))
                 {
                     return true;
                 }
             }
 
             return false;
+        }
+        
+        private ObjectTypes PlayerFiredTheBullet()
+        {
+            return _player.PlayerType == ObjectTypes.Player ? ObjectTypes.Player : ObjectTypes.OtherPlayer;
+        }
+        
+        private bool TeammateFiredTheBullet(ObjectTypes originType)
+        {
+            return _gameState.GameMode.Value == 2 && originType == ObjectTypes.Player ||
+                   originType == ObjectTypes.OtherPlayer;
         }
 
         private void ExplodeOnTriggerEnter()
