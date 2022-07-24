@@ -31,7 +31,7 @@ namespace StartMenuScripts.Misc
                     {
                         _disposables.Clear();
                         
-                        SceneManager.LoadScene("AsteroidGame");
+                        SceneManager.LoadSceneAsync("AsteroidGame");
                     }
                 })
                 .AddTo(_disposables);

@@ -37,6 +37,7 @@ namespace StartMenuScripts.StartMenu
 
             HideMenuOptions(gameModeCanvases);
             HideMenuOptions(gameDifficultyCanvases);
+            Debug.Log("test");
         }
         
         private void Start()
