@@ -168,8 +168,8 @@ MonoBehaviour:
       thrustScale: {x: 0.1, y: 0.3, z: 0.1}
   asteroidSettings:
     asteroidData:
-      minRotSpeed: 30
-      maxRotSpeed: 60
+      minRotSpeed: 65
+      maxRotSpeed: 105
   ufoSettings:
     ufoFiringHandler:
       ufoProjSpeed: 6

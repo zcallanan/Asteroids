@@ -58,13 +58,12 @@ namespace AsteroidGame.AsteroidScripts
             _asteroidRotSpeed = Random.Range(minRotSpeed, maxRotSpeed);
             _asteroidSpeed = Random.Range(minSpeed, maxSpeed);
 
-            _randomRotation = new Vector3(Random.value / 10, Random.value / 10, Random.value / 10);
+            _randomRotation = new Vector3(Random.value, Random.value, Random.value);
             _randomDirection = new Vector3(Random.Range(-5, 5), 1, Random.Range(-5, 5));
         }
 
         private void Update()
         {
-            // TODO: Fix the rate
             SetRotation(_randomRotation * (Time.deltaTime * _asteroidRotSpeed));
 
             var position = transform.position;
