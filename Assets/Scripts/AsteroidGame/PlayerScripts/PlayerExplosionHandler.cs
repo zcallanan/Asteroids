@@ -13,6 +13,7 @@ namespace AsteroidGame.PlayerScripts
         private readonly Player _player;
         private readonly Explosion.Factory _explosionFactory;
         private readonly GameState _gameState;
+        private readonly PlayerCollisionHandler _playerCollisionHandler;
 
         private Collider _collider;
         private Explosion _explosion;
@@ -24,11 +25,13 @@ namespace AsteroidGame.PlayerScripts
         public PlayerExplosionHandler(
             Player player,
             Explosion.Factory explosionFactory,
-            GameState gameState)
+            GameState gameState,
+            PlayerCollisionHandler playerCollisionHandler)
         {
             _player = player;
             _explosionFactory = explosionFactory;
             _gameState = gameState;
+            _playerCollisionHandler = playerCollisionHandler;
         }
         
         public void Initialize()
@@ -78,10 +81,11 @@ namespace AsteroidGame.PlayerScripts
 
         private void CreateExplosion()
         {
-            if (IsExplodingFromFiredBullets())
+            if (_playerCollisionHandler.IsCollidingWithPlayerBullets(_collider))
             {
                 return;
             }
+            
             _explosion = _explosionFactory.Create();
 
             _explosion.transform.position = _player.Position;
@@ -96,32 +100,6 @@ namespace AsteroidGame.PlayerScripts
             expParticleSystem.Play();
         }
 
-        private bool IsExplodingFromFiredBullets()
-        {
-            if (_collider.GetComponent<BulletProjectile>())
-            {
-                var originType = _collider.GetComponent<BulletProjectile>().OriginType;
-                
-                if (originType == PlayerFiredTheBullet() || TeammateFiredTheBullet(originType))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-        
-        private ObjectTypes PlayerFiredTheBullet()
-        {
-            return _player.PlayerType == ObjectTypes.Player ? ObjectTypes.Player : ObjectTypes.OtherPlayer;
-        }
-        
-        private bool TeammateFiredTheBullet(ObjectTypes originType)
-        {
-            return _gameState.GameMode.Value == 2 && originType == ObjectTypes.Player ||
-                   originType == ObjectTypes.OtherPlayer;
-        }
-
         private void ExplodeOnTriggerEnter()
         {
             _player.GameObj
@@ -130,11 +108,27 @@ namespace AsteroidGame.PlayerScripts
                 {
                     _collider = collider;
                     
-                    CreateExplosion();
+                    if (_collider.GetComponent<PlayerFacade>())
+                    {
+                        PreventTeamCollisionExplosion();
+                    }
+                    else
+                    {
+                        CreateExplosion();
+
+                    }
                 })
                 .AddTo(_disposables);
         }
-        
+
+        private void PreventTeamCollisionExplosion()
+        {
+            if (_gameState.GameMode.Value != 2)
+            {
+                CreateExplosion();
+            }
+        }
+
         private void DelayThenDespawnExplosion()
         {
             _player.GameObj

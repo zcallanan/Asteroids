@@ -37,6 +37,21 @@ namespace AsteroidGame.PlayerScripts
             }
         }
         
+        public bool IsCollidingWithPlayerBullets(Collider collider)
+        {
+            if (collider.GetComponent<BulletProjectile>())
+            {
+                var originType = collider.GetComponent<BulletProjectile>().OriginType;
+
+                if (originType == PlayerFiredTheBullet() || TeammateFiredTheBullet(originType))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+        
         private void DisposeIfGameNotRunning()
         {
             _gameState.IsGameRunning
@@ -48,6 +63,17 @@ namespace AsteroidGame.PlayerScripts
                     }
                 })
                 .AddTo(_disposables);
+        }
+        
+        private ObjectTypes PlayerFiredTheBullet()
+        {
+            return _player.PlayerType == ObjectTypes.Player ? ObjectTypes.Player : ObjectTypes.OtherPlayer;
+        }
+        
+        private bool TeammateFiredTheBullet(ObjectTypes originType)
+        {
+            return _gameState.GameMode.Value == 2 && originType == ObjectTypes.Player ||
+                   originType == ObjectTypes.OtherPlayer;
         }
 
         private void HandleCollisionOnTriggerEnter()
@@ -81,7 +107,7 @@ namespace AsteroidGame.PlayerScripts
 
         private void SetupPlayerDeathState()
         {
-            if (IsCollidingWithPlayerBullets())
+            if (IsCollidingWithPlayerBullets(_collider))
             {
                 return;
             }
@@ -90,32 +116,6 @@ namespace AsteroidGame.PlayerScripts
             _player.MeshCollider.enabled = false;
             
             _player.IsDead = true;
-        }
-
-        private bool IsCollidingWithPlayerBullets()
-        {
-            if (_collider.GetComponent<BulletProjectile>())
-            {
-                var originType = _collider.GetComponent<BulletProjectile>().OriginType;
-
-                if (originType == PlayerFiredTheBullet() || TeammateFiredTheBullet(originType))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        private ObjectTypes PlayerFiredTheBullet()
-        {
-            return _player.PlayerType == ObjectTypes.Player ? ObjectTypes.Player : ObjectTypes.OtherPlayer;
-        }
-        
-        private bool TeammateFiredTheBullet(ObjectTypes originType)
-        {
-            return _gameState.GameMode.Value == 2 && originType == ObjectTypes.Player ||
-                   originType == ObjectTypes.OtherPlayer;
         }
     }
 }
