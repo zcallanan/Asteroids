@@ -17,7 +17,7 @@ namespace AsteroidGame.UfoScripts
         private readonly Settings _settings;
         private readonly Difficulty.Settings _difficultySettings;
         private readonly GameState _gameState;
-        private readonly PlayerRegistry _playerRegistry;
+        private readonly InstanceRegistry _instanceRegistry;
         
         private float _ufoBulletProjectileSpeed;
         private float _ufoBulletProjectileLifespan;
@@ -38,14 +38,14 @@ namespace AsteroidGame.UfoScripts
             Settings settings,
             Difficulty.Settings difficultySettings,
             GameState gameState,
-            PlayerRegistry playerRegistry)
+            InstanceRegistry instanceRegistry)
         {
             _ufo = ufo;
             _bulletProjectileFactory = bulletProjectileFactory;
             _settings = settings;
             _difficultySettings = difficultySettings;
             _gameState = gameState;
-            _playerRegistry = playerRegistry;
+            _instanceRegistry = instanceRegistry;
         }
         
         public void Initialize()
@@ -119,7 +119,7 @@ namespace AsteroidGame.UfoScripts
             
             var targetList = new List<PlayerFacade>();
             
-            foreach (var playerFacade in _playerRegistry.playerFacades)
+            foreach (var playerFacade in _instanceRegistry.playerFacades)
             {
                 if (!playerFacade.IsDead && !playerFacade.HyperspaceWasTriggered)
                 {

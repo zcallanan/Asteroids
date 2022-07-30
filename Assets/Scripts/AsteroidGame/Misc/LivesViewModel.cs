@@ -8,20 +8,20 @@ using Zenject;
 
 namespace AsteroidGame.Misc
 {
-    public class LivesUIHandler : IInitializable
+    public class LivesViewModel : IInitializable
     {
-        private readonly PlayerRegistry _playerRegistry;
+        private readonly InstanceRegistry _instanceRegistry;
         private readonly GameState _gameState;
         private readonly Settings _settings;
         
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
-        public LivesUIHandler(
-            PlayerRegistry playerRegistry,
+        public LivesViewModel(
+            InstanceRegistry instanceRegistry,
             GameState gameState,
             Settings settings)
         {
-            _playerRegistry = playerRegistry;
+            _instanceRegistry = instanceRegistry;
             _gameState = gameState;
             _settings = settings;
         }
@@ -37,7 +37,7 @@ namespace AsteroidGame.Misc
                 DisposeIfGameNotRunning();
             }
         }
-        
+
         private void DisposeIfGameNotRunning()
         {
             _gameState.IsGameRunning
@@ -63,7 +63,7 @@ namespace AsteroidGame.Misc
 
         private void UpdateSprites()
         {
-            foreach (var playerFacade in _playerRegistry.playerFacades)
+            foreach (var playerFacade in _instanceRegistry.playerFacades)
             {
                 UpdateSpriteOnLivesChange(playerFacade);
             }

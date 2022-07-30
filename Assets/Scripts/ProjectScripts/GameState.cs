@@ -31,6 +31,8 @@ namespace ProjectScripts
         public ReactiveProperty<int> GameDifficulty { get; set; }
         public ReactiveProperty<int> GameMode { get; set; }
         
+        public ReactiveProperty<bool> AreLivesViewsSpawned { get; set; }
+
         public ReactiveProperty<Sprite> PlayerLivesSprite { get; set; }
         
         public ReactiveProperty<Sprite> OtherPlayerLivesSprite { get; set; }

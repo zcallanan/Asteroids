@@ -27,7 +27,8 @@ namespace AsteroidGame.Installers
             public ScoreHandler.Settings scoreHandler;
             public Difficulty.Settings difficulty;
             public GameOverHandler.Settings gameOverHandler;
-            public LivesUIHandler.Settings livesUIHandler;
+            public LivesViewModel.Settings livesViewModel;
+            public ViewData.Settings livesViewData;
         }
 
         [Serializable]
@@ -61,7 +62,8 @@ namespace AsteroidGame.Installers
             Container.BindInstance(gameSettings.gameLevelHandler).IfNotBound();
             Container.BindInstance(gameSettings.scoreHandler).IfNotBound();
             Container.BindInstance(gameSettings.gameOverHandler).IfNotBound();
-            Container.BindInstance(gameSettings.livesUIHandler).IfNotBound();
+            Container.BindInstance(gameSettings.livesViewModel).IfNotBound();
+            Container.BindInstance(gameSettings.livesViewData).IfNotBound();
 
             Container.BindInstance(asteroidSpawner).IfNotBound();
             Container.BindInstance(asteroidSettings.asteroidData).IfNotBound();

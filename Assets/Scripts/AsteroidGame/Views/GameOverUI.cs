@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 
-namespace AsteroidGame.UI
+namespace AsteroidGame.Views
 {
     public class GameOverUI : MonoBehaviour
     {

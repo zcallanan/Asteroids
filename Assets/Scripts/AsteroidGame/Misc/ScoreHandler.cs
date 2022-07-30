@@ -13,16 +13,16 @@ namespace AsteroidGame.Misc
     {
         private readonly Settings _settings;
         private readonly GameState _gameState;
-        private readonly PlayerRegistry _playerRegistry;
+        private readonly InstanceRegistry _instanceRegistry;
 
         public ScoreHandler(
             Settings settings,
             GameState gameState,
-            PlayerRegistry playerRegistry)
+            InstanceRegistry instanceRegistry)
         {
             _settings = settings;
             _gameState = gameState;
-            _playerRegistry = playerRegistry;
+            _instanceRegistry = instanceRegistry;
         }
 
         public void UpdateScore(ObjectTypes whatDied, Collider collider)
@@ -52,7 +52,7 @@ namespace AsteroidGame.Misc
                 }
             }
             
-            foreach (var playerFacade in _playerRegistry.playerFacades.Where(pFacade => scoreRecipients.Contains(pFacade.PlayerType)))
+            foreach (var playerFacade in _instanceRegistry.playerFacades.Where(pFacade => scoreRecipients.Contains(pFacade.PlayerType)))
             {
                 AddObjectValueToScore(whatDied, playerFacade);
             }
