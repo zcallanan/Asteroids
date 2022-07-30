@@ -25,27 +25,17 @@ namespace AsteroidGame.Views
 
         private void Start()
         {
-            CheckIfSpawned();
+            CheckIfSpawned(gameState.AreLivesViewsSpawned, _playerType);
             
-            CheckForChange();
+            var imageSource = _playerType == ObjectTypes.Player
+                ? gameState.PlayerLivesSprite
+                : gameState.OtherPlayerLivesSprite;
+            
+            CheckForChange(imageSource);
 
             DisposeIfGameNotRunning();
         }
 
-        protected override void CheckIfSpawned()
-        {
-            gameState.AreLivesViewsSpawned
-                .Subscribe(areLivesViewsSpawned =>
-                {
-                    if (areLivesViewsSpawned &&
-                        (_playerType == ObjectTypes.Player || _playerType == ObjectTypes.OtherPlayer))
-                    {
-                        SetUp();
-                    }
-                })
-                .AddTo(disposables);
-        }
-        
         protected override void SetUp()
         {
             var rectTransform = GetComponent<RectTransform>();
@@ -76,20 +66,9 @@ namespace AsteroidGame.Views
             rectTransform.localPosition = new Vector3(pos.x, pos.y, transform.position.z);
         }
 
-        protected override void CheckForChange()
+        protected override void UpdateVal<T>(T val)
         {
-            var imageSource = _playerType == ObjectTypes.Player
-                ? gameState.PlayerLivesSprite
-                : gameState.OtherPlayerLivesSprite;
-
-            imageSource
-                .Subscribe(UpdateSpriteDisplay)
-                .AddTo(disposables);
-        }
-
-        private void UpdateSpriteDisplay(Sprite sprite)
-        {
-            if (sprite == null && image)
+            if (val == null && image)
             {
                 image.gameObject.SetActive(false);
             }
@@ -100,10 +79,10 @@ namespace AsteroidGame.Views
                     image.gameObject.SetActive(true);
                 }
 
-                image.sprite = sprite;
+                image.sprite = val as Sprite;
             }
         }
-        
+
         public class Factory : PlaceholderFactory<ObjectTypes, LivesView>
         {
         }

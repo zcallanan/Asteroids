@@ -10,11 +10,33 @@ namespace AsteroidGame.Views
         [Inject]
         protected readonly GameState gameState;
 
-        protected readonly CompositeDisposable disposables = new CompositeDisposable();
-        protected abstract void CheckIfSpawned();
-        protected abstract void SetUp();
-        protected abstract void CheckForChange();
+        private readonly CompositeDisposable _disposables = new CompositeDisposable();
         
+        protected void CheckIfSpawned(ReactiveProperty<bool> source, ObjectTypes playerType)
+        {
+            source
+                .Subscribe(areSpawned =>
+                {
+                    if (areSpawned &&
+                        (playerType == ObjectTypes.Player || playerType == ObjectTypes.OtherPlayer))
+                    {
+                        SetUp();
+                    }
+                })
+                .AddTo(_disposables);
+        }
+        
+        protected abstract void SetUp();
+        
+        protected void CheckForChange<T>(ReactiveProperty<T> source)
+        {
+            source
+                .Subscribe(UpdateVal)
+                .AddTo(_disposables);
+        }
+
+        protected abstract void UpdateVal<T>(T val);
+
         protected void DisposeIfGameNotRunning()
         {
             gameState.IsGameRunning
@@ -22,10 +44,10 @@ namespace AsteroidGame.Views
                 {
                     if (!isGameRunning)
                     {
-                        disposables.Clear();
+                        _disposables.Clear();
                     }
                 })
-                .AddTo(disposables);
+                .AddTo(_disposables);
         }
     }
 }

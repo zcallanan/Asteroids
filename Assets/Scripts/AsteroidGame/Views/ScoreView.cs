@@ -25,27 +25,17 @@ namespace AsteroidGame.Views
         
         private void Start()
         {
-            CheckIfSpawned();
+            CheckIfSpawned(gameState.AreScoreViewsSpawned, _playerType);
             
-            CheckForChange();
+            var scoreSource = _playerType == ObjectTypes.Player
+                ? gameState.PlayerScoreText
+                : gameState.OtherPlayerScoreText;
+            
+            CheckForChange(scoreSource);
 
             DisposeIfGameNotRunning();
         }
 
-        protected override void CheckIfSpawned()
-        {
-            gameState.AreScoreViewsSpawned
-                .Subscribe(areScoreViewsSpawned =>
-                {
-                    if (areScoreViewsSpawned &&
-                        (_playerType == ObjectTypes.Player || _playerType == ObjectTypes.OtherPlayer))
-                    {
-                        SetUp();
-                    }
-                })
-                .AddTo(disposables);
-        }
-        
         protected override void SetUp()
         {
             var rectTransform = GetComponent<RectTransform>();
@@ -77,15 +67,9 @@ namespace AsteroidGame.Views
             rectTransform.localPosition = new Vector3(pos.x, pos.y, transform.position.z);
         }
 
-        protected override void CheckForChange()
+        protected override void UpdateVal<T>(T val)
         {
-            var scoreSource = _playerType == ObjectTypes.Player
-                ? gameState.PlayerScoreText
-                : gameState.OtherPlayerScoreText;
-            
-            scoreSource
-                .Subscribe(scoreValueText => scoreText.text = scoreValueText)
-                .AddTo(disposables);
+            scoreText.text = val as string;
         }
 
         public class Factory : PlaceholderFactory<ObjectTypes, ScoreView>
