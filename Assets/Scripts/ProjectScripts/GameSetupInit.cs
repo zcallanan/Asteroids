@@ -33,6 +33,7 @@ namespace ProjectScripts
             _gameState.IsUfoSpawning = new ReactiveProperty<bool>(false);
             _gameState.ArePlayersSpawned = new ReactiveProperty<bool>(false);
             _gameState.AreLivesViewsSpawned = new ReactiveProperty<bool>(false);
+            _gameState.AreScoreViewsSpawned = new ReactiveProperty<bool>(false);
 
             _gameState.PlayerLivesSprite = new ReactiveProperty<Sprite>(null);
             _gameState.OtherPlayerLivesSprite = new ReactiveProperty<Sprite>(null);

@@ -53,6 +53,7 @@ namespace StartMenuScripts.Misc
                         _gameState.IsGameOver.Value = false;
                         _gameState.ArePlayersSpawned.Value = false;
                         _gameState.AreLivesViewsSpawned.Value = false;
+                        _gameState.AreScoreViewsSpawned.Value = false;
                     }
                 })
                 .AddTo(_disposables);

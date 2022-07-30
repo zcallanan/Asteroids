@@ -35,7 +35,6 @@ namespace AsteroidGame.Installers
             
             Container.Bind<ScoreHandler>().AsSingle();
             
-            Container.Bind<ScoreUI>().FromComponentInHierarchy().AsCached();
             Container.Bind<GameOverUI>().FromComponentInHierarchy().AsCached();
             
             Container
@@ -80,6 +79,9 @@ namespace AsteroidGame.Installers
 
             Container.BindFactory<ObjectTypes, LivesView, LivesView.Factory>()
                 .FromComponentInNewPrefab(_settings.playerLivesPrefab);
+            
+            Container.BindFactory<ObjectTypes, ScoreView, ScoreView.Factory>()
+                .FromComponentInNewPrefab(_settings.playerScorePrefab);
         }
     
         [Serializable]
@@ -92,6 +94,7 @@ namespace AsteroidGame.Installers
             public GameObject thrustPrefab;
             public GameObject playerPrefab;
             public GameObject playerLivesPrefab;
+            public GameObject playerScorePrefab;
         }
     
         class BulletProjectilePool : MonoPoolableMemoryPool<float, float, ObjectTypes, IMemoryPool, BulletProjectile>

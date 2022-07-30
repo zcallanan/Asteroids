@@ -41,6 +41,7 @@ MonoBehaviour:
     thrustPrefab: {fileID: 1002203793942768099, guid: 420a1a66197ab4ab7bd3ebaaae424e8a, type: 3}
     playerPrefab: {fileID: 9044568935916217178, guid: 06b1719f3e8a809468cb747aac74807f, type: 3}
     playerLivesPrefab: {fileID: 4031092474936984735, guid: 917f84bd8cd504c1888e4e6ac561db98, type: 3}
+    playerScorePrefab: {fileID: 5637855566537419085, guid: 219f419d3b1804896af827a536c3818c, type: 3}
   gameSettings:
     gameLevelHandler:
       levelStartDelay: 1
@@ -146,10 +147,14 @@ MonoBehaviour:
       - {fileID: 21300000, guid: 2970127cb6afb4b5a9ac838ea5921aa0, type: 3}
       - {fileID: 21300000, guid: fdaf6461a10664bbdacd6fd285f8a997, type: 3}
     livesViewData:
-      playerLivesViewPos: {x: -241, y: 252}
-      playerSizeDelta: {x: 220, y: 22}
-      otherPlayerLivesViewPos: {x: 512, y: -38}
-      otherPlayerSizeDelta: {x: 220, y: 22}
+      p1LivesViewPos: {x: -241, y: 252}
+      p1LivesSizeDelta: {x: 220, y: 22}
+      p2LivesViewPos: {x: 0, y: 252}
+      p2LivesSizeDelta: {x: 220, y: 22}
+      p1ScoreViewPos: {x: -381, y: 252}
+      p1ScoreSizeDelta: {x: 126, y: 20}
+      p2ScoreViewPos: {x: 245, y: 252}
+      p2ScoreSizeDelta: {x: 126, y: 20}
   playerSettings:
     playerDirectionHandler:
       rotationAngle: {x: 0, y: 100, z: 0}

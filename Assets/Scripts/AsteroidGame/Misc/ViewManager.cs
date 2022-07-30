@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using AsteroidGame.Views;
 using ProjectScripts;
 using UniRx;
@@ -12,6 +13,7 @@ namespace AsteroidGame.Misc
         private GameState _gameState;
         private InstanceRegistry _instanceRegistry;
         private LivesView.Factory _livesViewFactory;
+        private ScoreView.Factory _scoreViewFactory;
         
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
         
@@ -19,11 +21,13 @@ namespace AsteroidGame.Misc
         public void Construct(
             GameState gameState,
             InstanceRegistry instanceRegistry,
-            LivesView.Factory livesViewFactory)
+            LivesView.Factory livesViewFactory,
+            ScoreView.Factory scoreViewFactory)
         {
             _gameState = gameState;
             _instanceRegistry = instanceRegistry;
             _livesViewFactory = livesViewFactory;
+            _scoreViewFactory = scoreViewFactory;
         }
 
         private void Start()
@@ -39,6 +43,8 @@ namespace AsteroidGame.Misc
                     if (isGameRunning)
                     {
                         CreateLivesViews();
+                        
+                        CreateScoreViews();
                     }
                     else
                     {
@@ -47,23 +53,35 @@ namespace AsteroidGame.Misc
                 })
                 .AddTo(_disposables);
         }
+
+        private void CreateView<T1, T2, T3>(T1 playerType, List<T2> instanceList, T3 factory ) 
+            where T1 : Enum
+            where T2 : AbstractView
+            where T3 : PlaceholderFactory<T1, T2>
+        {
+            var view = factory.Create(playerType);
+            view.transform.SetParent(gameObject.transform);
+            instanceList.Add(view);
+        }
         
         private void CreateLivesViews()
         {
-            var view = _livesViewFactory.Create(ObjectTypes.Player);
-            view.transform.SetParent(gameObject.transform);
-
-            _instanceRegistry.playerLivesViews.Add(view);
-            
+            CreateView(ObjectTypes.Player, _instanceRegistry.playerLivesViews, _livesViewFactory);
             if (_gameState.GameMode.Value != 0)
             {
-                view = _livesViewFactory.Create(ObjectTypes.OtherPlayer);
-                view.transform.SetParent(gameObject.transform);
-                
-                _instanceRegistry.playerLivesViews.Add(view);
+                CreateView(ObjectTypes.OtherPlayer, _instanceRegistry.playerLivesViews, _livesViewFactory);
             }
-
             _gameState.AreLivesViewsSpawned.Value = true;
+        }
+        
+        private void CreateScoreViews()
+        {
+            CreateView(ObjectTypes.Player, _instanceRegistry.playerScoreViews, _scoreViewFactory);
+            if (_gameState.GameMode.Value != 0)
+            {
+                CreateView(ObjectTypes.OtherPlayer, _instanceRegistry.playerScoreViews, _scoreViewFactory);
+            }
+            _gameState.AreScoreViewsSpawned.Value = true;
         }
     }
 }

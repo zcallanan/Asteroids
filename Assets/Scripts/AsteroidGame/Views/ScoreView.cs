@@ -7,22 +7,22 @@ using Zenject;
 
 namespace AsteroidGame.Views
 {
-    public class LivesView : AbstractView
+    public class ScoreView : AbstractView
     {
-        [SerializeField] private Image image;
-
+        [SerializeField] private Text scoreText;
+        
         private ObjectTypes _playerType;
         private ViewData.Settings _viewDataSettings;
         
         [Inject]
         public void Construct(
-            ViewData.Settings viewDataSettings,
-            [InjectOptional] ObjectTypes playerType)
+            [InjectOptional] ObjectTypes playerType,
+            ViewData.Settings viewDataSettings)
         {
-            _viewDataSettings = viewDataSettings;
             _playerType = playerType;
+            _viewDataSettings = viewDataSettings;
         }
-
+        
         private void Start()
         {
             CheckIfSpawned();
@@ -34,10 +34,10 @@ namespace AsteroidGame.Views
 
         protected override void CheckIfSpawned()
         {
-            gameState.AreLivesViewsSpawned
-                .Subscribe(areLivesViewsSpawned =>
+            gameState.AreScoreViewsSpawned
+                .Subscribe(areScoreViewsSpawned =>
                 {
-                    if (areLivesViewsSpawned &&
+                    if (areScoreViewsSpawned &&
                         (_playerType == ObjectTypes.Player || _playerType == ObjectTypes.OtherPlayer))
                     {
                         SetUp();
@@ -54,15 +54,16 @@ namespace AsteroidGame.Views
 
             if (_playerType == ObjectTypes.OtherPlayer)
             {
-                gameObject.name = "P2LivesView";
-                pos = _viewDataSettings.p2LivesViewPos;
-                widthHeight = _viewDataSettings.p2LivesSizeDelta;
+                gameObject.name = "P2ScoreView";
+                pos = _viewDataSettings.p2ScoreViewPos;
+                widthHeight = _viewDataSettings.p2ScoreSizeDelta;
+                scoreText.GetComponent<Text>().color = _viewDataSettings.p2Color;
             }
             else
             {
-                gameObject.name = "P1LivesView";
-                pos = _viewDataSettings.p1LivesViewPos;
-                widthHeight = _viewDataSettings.p1LivesSizeDelta;
+                gameObject.name = "P1ScoreView";
+                pos = _viewDataSettings.p1ScoreViewPos;
+                widthHeight = _viewDataSettings.p1ScoreSizeDelta;
             }
 
             rectTransform.anchorMin = Vector2.up;
@@ -78,33 +79,16 @@ namespace AsteroidGame.Views
 
         protected override void CheckForChange()
         {
-            var imageSource = _playerType == ObjectTypes.Player
-                ? gameState.PlayerLivesSprite
-                : gameState.OtherPlayerLivesSprite;
-
-            imageSource
-                .Subscribe(UpdateSpriteDisplay)
+            var scoreSource = _playerType == ObjectTypes.Player
+                ? gameState.PlayerScoreText
+                : gameState.OtherPlayerScoreText;
+            
+            scoreSource
+                .Subscribe(scoreValueText => scoreText.text = scoreValueText)
                 .AddTo(disposables);
         }
 
-        private void UpdateSpriteDisplay(Sprite sprite)
-        {
-            if (sprite == null && image)
-            {
-                image.gameObject.SetActive(false);
-            }
-            else if (image)
-            {
-                if (!image.gameObject.activeSelf)
-                {
-                    image.gameObject.SetActive(true);
-                }
-
-                image.sprite = sprite;
-            }
-        }
-        
-        public class Factory : PlaceholderFactory<ObjectTypes, LivesView>
+        public class Factory : PlaceholderFactory<ObjectTypes, ScoreView>
         {
         }
     }

@@ -32,6 +32,7 @@ namespace ProjectScripts
         public ReactiveProperty<int> GameMode { get; set; }
         
         public ReactiveProperty<bool> AreLivesViewsSpawned { get; set; }
+        public ReactiveProperty<bool> AreScoreViewsSpawned { get; set; }
 
         public ReactiveProperty<Sprite> PlayerLivesSprite { get; set; }
         
