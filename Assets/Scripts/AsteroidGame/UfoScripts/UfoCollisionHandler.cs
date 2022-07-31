@@ -11,7 +11,7 @@ namespace AsteroidGame.UfoScripts
     public class UfoCollisionHandler : IInitializable
     {
         private readonly Ufo _ufo;
-        private readonly ScoreHandler _scoreHandler;
+        private readonly ScoreViewModel _scoreViewModel;
         private readonly GameState _gameState;
 
         private Collider _collider;
@@ -20,11 +20,11 @@ namespace AsteroidGame.UfoScripts
 
         public UfoCollisionHandler(
             Ufo ufo,
-            ScoreHandler scoreHandler,
+            ScoreViewModel scoreViewModel,
             GameState gameState)
         {
             _ufo = ufo;
-            _scoreHandler = scoreHandler;
+            _scoreViewModel = scoreViewModel;
             _gameState = gameState;
         }
 
@@ -63,7 +63,7 @@ namespace AsteroidGame.UfoScripts
                         return;
                     }
 
-                    _scoreHandler.UpdateScore(_ufo.Size, _collider);
+                    _scoreViewModel.UpdateScore(_ufo.Size, _collider);
                 })
                 .AddTo(_disposables);
         }

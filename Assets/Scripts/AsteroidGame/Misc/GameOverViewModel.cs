@@ -6,10 +6,10 @@ using Zenject;
 
 namespace AsteroidGame.Misc
 {
-    public class GameOverHandler : IInitializable
+    public class GameOverViewModel : IInitializable
     {
         private readonly GameState _gameState;
-        private readonly PlayerRegistry _playerRegistry;
+        private readonly InstanceRegistry _instanceRegistry;
         private readonly Settings _settings;
 
         private bool _isPlayerOutOfLives;
@@ -17,13 +17,13 @@ namespace AsteroidGame.Misc
         
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
-        public GameOverHandler(
+        public GameOverViewModel(
             GameState gameState,
-            PlayerRegistry playerRegistry,
+            InstanceRegistry instanceRegistry,
             Settings settings)
         {
             _gameState = gameState;
-            _playerRegistry = playerRegistry;
+            _instanceRegistry = instanceRegistry;
             _settings = settings;
         }
         
@@ -54,7 +54,7 @@ namespace AsteroidGame.Misc
         
         private void CheckIfPlayersAreOutOfLives()
         {
-            foreach (var playerFacade in _playerRegistry.playerFacades)
+            foreach (var playerFacade in _instanceRegistry.playerFacades)
             {
                 CheckPlayerLives(playerFacade);
             }

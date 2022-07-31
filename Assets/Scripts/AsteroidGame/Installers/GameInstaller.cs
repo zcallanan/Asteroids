@@ -3,7 +3,7 @@ using AsteroidGame.AsteroidScripts;
 using AsteroidGame.Misc;
 using AsteroidGame.PlayerScripts;
 using AsteroidGame.UfoScripts;
-using AsteroidGame.UI;
+using AsteroidGame.Views;
 using ProjectScripts;
 using UnityEngine;
 using Zenject;
@@ -21,23 +21,19 @@ namespace AsteroidGame.Installers
             Container.BindInterfacesAndSelfTo<UfoSpawner>().AsSingle();
             Container.BindInterfacesAndSelfTo<PlayerSpawner>().AsSingle();
             
-            Container.Bind<PlayerRegistry>().AsSingle();
+            Container.Bind<InstanceRegistry>().AsSingle();
 
             Container.BindInterfacesTo<UfoSpawnInit>().AsSingle();
 
             Container.BindInterfacesAndSelfTo<GameLevelHandler>().AsSingle();
             
             Container.BindInterfacesTo<LoadStartScene>().AsSingle();
-            Container.BindInterfacesTo<GameOverHandler>().AsSingle();
-            Container.BindInterfacesTo<LivesUIHandler>().AsSingle();
+            Container.BindInterfacesTo<GameOverViewModel>().AsSingle();
+            Container.BindInterfacesTo<LivesViewModel>().AsSingle();
 
             Container.Bind<BoundHandler>().FromComponentInHierarchy().AsCached();
             
-            Container.Bind<ScoreHandler>().AsSingle();
-            
-            Container.Bind<ScoreUI>().FromComponentInHierarchy().AsCached();
-            Container.Bind<LivesUI>().FromComponentInHierarchy().AsCached();
-            Container.Bind<GameOverUI>().FromComponentInHierarchy().AsCached();
+            Container.Bind<ScoreViewModel>().AsSingle();
             
             Container
                 .BindFactory<float, float, ObjectTypes, BulletProjectile, BulletProjectile.Factory>()
@@ -78,6 +74,15 @@ namespace AsteroidGame.Installers
             
             Container.BindFactory<ObjectTypes, PlayerFacade, PlayerFacade.Factory>().FromSubContainerResolve()
                 .ByNewPrefabInstaller<PlayerInstaller>(_settings.playerPrefab);
+
+            Container.BindFactory<ObjectTypes, LivesView, LivesView.Factory>()
+                .FromComponentInNewPrefab(_settings.playerLivesPrefab);
+            
+            Container.BindFactory<ObjectTypes, ScoreView, ScoreView.Factory>()
+                .FromComponentInNewPrefab(_settings.playerScorePrefab);
+            
+            Container.BindFactory<GameOverView, GameOverView.Factory>()
+                .FromComponentInNewPrefab(_settings.gameOverPrefab);
         }
     
         [Serializable]
@@ -89,6 +94,9 @@ namespace AsteroidGame.Installers
             public GameObject explosionPrefab;
             public GameObject thrustPrefab;
             public GameObject playerPrefab;
+            public GameObject playerLivesPrefab;
+            public GameObject playerScorePrefab;
+            public GameObject gameOverPrefab;
         }
     
         class BulletProjectilePool : MonoPoolableMemoryPool<float, float, ObjectTypes, IMemoryPool, BulletProjectile>

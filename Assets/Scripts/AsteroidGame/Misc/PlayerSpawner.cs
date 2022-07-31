@@ -10,20 +10,20 @@ namespace AsteroidGame.Misc
     {
         private readonly GameState _gameState;
         private readonly PlayerFacade.Factory _playerFactory;
-        private readonly PlayerRegistry _playerRegistry;
+        private readonly InstanceRegistry _instanceRegistry;
         private readonly Settings _settings;
         private readonly PlayerData.Settings _playerDataSettings;
         
         public PlayerSpawner(
             GameState gameState,
             PlayerFacade.Factory playerFactory,
-            PlayerRegistry playerRegistry,
+            InstanceRegistry instanceRegistry,
             Settings settings,
             PlayerData.Settings playerDataSettings)
         {
             _gameState = gameState;
             _playerFactory = playerFactory;
-            _playerRegistry = playerRegistry;
+            _instanceRegistry = instanceRegistry;
             _settings = settings;
             _playerDataSettings = playerDataSettings;
         }
@@ -41,7 +41,7 @@ namespace AsteroidGame.Misc
             var playerFacade = _playerFactory.Create(ObjectTypes.Player);
             playerFacade.name = "Player";
             
-            _playerRegistry.playerFacades.Add(playerFacade);
+            _instanceRegistry.playerFacades.Add(playerFacade);
             SetupPlayer(playerFacade);
 
             if (_gameState.GameMode.Value != 0)
@@ -49,7 +49,7 @@ namespace AsteroidGame.Misc
                  playerFacade = _playerFactory.Create(ObjectTypes.OtherPlayer);
                  playerFacade.name = "Other Player";
                 
-                _playerRegistry.playerFacades.Add(playerFacade);
+                 _instanceRegistry.playerFacades.Add(playerFacade);
                 SetupPlayer(playerFacade);
             }
 

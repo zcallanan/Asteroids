@@ -12,7 +12,7 @@ namespace AsteroidGame.AsteroidScripts
     public class AsteroidCollisionHandler : IInitializable
     {
         private readonly Asteroid _asteroid;
-        private readonly ScoreHandler _scoreHandler;
+        private readonly ScoreViewModel _scoreViewModel;
         private readonly AsteroidSpawner _asteroidSpawner;
         private readonly GameLevelHandler _gameLevelHandler;
         private readonly Difficulty.Settings _difficultySettings;
@@ -29,14 +29,14 @@ namespace AsteroidGame.AsteroidScripts
         
         public AsteroidCollisionHandler(
             Asteroid asteroid,
-            ScoreHandler scoreHandler,
+            ScoreViewModel scoreViewModel,
             AsteroidSpawner asteroidSpawner,
             GameLevelHandler gameLevelHandler,
             Difficulty.Settings difficultySettings,
             GameState gameState)
         {
             _asteroid = asteroid;
-            _scoreHandler = scoreHandler;
+            _scoreViewModel = scoreViewModel;
             _asteroidSpawner = asteroidSpawner;
             _gameLevelHandler = gameLevelHandler;
             _difficultySettings = difficultySettings;
@@ -95,7 +95,7 @@ namespace AsteroidGame.AsteroidScripts
                 }
             }
             
-            _scoreHandler.UpdateScore(_asteroid.Size, collider);
+            _scoreViewModel.UpdateScore(_asteroid.Size, collider);
         }
 
         private void HandleCollisionOnTriggerEnter()
