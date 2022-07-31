@@ -28,12 +28,12 @@ namespace AsteroidGame.Installers
             Container.BindInterfacesAndSelfTo<GameLevelHandler>().AsSingle();
             
             Container.BindInterfacesTo<LoadStartScene>().AsSingle();
-            Container.BindInterfacesTo<GameOverHandler>().AsSingle();
+            Container.BindInterfacesTo<GameOverViewModel>().AsSingle();
             Container.BindInterfacesTo<LivesViewModel>().AsSingle();
 
             Container.Bind<BoundHandler>().FromComponentInHierarchy().AsCached();
             
-            Container.Bind<ScoreHandler>().AsSingle();
+            Container.Bind<ScoreViewModel>().AsSingle();
             
             Container
                 .BindFactory<float, float, ObjectTypes, BulletProjectile, BulletProjectile.Factory>()

@@ -6,7 +6,7 @@ using Zenject;
 
 namespace AsteroidGame.Misc
 {
-    public class GameOverHandler : IInitializable
+    public class GameOverViewModel : IInitializable
     {
         private readonly GameState _gameState;
         private readonly InstanceRegistry _instanceRegistry;
@@ -17,7 +17,7 @@ namespace AsteroidGame.Misc
         
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
-        public GameOverHandler(
+        public GameOverViewModel(
             GameState gameState,
             InstanceRegistry instanceRegistry,
             Settings settings)

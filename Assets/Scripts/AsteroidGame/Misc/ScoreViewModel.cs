@@ -9,13 +9,13 @@ using UnityEngine;
 
 namespace AsteroidGame.Misc
 {
-    public class ScoreHandler
+    public class ScoreViewModel
     {
         private readonly Settings _settings;
         private readonly GameState _gameState;
         private readonly InstanceRegistry _instanceRegistry;
 
-        public ScoreHandler(
+        public ScoreViewModel(
             Settings settings,
             GameState gameState,
             InstanceRegistry instanceRegistry)
