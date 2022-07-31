@@ -19,6 +19,9 @@ namespace AsteroidGame.Misc
             public Vector2 p2ScoreSizeDelta;
 
             public Color p2Color;
+
+            public Vector2 gameOverPos;
+            public Vector2 gameOverSizeDelta;
         }
     }
 }

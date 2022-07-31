@@ -1,13 +1,12 @@
 using AsteroidGame.Misc;
 using ProjectScripts;
-using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 
 namespace AsteroidGame.Views
 {
-    public class LivesView : AbstractView
+    public class LivesView : BaseGameView
     {
         [SerializeField] private Image image;
 
@@ -25,7 +24,10 @@ namespace AsteroidGame.Views
 
         private void Start()
         {
-            CheckIfSpawned(gameState.AreLivesViewsSpawned, _playerType);
+            if (_playerType == ObjectTypes.Player || _playerType == ObjectTypes.OtherPlayer)
+            {
+                CheckIfSpawned(gameState.AreLivesViewsSpawned);
+            }
             
             var imageSource = _playerType == ObjectTypes.Player
                 ? gameState.PlayerLivesSprite
@@ -36,7 +38,7 @@ namespace AsteroidGame.Views
             DisposeIfGameNotRunning();
         }
 
-        protected override void SetUp()
+        protected override void SetUpView()
         {
             var rectTransform = GetComponent<RectTransform>();
             Vector3 pos;

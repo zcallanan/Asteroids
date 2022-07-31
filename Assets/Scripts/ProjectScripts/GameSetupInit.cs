@@ -34,6 +34,7 @@ namespace ProjectScripts
             _gameState.ArePlayersSpawned = new ReactiveProperty<bool>(false);
             _gameState.AreLivesViewsSpawned = new ReactiveProperty<bool>(false);
             _gameState.AreScoreViewsSpawned = new ReactiveProperty<bool>(false);
+            _gameState.IsGameOverViewSpawned = new ReactiveProperty<bool>(false);
 
             _gameState.PlayerLivesSprite = new ReactiveProperty<Sprite>(null);
             _gameState.OtherPlayerLivesSprite = new ReactiveProperty<Sprite>(null);

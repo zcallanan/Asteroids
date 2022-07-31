@@ -5,34 +5,33 @@ using Zenject;
 
 namespace AsteroidGame.Views
 {
-    public abstract class AbstractView : MonoBehaviour
+    public abstract class BaseGameView : MonoBehaviour
     {
         [Inject]
         protected readonly GameState gameState;
 
-        private readonly CompositeDisposable _disposables = new CompositeDisposable();
+        protected readonly CompositeDisposable disposables = new CompositeDisposable();
         
-        protected void CheckIfSpawned(ReactiveProperty<bool> source, ObjectTypes playerType)
+        protected void CheckIfSpawned(ReactiveProperty<bool> source)
         {
             source
                 .Subscribe(areSpawned =>
                 {
-                    if (areSpawned &&
-                        (playerType == ObjectTypes.Player || playerType == ObjectTypes.OtherPlayer))
+                    if (areSpawned)
                     {
-                        SetUp();
+                        SetUpView();
                     }
                 })
-                .AddTo(_disposables);
+                .AddTo(disposables);
         }
-        
-        protected abstract void SetUp();
-        
+
+        protected abstract void SetUpView();
+
         protected void CheckForChange<T>(ReactiveProperty<T> source)
         {
             source
                 .Subscribe(UpdateVal)
-                .AddTo(_disposables);
+                .AddTo(disposables);
         }
 
         protected abstract void UpdateVal<T>(T val);
@@ -44,10 +43,10 @@ namespace AsteroidGame.Views
                 {
                     if (!isGameRunning)
                     {
-                        _disposables.Clear();
+                        disposables.Clear();
                     }
                 })
-                .AddTo(_disposables);
+                .AddTo(disposables);
         }
     }
 }

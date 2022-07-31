@@ -1,13 +1,12 @@
 using AsteroidGame.Misc;
 using ProjectScripts;
-using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 
 namespace AsteroidGame.Views
 {
-    public class ScoreView : AbstractView
+    public class ScoreView : BaseGameView
     {
         [SerializeField] private Text scoreText;
         
@@ -25,7 +24,7 @@ namespace AsteroidGame.Views
         
         private void Start()
         {
-            CheckIfSpawned(gameState.AreScoreViewsSpawned, _playerType);
+            CheckIfSpawned(gameState.AreScoreViewsSpawned);
             
             var scoreSource = _playerType == ObjectTypes.Player
                 ? gameState.PlayerScoreText
@@ -36,7 +35,7 @@ namespace AsteroidGame.Views
             DisposeIfGameNotRunning();
         }
 
-        protected override void SetUp()
+        protected override void SetUpView()
         {
             var rectTransform = GetComponent<RectTransform>();
             Vector3 pos;

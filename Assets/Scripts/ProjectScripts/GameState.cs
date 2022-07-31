@@ -33,6 +33,7 @@ namespace ProjectScripts
         
         public ReactiveProperty<bool> AreLivesViewsSpawned { get; set; }
         public ReactiveProperty<bool> AreScoreViewsSpawned { get; set; }
+        public ReactiveProperty<bool> IsGameOverViewSpawned { get; set; }
 
         public ReactiveProperty<Sprite> PlayerLivesSprite { get; set; }
         

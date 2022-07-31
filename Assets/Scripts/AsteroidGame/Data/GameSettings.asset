@@ -155,6 +155,7 @@ MonoBehaviour:
       p1ScoreSizeDelta: {x: 126, y: 20}
       p2ScoreViewPos: {x: 245, y: 252}
       p2ScoreSizeDelta: {x: 126, y: 20}
+      p2Color: {r: 0.6745098, g: 0.8, b: 0.8901961, a: 1}
   playerSettings:
     playerDirectionHandler:
       rotationAngle: {x: 0, y: 100, z: 0}

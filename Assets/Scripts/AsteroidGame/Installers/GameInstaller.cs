@@ -35,8 +35,6 @@ namespace AsteroidGame.Installers
             
             Container.Bind<ScoreHandler>().AsSingle();
             
-            Container.Bind<GameOverUI>().FromComponentInHierarchy().AsCached();
-            
             Container
                 .BindFactory<float, float, ObjectTypes, BulletProjectile, BulletProjectile.Factory>()
                 .FromPoolableMemoryPool<float, float, ObjectTypes, BulletProjectile, BulletProjectilePool>(x => x
@@ -82,6 +80,9 @@ namespace AsteroidGame.Installers
             
             Container.BindFactory<ObjectTypes, ScoreView, ScoreView.Factory>()
                 .FromComponentInNewPrefab(_settings.playerScorePrefab);
+            
+            Container.BindFactory<GameOverView, GameOverView.Factory>()
+                .FromComponentInNewPrefab(_settings.gameOverPrefab);
         }
     
         [Serializable]
@@ -95,6 +96,7 @@ namespace AsteroidGame.Installers
             public GameObject playerPrefab;
             public GameObject playerLivesPrefab;
             public GameObject playerScorePrefab;
+            public GameObject gameOverPrefab;
         }
     
         class BulletProjectilePool : MonoPoolableMemoryPool<float, float, ObjectTypes, IMemoryPool, BulletProjectile>
