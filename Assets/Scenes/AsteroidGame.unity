@@ -209,8 +209,8 @@ GameObject:
   - component: {fileID: 635360140}
   - component: {fileID: 635360139}
   - component: {fileID: 635360138}
-  - component: {fileID: 635360143}
   - component: {fileID: 635360142}
+  - component: {fileID: 635360143}
   m_Layer: 5
   m_Name: GameViews
   m_TagString: Untagged
