@@ -3,6 +3,8 @@ using AsteroidGame.AsteroidScripts;
 using AsteroidGame.Misc;
 using AsteroidGame.PlayerScripts;
 using AsteroidGame.UfoScripts;
+using AsteroidGame.ViewModels;
+using AsteroidGame.Views;
 using UnityEngine;
 using Zenject;
 

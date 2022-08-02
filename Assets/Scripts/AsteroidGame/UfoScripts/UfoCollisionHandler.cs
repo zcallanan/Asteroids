@@ -1,5 +1,5 @@
 using AsteroidGame.Misc;
-using AsteroidGame.PlayerScripts;
+using AsteroidGame.ViewModels;
 using ProjectScripts;
 using UniRx;
 using UniRx.Triggers;

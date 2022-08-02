@@ -42,12 +42,13 @@ MonoBehaviour:
     playerPrefab: {fileID: 9044568935916217178, guid: 06b1719f3e8a809468cb747aac74807f, type: 3}
     playerLivesPrefab: {fileID: 4031092474936984735, guid: 917f84bd8cd504c1888e4e6ac561db98, type: 3}
     playerScorePrefab: {fileID: 5637855566537419085, guid: 219f419d3b1804896af827a536c3818c, type: 3}
+    gameOverPrefab: {fileID: 7510132671038639828, guid: ec0b6e253d06b4408bb37178c5536f05, type: 3}
   gameSettings:
     gameLevelHandler:
       levelStartDelay: 1
-    scoreHandler:
+    scoreViewModel:
       smallAstVal: 100
-      mediumAstVal: 5000
+      mediumAstVal: 50
       largeAstVal: 10
       smallUfoVal: 1000
       largeUfoVal: 200
@@ -119,7 +120,7 @@ MonoBehaviour:
         ufoOffsetConstant: 0.4
         ufoOffsetMin: 0.3
         ufoOffsetMax: 0.8
-    gameOverHandler:
+    gameOverViewModel:
       delayBeforeGameReset: 7
     livesViewModel:
       playerLivesSprites:
@@ -156,6 +157,8 @@ MonoBehaviour:
       p2ScoreViewPos: {x: 245, y: 252}
       p2ScoreSizeDelta: {x: 126, y: 20}
       p2Color: {r: 0.6745098, g: 0.8, b: 0.8901961, a: 1}
+      gameOverPos: {x: 0, y: 0}
+      gameOverSizeDelta: {x: 0, y: 0}
   playerSettings:
     playerDirectionHandler:
       rotationAngle: {x: 0, y: 100, z: 0}
