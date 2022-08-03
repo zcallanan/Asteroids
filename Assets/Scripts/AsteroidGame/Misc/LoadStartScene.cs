@@ -31,7 +31,7 @@ namespace AsteroidGame.Misc
                     {
                         _disposables.Clear();
                         
-                        SceneManager.LoadSceneAsync("StartScreen");
+                        SceneManager.LoadSceneAsync("StartMenu");
                     }
                 })
                 .AddTo(_disposables);
