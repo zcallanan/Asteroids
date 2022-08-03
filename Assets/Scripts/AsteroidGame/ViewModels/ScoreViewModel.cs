@@ -14,12 +14,12 @@ namespace AsteroidGame.ViewModels
     {
         private readonly Settings _settings;
         private readonly GameState _gameState;
-        private readonly InstanceRegistry _instanceRegistry;
+        private readonly GameInstanceRegistry _instanceRegistry;
 
         public ScoreViewModel(
             Settings settings,
             GameState gameState,
-            InstanceRegistry instanceRegistry)
+            GameInstanceRegistry instanceRegistry)
         {
             _settings = settings;
             _gameState = gameState;

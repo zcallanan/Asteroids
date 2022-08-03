@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace AsteroidGame.Views
 {
-    public class ViewData
+    public class GameViewData
     {
         [Serializable]
         public class Settings

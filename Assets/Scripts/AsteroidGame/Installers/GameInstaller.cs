@@ -22,7 +22,7 @@ namespace AsteroidGame.Installers
             Container.BindInterfacesAndSelfTo<UfoSpawner>().AsSingle();
             Container.BindInterfacesAndSelfTo<PlayerSpawner>().AsSingle();
             
-            Container.Bind<InstanceRegistry>().AsSingle();
+            Container.Bind<GameInstanceRegistry>().AsSingle();
 
             Container.BindInterfacesTo<UfoSpawnInit>().AsSingle();
 

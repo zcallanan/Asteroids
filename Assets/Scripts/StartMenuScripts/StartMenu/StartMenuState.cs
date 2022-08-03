@@ -6,5 +6,7 @@ namespace StartMenuScripts.StartMenu
     {
         public ReactiveProperty<bool> MenuFocus { get; set; }
         public ReactiveProperty<bool> IsStartScreenInit { get; set; }
+        
+        public ReactiveProperty<bool> AreDifficultyViewsSpawned { get; set; }
     }
 }

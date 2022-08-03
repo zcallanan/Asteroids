@@ -10,14 +10,14 @@ namespace AsteroidGame.Misc
     {
         private readonly GameState _gameState;
         private readonly PlayerFacade.Factory _playerFactory;
-        private readonly InstanceRegistry _instanceRegistry;
+        private readonly GameInstanceRegistry _instanceRegistry;
         private readonly Settings _settings;
         private readonly PlayerData.Settings _playerDataSettings;
         
         public PlayerSpawner(
             GameState gameState,
             PlayerFacade.Factory playerFactory,
-            InstanceRegistry instanceRegistry,
+            GameInstanceRegistry instanceRegistry,
             Settings settings,
             PlayerData.Settings playerDataSettings)
         {

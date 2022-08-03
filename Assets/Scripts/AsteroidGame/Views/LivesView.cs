@@ -10,14 +10,14 @@ namespace AsteroidGame.Views
         [SerializeField] private Image image;
 
         private ObjectTypes _playerType;
-        private ViewData.Settings _viewDataSettings;
+        private GameViewData.Settings _gameViewDataSettings;
         
         [Inject]
         public void Construct(
-            ViewData.Settings viewDataSettings,
+            GameViewData.Settings gameViewDataSettings,
             [InjectOptional] ObjectTypes playerType)
         {
-            _viewDataSettings = viewDataSettings;
+            _gameViewDataSettings = gameViewDataSettings;
             _playerType = playerType;
         }
 
@@ -34,7 +34,7 @@ namespace AsteroidGame.Views
             
             CheckForChange(imageSource);
 
-            DisposeIfGameNotRunning();
+            ToggleDispose(false);
         }
 
         protected override void SetUpView()
@@ -46,14 +46,14 @@ namespace AsteroidGame.Views
             if (_playerType == ObjectTypes.OtherPlayer)
             {
                 gameObject.name = "P2LivesView";
-                pos = _viewDataSettings.p2LivesViewPos;
-                widthHeight = _viewDataSettings.p2LivesSizeDelta;
+                pos = _gameViewDataSettings.p2LivesViewPos;
+                widthHeight = _gameViewDataSettings.p2LivesSizeDelta;
             }
             else
             {
                 gameObject.name = "P1LivesView";
-                pos = _viewDataSettings.p1LivesViewPos;
-                widthHeight = _viewDataSettings.p1LivesSizeDelta;
+                pos = _gameViewDataSettings.p1LivesViewPos;
+                widthHeight = _gameViewDataSettings.p1LivesSizeDelta;
             }
 
             rectTransform.anchorMin = Vector2.up;

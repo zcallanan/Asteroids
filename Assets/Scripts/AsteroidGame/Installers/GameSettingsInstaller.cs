@@ -30,7 +30,7 @@ namespace AsteroidGame.Installers
             public Difficulty.Settings difficulty;
             public GameOverViewModel.Settings gameOverViewModel;
             public LivesViewModel.Settings livesViewModel;
-            public ViewData.Settings livesViewData;
+            public GameViewData.Settings livesViewData;
         }
 
         [Serializable]

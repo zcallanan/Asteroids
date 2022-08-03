@@ -4,7 +4,7 @@ using AsteroidGame.Views;
 
 namespace AsteroidGame.Misc
 {
-    public class InstanceRegistry
+    public class GameInstanceRegistry
     {
         public readonly List<PlayerFacade> playerFacades = new List<PlayerFacade>();
         public readonly List<LivesView> playerLivesViews = new List<LivesView>();

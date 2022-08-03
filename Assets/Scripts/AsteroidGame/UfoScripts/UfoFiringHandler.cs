@@ -17,7 +17,7 @@ namespace AsteroidGame.UfoScripts
         private readonly Settings _settings;
         private readonly Difficulty.Settings _difficultySettings;
         private readonly GameState _gameState;
-        private readonly InstanceRegistry _instanceRegistry;
+        private readonly GameInstanceRegistry _instanceRegistry;
         
         private float _ufoBulletProjectileSpeed;
         private float _ufoBulletProjectileLifespan;
@@ -38,7 +38,7 @@ namespace AsteroidGame.UfoScripts
             Settings settings,
             Difficulty.Settings difficultySettings,
             GameState gameState,
-            InstanceRegistry instanceRegistry)
+            GameInstanceRegistry instanceRegistry)
         {
             _ufo = ufo;
             _bulletProjectileFactory = bulletProjectileFactory;

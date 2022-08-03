@@ -1,4 +1,5 @@
 using System;
+using ProjectScripts;
 using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,13 +11,13 @@ namespace AsteroidGame.Views
     {
         [SerializeField] private Text gameOverText;
 
-        private ViewData.Settings _viewDataSettings;
+        private GameViewData.Settings _gameViewDataSettings;
         
         [Inject]
         public void Construct(
-            ViewData.Settings viewDataSettings)
+            GameViewData.Settings gameViewDataSettings)
         { 
-            _viewDataSettings = viewDataSettings;
+            _gameViewDataSettings = gameViewDataSettings;
         }
         
         private void Start()
@@ -25,7 +26,7 @@ namespace AsteroidGame.Views
 
             CheckForChange(gameState.IsGameOver);
 
-            DisposeIfGameNotRunning();
+            ToggleDispose(false);
         }
 
         protected override void SetUpView()
@@ -35,8 +36,8 @@ namespace AsteroidGame.Views
             var rectTransform = GetComponent<RectTransform>();
 
             gameObject.name = "GameOverView";
-            Vector3 pos = _viewDataSettings.gameOverPos;
-            Vector3 widthHeight = _viewDataSettings.gameOverSizeDelta;
+            Vector3 pos = _gameViewDataSettings.gameOverPos;
+            Vector3 widthHeight = _gameViewDataSettings.gameOverSizeDelta;
             
             rectTransform.anchorMin = Vector2.up;
             rectTransform.anchorMax = Vector2.up;
