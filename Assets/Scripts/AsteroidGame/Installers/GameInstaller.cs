@@ -3,6 +3,7 @@ using AsteroidGame.AsteroidScripts;
 using AsteroidGame.Misc;
 using AsteroidGame.PlayerScripts;
 using AsteroidGame.UfoScripts;
+using AsteroidGame.ViewModels;
 using AsteroidGame.Views;
 using ProjectScripts;
 using UnityEngine;
@@ -13,7 +14,7 @@ namespace AsteroidGame.Installers
     public class GameInstaller : MonoInstaller
     {
         [Inject]
-        Settings _settings;
+        private Settings _settings;
     
         public override void InstallBindings()
         {

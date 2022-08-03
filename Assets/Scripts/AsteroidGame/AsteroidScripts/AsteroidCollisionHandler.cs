@@ -1,6 +1,7 @@
 using AsteroidGame.Misc;
 using AsteroidGame.PlayerScripts;
 using AsteroidGame.UfoScripts;
+using AsteroidGame.ViewModels;
 using ProjectScripts;
 using UniRx;
 using UniRx.Triggers;
