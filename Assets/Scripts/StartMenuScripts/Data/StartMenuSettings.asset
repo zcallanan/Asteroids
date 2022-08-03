@@ -12,8 +12,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59dea261110d744628417e2655f26cd8, type: 3}
   m_Name: StartMenuSettings
   m_EditorClassIdentifier: 
+  startMenuInstaller:
+    difficultyPrefab: {fileID: 182514328350425895, guid: 3e2b7572bacd549e8892b6f78457e04d, type: 3}
   startMenuHandler:
     startMenuInitDelay: 4
     startMenuInputDelay: 0.3
   startMenuData:
     titleAnimModifier: 2.5
+    difficultyLevels:
+    - Novice
+    - Intermediate
+    - Advanced
+    - Expert
+    positionsV2s:
+    - {x: -320, y: -214}
+    - {x: -170, y: -214}
+    - {x: 60, y: -214}
+    - {x: 200, y: -214}
+    widthHeights:
+    - {x: 150, y: 30.75}
+    - {x: 220, y: 30.75}
+    - {x: 160, y: 30.75}
+    - {x: 160, y: 30.75}

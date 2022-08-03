@@ -10,15 +10,15 @@ namespace AsteroidGame.Views
         [SerializeField] private Text scoreText;
         
         private ObjectTypes _playerType;
-        private ViewData.Settings _viewDataSettings;
+        private GameViewData.Settings _gameViewDataSettings;
         
         [Inject]
         public void Construct(
             [InjectOptional] ObjectTypes playerType,
-            ViewData.Settings viewDataSettings)
+            GameViewData.Settings gameViewDataSettings)
         {
             _playerType = playerType;
-            _viewDataSettings = viewDataSettings;
+            _gameViewDataSettings = gameViewDataSettings;
         }
         
         private void Start()
@@ -31,7 +31,7 @@ namespace AsteroidGame.Views
             
             CheckForChange(scoreSource);
 
-            DisposeIfGameNotRunning();
+            ToggleDispose(false);
         }
 
         protected override void SetUpView()
@@ -43,15 +43,15 @@ namespace AsteroidGame.Views
             if (_playerType == ObjectTypes.OtherPlayer)
             {
                 gameObject.name = "P2ScoreView";
-                pos = _viewDataSettings.p2ScoreViewPos;
-                widthHeight = _viewDataSettings.p2ScoreSizeDelta;
-                scoreText.GetComponent<Text>().color = _viewDataSettings.p2Color;
+                pos = _gameViewDataSettings.p2ScoreViewPos;
+                widthHeight = _gameViewDataSettings.p2ScoreSizeDelta;
+                scoreText.GetComponent<Text>().color = _gameViewDataSettings.p2Color;
             }
             else
             {
                 gameObject.name = "P1ScoreView";
-                pos = _viewDataSettings.p1ScoreViewPos;
-                widthHeight = _viewDataSettings.p1ScoreSizeDelta;
+                pos = _gameViewDataSettings.p1ScoreViewPos;
+                widthHeight = _gameViewDataSettings.p1ScoreSizeDelta;
             }
 
             rectTransform.anchorMin = Vector2.up;

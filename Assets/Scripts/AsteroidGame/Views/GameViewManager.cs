@@ -11,7 +11,7 @@ namespace AsteroidGame.Views
     public class GameViewManager : MonoBehaviour
     {
         private GameState _gameState;
-        private InstanceRegistry _instanceRegistry;
+        private GameInstanceRegistry _instanceRegistry;
         private LivesView.Factory _livesViewFactory;
         private ScoreView.Factory _scoreViewFactory;
         private GameOverView.Factory _gameOverFactory;
@@ -21,7 +21,7 @@ namespace AsteroidGame.Views
         [Inject]
         public void Construct(
             GameState gameState,
-            InstanceRegistry instanceRegistry,
+            GameInstanceRegistry instanceRegistry,
             LivesView.Factory livesViewFactory,
             ScoreView.Factory scoreViewFactory,
             GameOverView.Factory gameOverFactory)

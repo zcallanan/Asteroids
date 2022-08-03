@@ -10,7 +10,7 @@ namespace AsteroidGame.ViewModels
     public class GameOverViewModel : IInitializable
     {
         private readonly GameState _gameState;
-        private readonly InstanceRegistry _instanceRegistry;
+        private readonly GameInstanceRegistry _instanceRegistry;
         private readonly Settings _settings;
 
         private bool _isPlayerOutOfLives;
@@ -20,7 +20,7 @@ namespace AsteroidGame.ViewModels
 
         public GameOverViewModel(
             GameState gameState,
-            InstanceRegistry instanceRegistry,
+            GameInstanceRegistry instanceRegistry,
             Settings settings)
         {
             _gameState = gameState;

@@ -9,7 +9,6 @@ namespace StartMenuScripts.StartMenu
     public class StartMenuInteractions : MonoBehaviour
     {
         public List<Canvas> gameModeCanvases = new List<Canvas>();
-        public List<Canvas> gameDifficultyCanvases = new List<Canvas>();
 
         private StartMenuState _startMenuState;
         private GameState _gameState;
@@ -20,23 +19,23 @@ namespace StartMenuScripts.StartMenu
         
         [Inject]
         public void Construct(
-            StartMenuState startMenuState,
-            GameState gameState)
+            StartMenuState iStartMenuState,
+            GameState iGameState)
         {
-            _startMenuState = startMenuState;
-            _gameState = gameState;
+            _startMenuState = iStartMenuState;
+            _gameState = iGameState;
         }
         
         private void Awake()
         {
             _startMenuState.IsStartScreenInit = new ReactiveProperty<bool>(false);
             _startMenuState.MenuFocus = new ReactiveProperty<bool>(false);
+            _startMenuState.AreDifficultyViewsSpawned = new ReactiveProperty<bool>(false);
             
             _canvas = GetComponent<Canvas>();
             _canvas.enabled = false;
 
             HideMenuOptions(gameModeCanvases);
-            HideMenuOptions(gameDifficultyCanvases);
         }
         
         private void Start()
@@ -45,7 +44,7 @@ namespace StartMenuScripts.StartMenu
 
             EnableGameModeCanvas();
 
-            EnableGameDifficultyCanvas();
+            // EnableGameDifficultyCanvas();
 
             DisposeOnGameRunning();
         }
@@ -83,17 +82,17 @@ namespace StartMenuScripts.StartMenu
                 .AddTo(_disposables);
         }
         
-        private void EnableGameDifficultyCanvas()
-        {
-            _gameState.GameDifficulty
-                .Subscribe(index =>
-                {
-                    HideMenuOptions(gameDifficultyCanvases);
-
-                    gameDifficultyCanvases[index].enabled = true;
-                })
-                .AddTo(_disposables);
-        }
+        // private void EnableGameDifficultyCanvas()
+        // {
+        //     _gameState.GameDifficulty
+        //         .Subscribe(index =>
+        //         {
+        //             HideMenuOptions(gameDifficultyCanvases);
+        //
+        //             gameDifficultyCanvases[index].enabled = true;
+        //         })
+        //         .AddTo(_disposables);
+        // }
 
         private void EnableOnceStartScreenTimerEnds()
         {

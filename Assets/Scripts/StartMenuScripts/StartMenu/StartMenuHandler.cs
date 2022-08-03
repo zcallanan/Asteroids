@@ -1,5 +1,6 @@
 using System;
 using ProjectScripts;
+using StartMenuScripts.Misc;
 using UniRx;
 using Zenject;
 
@@ -11,6 +12,7 @@ namespace StartMenuScripts.StartMenu
         private readonly GameState _gameState;
         private readonly StartMenuState _startMenuState;
         private readonly StartMenuInteractions _startMenuInteractions;
+        private readonly StartMenuInstanceRegistry _startMenuInstanceRegistry;
         private readonly Settings _settings;
 
         private bool _throttleInput;
@@ -19,16 +21,18 @@ namespace StartMenuScripts.StartMenu
 
         public StartMenuHandler(
             InputState inputState,
-            GameState gameState,
-            StartMenuState startMenuState,
-            StartMenuInteractions startMenuInteractions,
-            Settings settings)
+            GameState iGameState,
+            StartMenuState iStartMenuState,
+            StartMenuInteractions iStartMenuInteractions,
+            StartMenuInstanceRegistry iStartMenuInstanceRegistry,
+            Settings iSettings)
         {
             _inputState = inputState;
-            _gameState = gameState;
-            _startMenuState = startMenuState;
-            _startMenuInteractions = startMenuInteractions;
-            _settings = settings;
+            _gameState = iGameState;
+            _startMenuState = iStartMenuState;
+            _startMenuInteractions = iStartMenuInteractions;
+            _startMenuInstanceRegistry = iStartMenuInstanceRegistry;
+            _settings = iSettings;
         }
         
         public void Initialize()
@@ -125,7 +129,7 @@ namespace StartMenuScripts.StartMenu
             else
             {
                 _gameState.GameDifficulty.Value = SetValue(inputVal,
-                    _startMenuInteractions.gameDifficultyCanvases.Count, 
+                    _startMenuInstanceRegistry.difficultyViews.Count, 
                     _gameState.GameDifficulty.Value);
             }
         }

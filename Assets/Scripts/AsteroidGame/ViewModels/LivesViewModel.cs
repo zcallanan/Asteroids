@@ -11,14 +11,14 @@ namespace AsteroidGame.ViewModels
 {
     public class LivesViewModel : IInitializable
     {
-        private readonly InstanceRegistry _instanceRegistry;
+        private readonly GameInstanceRegistry _instanceRegistry;
         private readonly GameState _gameState;
         private readonly Settings _settings;
         
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
         public LivesViewModel(
-            InstanceRegistry instanceRegistry,
+            GameInstanceRegistry instanceRegistry,
             GameState gameState,
             Settings settings)
         {

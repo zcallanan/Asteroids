@@ -1,4 +1,5 @@
 using ProjectScripts;
+using StartMenuScripts.StartMenu;
 using UniRx;
 using Zenject;
 
@@ -7,13 +8,16 @@ namespace StartMenuScripts.Misc
     public class SetupAsteroidData : IInitializable
     {
         private readonly GameState _gameState;
+        private readonly StartMenuState _startMenuState;
         
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
         public SetupAsteroidData(
-            GameState gameState)
+            GameState gameState,
+            StartMenuState startMenuState)
         {
             _gameState = gameState;
+            _startMenuState = startMenuState;
         }
         
         public void Initialize()
@@ -55,6 +59,9 @@ namespace StartMenuScripts.Misc
                         _gameState.AreLivesViewsSpawned.Value = false;
                         _gameState.AreScoreViewsSpawned.Value = false;
                         _gameState.IsGameOverViewSpawned.Value = false;
+
+                        _startMenuState.IsStartScreenInit.Value = false;
+                        _startMenuState.AreDifficultyViewsSpawned.Value = false;
                     }
                 })
                 .AddTo(_disposables);

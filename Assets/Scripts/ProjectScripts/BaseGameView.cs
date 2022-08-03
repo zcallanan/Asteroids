@@ -1,9 +1,8 @@
-using ProjectScripts;
 using UniRx;
 using UnityEngine;
 using Zenject;
 
-namespace AsteroidGame.Views
+namespace ProjectScripts
 {
     public abstract class BaseGameView : MonoBehaviour
     {
@@ -36,12 +35,12 @@ namespace AsteroidGame.Views
 
         protected abstract void UpdateVal<T>(T val);
 
-        protected void DisposeIfGameNotRunning()
+        protected void ToggleDispose(bool whenGameIsRun)
         {
             gameState.IsGameRunning
                 .Subscribe(isGameRunning =>
                 {
-                    if (!isGameRunning)
+                    if (isGameRunning == whenGameIsRun)
                     {
                         disposables.Clear();
                     }
